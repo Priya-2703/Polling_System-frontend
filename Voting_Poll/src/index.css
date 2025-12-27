@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@100..800&family=Exo+2:ital,wght@0,100..900;1,100..900&family=Geologica:wght,CRSV@100..900,0&family=Orbitron:wght@400..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-heading: "Orbitron", sans-serif ; /* "Geologica", sans-serif , "Orbitron", sans-serif */
+  --font-body: "Geologica", sans-serif ; /* "Geologica", sans-serif , "Exo 2", sans-serif */
+  --font-tamil: "Anek Tamil", sans-serif;
+  --color-accet: #01FAFA;   
+  /* end color 02D1D1 border color :080808  pink :7A1F3E */
+}
+
+/* .tamil-mode * {
+  font-family: "Anek Tamil", sans-serif !important;
+} */
+
+/* .tamil-mode .font-heading,
+.tamil-mode .font-body {
+ font-family: "Anek Tamil", sans-serif !important;
+} */
+
+:root {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+:root::-webkit-scrollbar {
+  display: none; 
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  background-color: black;
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
