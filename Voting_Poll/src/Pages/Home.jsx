@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <>
       <div className="containter mx-auto">
-        <div className="w-[90%] mx-auto h-screen relative flex flex-col">
+        <div className="w-[90%] mx-auto h-dvh relative flex flex-col">
           <div className="flex justify-center items-start pt-4">
             <h1 className="text-[20px] font-heading text-center uppercase font-black tracking-wide leading-6 text-transparent bg-linear-to-r from-accet to-[#017474] bg-clip-text">
               Tamil Nadu 2026 Election Opinion Poll
