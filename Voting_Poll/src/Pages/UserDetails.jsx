@@ -150,28 +150,28 @@ const UserDetails = () => {
   // Section Title Component
   const SectionTitle = ({ icon, title }) => (
     <div className="flex items-center gap-2 mb-8 mt-8 first:mt-0">
-      <div className="w-8 h-8 rounded-full bg-linear-to-br from-accet to-[#014ca8] flex items-center justify-center text-sm">
+      <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-linear-to-br from-accet to-indigo-400 flex items-center justify-center text-sm">
         {icon}
       </div>
       <div className="flex flex-col justify-center items-start">
-        <h2 className="text-[12px] text-white font-heading font-bold uppercase tracking-wide">
+        <h2 className="text-[12px] lg:text-[20px] text-white font-heading font-bold uppercase tracking-wide">
           {title}
         </h2>
       </div>
-      <div className="flex-1 h-px bg-linear-to-r from-accet/50 to-transparent" />
+      <div className="flex-1 h-px lg:h-1 rounded-2xl bg-linear-to-r from-accet/50 to-transparent" />
     </div>
   );
 
   return (
     <div className="container mx-auto">
-      <div className="w-[90%] mx-auto min-h-screen relative flex flex-col py-4">
+      <div className="w-[90%] lg:w-[50%] mx-auto min-h-screen relative flex flex-col py-4">
         {/* Header */}
         <div className="flex justify-center items-start pt-2 sticky top-0 bg-linear-to-b from-black via-black to-transparent pb-4 z-10">
           <div className="text-center">
-            <h1 className="text-[20px] font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-linear-to-r from-accet to-[#013974] bg-clip-text">
+            <h1 className="text-[20px] lg:text-[30px] font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-linear-to-r from-accet to-[#013974] bg-clip-text">
               {t("header.title")}
             </h1>
-            <p className="text-[8px] font-medium text-white/40 font-body ">
+            <p className="text-[8px] lg:text-[14px] lg:mt-1 font-medium text-white/40 font-body ">
               {t("header.subtitle")}
             </p>
           </div>
@@ -184,24 +184,24 @@ const UserDetails = () => {
         >
           {/* ==================== PERSONAL DETAILS ==================== */}
           <SectionTitle
-            icon={<HiMiniUser className="text-gray-900 " />}
+            icon={<HiMiniUser className="text-gray-900 text-[12px] lg:text-[20px]" />}
             title={t("sections.personal")}
           />
 
           {/* Name Input */}
           <div className="relative group mb-6">
-            <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
+            {/* <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" /> */}
+              <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
                 {t("labels.fullName")}
               </label>
-            <div className="relative bg-shade backdrop-blur-sm border border-white/20  px-4 py-1.5 group-hover:border-accet/30 transition-colors">
+            <div className="relative bg-shade backdrop-blur-sm border border-white/20  px-4 py-1.5 lg:py-3 group-hover:border-accet/30 transition-colors">
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder={t("placeholders.fullName")}
-                className="w-full bg-transparent text-white font-body font-medium text-[12px] capitalize outline-none placeholder:text-white/30"
+                className="w-full bg-transparent text-white font-body font-medium text-[12px] lg:text-[14px] capitalize outline-none placeholder:text-white/30"
                 required
               />
             </div>
@@ -209,10 +209,10 @@ const UserDetails = () => {
 
           {/* Gender Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold  text-accet font-heading uppercase tracking-wide mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold  text-accet font-heading uppercase tracking-wide mb-2 block px-1">
               {t("labels.gender")}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 lg:gap-4">
               {[
                 {
                   value: "male",
@@ -241,12 +241,12 @@ const UserDetails = () => {
                   <div
                     className={`p-3  border text-center backdrop-blur-xl transition-all flex flex-col justify-center gap-1 items-center duration-300 ${
                       formData.gender === gender.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
                     <img src={gender.icon} alt={gender.label} className="w-6" />
-                    <span className="text-[9px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[12px] font-heading uppercase tracking-widest">
                       {gender.label}
                     </span>
                   </div>
@@ -257,10 +257,10 @@ const UserDetails = () => {
 
           {/* Age Range Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
              {t("labels.ageGroup")}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 lg:gap-4">
               {ageRanges.map((age) => (
                 <label key={age.value} className="cursor-pointer">
                   <input
@@ -271,13 +271,13 @@ const UserDetails = () => {
                     className="sr-only"
                   />
                   <div
-                    className={`py-1.5 px-2  border backdrop-blur-xl text-center transition-all duration-300 ${
+                    className={`py-1.5 lg:py-3 px-2  border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.age === age.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[11px] font-heading font-normal tracking-wide">
+                    <span className="text-[11px] lg:text-[12px] font-heading font-normal tracking-wide">
                       {age.label}
                     </span>
                   </div>
@@ -297,21 +297,21 @@ const UserDetails = () => {
 
           {/* ==================== LOCATION & BACKGROUND ==================== */}
           <SectionTitle
-            icon={<MdLocationOn className="text-gray-900 " />}
+            icon={<MdLocationOn className="text-gray-900 text-[12px] lg:text-[20px]" />}
             title={t("sections.location")}          
           />
 
           {/* District Selection */}
           <div className="relative group mb-6">
-            <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-lg blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
+            {/* <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-lg blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" /> */}
+              <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-2 block px-1">
                 {t("labels.district")}
               </label>
-            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1 group-hover:border-accet/30 transition-colors">
+            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1 lg:py-2 group-hover:border-accet/30 transition-colors">
               
               <div 
                 onClick={() => setShowMap(true)}
-                className="w-full bg-transparent text-white font-body text-[12px] py-2 cursor-pointer flex justify-between items-center"
+                className="w-full bg-transparent text-white font-body text-[12px] lg:text-[14px] py-2 cursor-pointer flex justify-between items-center"
               >
                 <span className={formData.district ? "text-white" : "text-white/30"}>
                     {formData.district || t("placeholders.district")}
@@ -325,10 +325,10 @@ const UserDetails = () => {
 
           {/* Religion Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
               {t("labels.religion")}
             </label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-2 lg:gap-4">
               {religions.map((religion) => (
                 <label key={religion.value} className="cursor-pointer">
                   <input
@@ -341,12 +341,12 @@ const UserDetails = () => {
                   <div
                     className={`py-3 px-1 border backdrop-blur-xl flex flex-col gap-2 justify-center items-center text-center transition-all duration-300 ${
                       formData.religion === religion.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <img src={religion.icon} alt={religion.label} className="w-6" />
-                    <span className="text-[8px]  font-heading uppercase tracking-widest font-normal">
+                    <img src={religion.icon} alt={religion.label} className="w-6 lg:w-8" />
+                    <span className="text-[8px] lg:text-[11px] font-heading uppercase tracking-widest font-normal">
                       {religion.label}
                     </span>
                   </div>
@@ -357,10 +357,10 @@ const UserDetails = () => {
 
           {/* Mother Tongue Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
               {t("labels.motherTongue")}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 lg:gap-4">
               {motherTongues.map((lang) => (
                 <label key={lang.value} className="cursor-pointer">
                   <input
@@ -371,14 +371,14 @@ const UserDetails = () => {
                     className="sr-only"
                   />
                   <div
-                    className={`py-1.5 px-2  border backdrop-blur-xl text-center transition-all duration-300 ${
+                    className={`py-1.5 lg:py-3 px-2  border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.motherTongue === lang.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
                     <div className="text-lg font-normal">{lang.icon}</div>
-                    <span className="text-[9px] font-normal font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[12px] font-normal font-heading uppercase tracking-widest">
                       {lang.label}
                     </span>
                   </div>
@@ -389,19 +389,19 @@ const UserDetails = () => {
 
           {/* ==================== CONTACT & COMMUNITY ==================== */}
           <SectionTitle
-            icon={<HiPhone className="text-gray-900 " />}
+            icon={<HiPhone className="text-gray-900 text-[12px] lg:text-[20px]" />}
             title={t("sections.contact")}
           />
 
           {/* Phone Number */}
           <div className="relative group mb-6">
-            <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-            <label className="text-[10px] text-accet font-bold font-heading uppercase tracking-widest mb-2 block px-1">
+            {/* <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-2xl blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" /> */}
+            <label className="text-[10px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-widest mb-2 block px-1">
                {t("labels.phoneNumber")}
             </label>
-            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1.5 group-hover:border-accet/30 transition-colors"> 
+            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1.5 lg:py-3 group-hover:border-accet/30 transition-colors"> 
               <div className="flex items-center gap-2">
-                <span className="text-white font-body text-[12px] py-1 rounded">
+                <span className="text-white font-body text-[12px] lg:text-[14px] py-1 rounded">
                   +91
                 </span>
                 <input
@@ -411,7 +411,7 @@ const UserDetails = () => {
                   onChange={handleChange}
                   placeholder={t("placeholders.phone")}
                   maxLength="10"
-                  className="flex-1 bg-transparent text-white font-body text-[12px] outline-none placeholder:text-white/30 tracking-wider"
+                  className="flex-1 bg-transparent text-white font-body text-[12px] lg:text-[14px] outline-none placeholder:text-white/30 tracking-wider"
                   required
                 />
               </div>
@@ -431,7 +431,7 @@ const UserDetails = () => {
                     />
                   </div>
                   <span
-                    className={`text-[8px] font-body ${
+                    className={`text-[8px] lg:text-[10px] font-body ${
                       formData.phone.length === 10
                         ? "text-green-400"
                         : "text-white/40"
@@ -446,10 +446,10 @@ const UserDetails = () => {
 
           {/* Community Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
               {t("labels.community")}
             </label>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 lg:gap-4">
               {communities.map((community) => (
                 <label key={community.value} className="cursor-pointer">
                   <input
@@ -460,16 +460,16 @@ const UserDetails = () => {
                     className="sr-only"
                   />
                   <div
-                    className={`py-2 px-2 min-h-16 backdrop-blur-xl border text-center flex flex-col justify-center items-center transition-all duration-300 ${
+                    className={`py-2 px-2 lg:py-3 min-h-16 backdrop-blur-xl border text-center flex flex-col justify-center items-center transition-all duration-300 ${
                       formData.community === community.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[12px] font-heading font-normal tracking-widest leading-5">
+                    <span className="text-[12px] lg:text-[14px] font-heading font-normal tracking-widest leading-5">
                       {community.label}
                     </span>
-                    <span className="text-[7px] font-body">
+                    <span className="text-[7px] lg:text-[10px] font-body">
                       {community.full}
                     </span>
                   </div>
@@ -481,17 +481,17 @@ const UserDetails = () => {
           {/* Caste Input */}
           <div className="relative group mb-6">
             <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-lg blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
-              <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
+              <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
                 {t("labels.caste")}
               </label>
-            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1.5 group-hover:border-accet/30 transition-colors">
+            <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-1.5 lg:py-3 group-hover:border-accet/30 transition-colors">
               <input
                 type="text"
                 name="caste"
                 value={formData.caste}
                 onChange={handleChange}
                 placeholder={t("placeholders.caste")}
-                className="w-full bg-transparent text-white font-body text-[12px] outline-none placeholder:text-white/30"
+                className="w-full bg-transparent text-white font-body text-[12px] lg:text-[14px] outline-none placeholder:text-white/30"
                 required
               />
             </div>
@@ -499,16 +499,16 @@ const UserDetails = () => {
 
           {/* ==================== ID VERIFICATION ==================== */}
           <SectionTitle
-            icon={<MdVerifiedUser className="text-gray-900 " />}
+            icon={<MdVerifiedUser className="text-gray-900 text-[12px] lg:text-[20px]" />}
             title={t("sections.idVerification")}
           />
 
           {/* ID Type Selection */}
           <div className="mb-6">
-            <label className="text-[10px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
+            <label className="text-[10px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-2 block px-1">
               {t("labels.idType")}
             </label>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 lg:gap-4">
               {idTypes.map((id) => (
                 <label key={id.value} className="cursor-pointer">
                   <input
@@ -524,12 +524,12 @@ const UserDetails = () => {
                   <div
                     className={`p-4 border backdrop-blur-xl text-center transition-all flex flex-col justify-center gap-1 items-center duration-300 ${
                       formData.idType === id.value
-                        ? "bg-linear-to-br from-accet/20 to-[#017474]/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-linear-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
                     <img src={id.icon} alt={id.label} className="w-6" />
-                    <span className="text-[9px] font-normal font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[11px] font-normal font-heading uppercase tracking-widest">
                       {id.label}
                     </span>
                   </div>
@@ -543,7 +543,7 @@ const UserDetails = () => {
             <div className="relative group mb-4 animate-fadeIn">
               <div className="absolute inset-0 bg-linear-to-r from-accet to-[#017474] rounded-lg blur opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
               <div className="relative bg-shade backdrop-blur-sm border border-white/20 px-4 py-2 group-hover:border-accet/30 transition-colors">
-                <label className="text-[10px] text-accet font-heading uppercase tracking-wide flex items-center gap-2">
+                <label className="text-[10px] lg:text-[12px] text-accet font-heading uppercase tracking-wide flex items-center gap-2">
                   {formData.idType === "aadhar"
                     ? t("labels.aadharNumber")
                     : t("labels.dlNumber")}
@@ -561,7 +561,7 @@ const UserDetails = () => {
                     idTypes.find((id) => id.value === formData.idType)
                       ?.maxLength
                   }
-                  className="w-full bg-transparent text-white font-body text-[12px] mt-2 outline-none placeholder:text-white/30 tracking-wide uppercase"
+                  className="w-full bg-transparent text-white font-body text-[12px] lg:text-[14px] mt-2 outline-none placeholder:text-white/30 tracking-wide uppercase"
                   required
                 />
                 {/* ID validation indicator */}
@@ -585,7 +585,7 @@ const UserDetails = () => {
                       }}
                     />
                   </div>
-                  <span className="text-[8px] text-white font-body">
+                  <span className="text-[8px] lg:text-[10px] text-white font-body">
                     {formData.idNumber.length}/
                     {
                       idTypes.find((id) => id.value === formData.idType)
@@ -616,10 +616,10 @@ const UserDetails = () => {
                 </svg>
               </div>
               <div>
-                <p className="text-[10px] text-green-400 font-heading uppercase tracking-wider">
+                <p className="text-[10px] lg:text-[13px] text-green-400 font-heading uppercase tracking-wider">
                   {t("user_messages.dataSecure")}
                 </p>
-                <p className="text-[8px] text-white/50 font-extralight font-body mt-1 leading-relaxed">
+                <p className="text-[8px] lg:text-[10px] text-white/50 font-extralight font-body mt-1 leading-relaxed">
                  {t("user_messages.encryptionNotice")}
                 </p>
               </div>
@@ -637,7 +637,7 @@ const UserDetails = () => {
               onChange={(e) => setAgreed(e.target.checked)}
               className="custom-checkbox w-3.5 h-3.5"
             />
-            <p className="text-[9px] text-white/50 font-sans font-light leading-relaxed">
+            <p className="text-[9px] lg:text-[12px] text-white/50 font-sans font-light leading-relaxed">
               {t("user_messages.agreement")}{' '}
               <span className="text-accet underline font-medium cursor-pointer">
                 {t("user_messages.privacyPolicy")}
@@ -655,7 +655,7 @@ const UserDetails = () => {
             type="submit"
             onClick={handleSubmit}
             disabled={!isFormValid()}
-            className={`w-full font-heading text-[12px] tracking-wider py-3.5 rounded uppercase font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
+            className={`w-full font-heading text-[12px] lg:text-[14px] tracking-wider py-3.5 lg:py-4 rounded uppercase font-bold transition-all duration-300 flex items-center justify-center gap-2 ${
               isFormValid()
                 ? "text-white bg-linear-to-r from-accet/40 to-accet/60 hover:shadow-lg hover:shadow-accet/30 active:scale-[0.98]"
                 : "text-white/30 bg-white/5 border border-white/10 cursor-not-allowed"
@@ -692,7 +692,7 @@ const UserDetails = () => {
           </button>
 
           {/* Quick Links */}
-          <div className="text-[7px] tracking-widest text-white/40 flex justify-between items-center mt-2 px-4 font-heading font-light">
+          <div className="text-[7px] lg:text-[10px] tracking-widest text-white/40 flex justify-between items-center mt-2 px-4 font-heading font-light">
             <p className="hover:text-white cursor-pointer transition-colors">
               {t("user_messages.privacyPolicy")}
             </p>

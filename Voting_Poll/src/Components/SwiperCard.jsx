@@ -47,6 +47,23 @@ const SwiperCard = ({
     <div className="w-full bg-transparent">
       {/* Swiper Container with proper padding */}
       <div className="relative w-full px-2 sm:px-4">
+        <div
+          className="hidden lg:block absolute left-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0) 100%)",
+          }}
+        />
+
+        {/* ========== RIGHT FADE - Desktop Only ========== */}
+        <div
+          className="hidden lg:block absolute right-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
+          style={{
+            background:
+              "linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0) 100%)",
+          }}
+        />
+
         <Swiper
           modules={[Navigation, EffectCoverflow]}
           effect="coverflow"
@@ -88,7 +105,7 @@ const SwiperCard = ({
               spaceBetween: 60,
             },
             1280: {
-              slidesPerView: 3,
+              slidesPerView: 4,
               spaceBetween: 80,
             },
           }}
@@ -200,7 +217,11 @@ const SwiperCard = ({
                         )}
 
                         {/* Card Content */}
-                        <div className={`flex flex-col justify-center items-center ${item.party ? "mt-10" : "mt-3"} `}>
+                        <div
+                          className={`flex flex-col justify-center items-center ${
+                            item.party ? "mt-10" : "mt-3"
+                          } `}
+                        >
                           {/* Candidate Image */}
                           <div className="relative">
                             {/* Image Glow */}
@@ -238,17 +259,23 @@ const SwiperCard = ({
                           </div>
 
                           {/* Candidate Info */}
-                          <div className={`text-center mt-4 ${item.party ? "mb-0" :"mb-2"}`}>
+                          <div
+                            className={`text-center mt-4 ${
+                              item.party ? "mb-0" : "mb-2"
+                            }`}
+                          >
                             <h1 className="text-[16px] px-2 font-heading uppercase font-black tracking-wide text-transparent bg-linear-to-r from-accet via-blue-300 to-blue-800 bg-clip-text leading-5">
                               {item.name}
                             </h1>
 
                             {/* Divider */}
-                            {item.party && (<div className="flex items-center justify-center gap-2 my-2">
-                              <div className="h-px w-8 bg-linear-to-r from-transparent to-accet/50" />
-                              <div className="w-1.5 h-1.5 bg-accet/60 rounded-full" />
-                              <div className="h-px w-8 bg-linear-to-l from-transparent to-accet/50" />
-                            </div>)}
+                            {item.party && (
+                              <div className="flex items-center justify-center gap-2 my-2">
+                                <div className="h-px w-8 bg-linear-to-r from-transparent to-accet/50" />
+                                <div className="w-1.5 h-1.5 bg-accet/60 rounded-full" />
+                                <div className="h-px w-8 bg-linear-to-l from-transparent to-accet/50" />
+                              </div>
+                            )}
 
                             <div className="flex items-center justify-center gap-2">
                               <span className="text-[15px] sm:text-[18px] font-heading uppercase font-black tracking-widest text-transparent bg-linear-to-r from-accet to-blue-300 bg-clip-text">
@@ -282,9 +309,9 @@ const SwiperCard = ({
           }}
           ref={prevRef}
           aria-label="Previous"
-          className="absolute top-1/2 -translate-y-1/2 left-0 sm:left-2 lg:left-16 z-30 
+          className="absolute top-1/2 -translate-y-1/2 left-0 sm:left-2 lg:left-16 z-40 
             w-10 h-10 sm:w-12 sm:h-12
-            rounded-full bg-black/50 backdrop-blur-md border border-accet/30
+            rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet
             flex justify-center items-center
             hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95
             transition-all duration-300"
@@ -310,9 +337,9 @@ const SwiperCard = ({
           }}
           ref={nextRef}
           aria-label="Next"
-          className="absolute top-1/2 -translate-y-1/2 right-0 sm:right-2 lg:right-16 z-30 
+          className="absolute top-1/2 -translate-y-1/2 right-0 sm:right-2 lg:right-16 z-40 
             w-10 h-10 sm:w-12 sm:h-12
-            rounded-full bg-black/50 backdrop-blur-md border border-accet/30
+            rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet
             flex justify-center items-center
             hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95
             transition-all duration-300"

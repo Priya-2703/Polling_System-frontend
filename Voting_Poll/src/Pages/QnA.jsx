@@ -285,18 +285,18 @@ const QnA = () => {
               <img
                 src={selectedCandidate.party_logo}
                 alt={selectedCandidate.party}
-                className="w-8 h-8 rounded-full border border-accet/40 object-cover"
+                className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-accet/40 object-cover"
               />
               <div className="bg-accet/10 border border-accet/30 rounded-full px-3 py-1">
-                <span className="text-accet text-[10px] font-medium">
-                  {t("vote_messages.votingFor")}{" "}
+                <span className="text-accet text-[10px] lg:text-[14px] font-heading font-medium">
+                  {t("vote_messages.votingFor")} {"  "}
                   <span className="font-bold">{selectedCandidate.name}</span>
                 </span>
               </div>
             </div>
 
             {/* Progress Section */}
-            <div className="relative max-w-md mx-auto mt-4">
+            <div className="relative max-w-md lg:max-w-[50%] mx-auto mt-4 lg:mt-8">
               <div className="flex justify-between items-center mb-2 px-1">
                 {questions.map((_, index) => (
                   <div
@@ -308,7 +308,7 @@ const QnA = () => {
                     }`}
                   >
                     <div
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all duration-500 ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 lg:w-10 lg:h-10 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all duration-500 ${
                         index < currentQuestion
                           ? "bg-linear-to-br from-accet to-accet/30 text-black"
                           : index === currentQuestion
@@ -367,13 +367,13 @@ const QnA = () => {
               }`}
             >
               <div className="text-center mb-5">
-                <p className="text-[14px] sm:text-[16px] font-heading font-bold text-accet">
+                <p className="text-[14px] md:text-[16px] lg:text-[20px] font-heading font-bold text-accet">
                   {question.question}
                 </p>
               </div>
 
               {showError && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-center animate-shake">
+                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-center animate-shake">
                   <p className="text-red-400 text-sm font-medium flex items-center justify-center gap-2">
                     <svg
                       className="w-4 h-4"
@@ -388,7 +388,7 @@ const QnA = () => {
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {t("vote_messages.selectOption") || "Please select an option to continue"}
+                    {t("vote_messages.selectError") || "Please select an option to continue"}
                   </p>
                 </div>
               )}
@@ -409,7 +409,7 @@ const QnA = () => {
                       key={`${option.id}-${index}`}
                       onClick={() => handleOptionSelect(option.id)}
                       disabled={isAnimating || isCompleting}
-                      className={`group relative overflow-hidden transition-all duration-300 transform rounded-xl ${
+                      className={`group relative overflow-hidden transition-all duration-300 transform ${
                         isSelected
                           ? "scale-[1.02] bg-linear-to-br from-accet/20 via-accet/10 to-shade backdrop-blur-sm border-2 border-accet shadow-[0_0_20px_rgba(95,98,233,0.3)]"
                           : `bg-shade border ${
@@ -463,7 +463,7 @@ const QnA = () => {
                           <>
                             <div className="flex-1 flex items-center justify-start">
                               <p
-                                className={`font-heading font-normal text-sm sm:text-base transition-colors duration-300 ${
+                                className={`font-heading font-normal text-sm md:text-base lg:text-[18px] transition-colors duration-300 ${
                                   isSelected ? "text-accet" : "text-white/70"
                                 }`}
                               >
@@ -500,7 +500,7 @@ const QnA = () => {
                           <>
                             <div className="flex-1 text-left">
                               <p
-                                className={`font-heading capitalize font-medium tracking-wide text-[13px] sm:text-[14px] transition-colors duration-300 ${
+                                className={`font-heading capitalize font-medium tracking-wide lg:text-[16px] text-[13px] sm:text-[14px] transition-colors duration-300 ${
                                   isSelected
                                     ? "text-accet"
                                     : "text-white/90 group-hover:text-white"
@@ -547,11 +547,11 @@ const QnA = () => {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="shrink-0 flex items-center justify-between gap-4 mt-4 max-w-lg mx-auto w-full">
+          <div className="shrink-0 flex items-center justify-between gap-4 mt-4 max-w-lg lg:max-w-[50%] lg:mt-14 mx-auto w-full">
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0 || isAnimating || isCompleting}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2.5  font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
                 currentQuestion === 0 || isAnimating || isCompleting
                   ? "bg-white/5 text-white/20 cursor-not-allowed"
                   : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10 hover:border-white/30"
@@ -576,11 +576,11 @@ const QnA = () => {
             <button
               onClick={handleNext}
               disabled={isAnimating || isCompleting}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-heading font-bold text-sm uppercase tracking-wider transition-all duration-300 ${
+              className={`flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
                 isAnimating || isCompleting
                   ? "bg-accet/50 text-black/50 cursor-not-allowed"
                   : selectedOption
-                  ? "bg-linear-to-r from-accet to-accet/50 text-black hover:shadow-[0_0_30px_rgba(95,98,233,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet to-indigo-500/30 text-white hover:shadow-[0_0_30px_rgba(95,98,233,0.2)] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-accet/50 to-accet/50 text-black/70"
               }`}
             >

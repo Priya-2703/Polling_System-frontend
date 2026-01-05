@@ -1,8 +1,31 @@
 const en = {
-  home: {
-    title: "Tamil Nadu 2026 Election Opinion Poll",
-    startButton: "Start",
-    votingText: "Voting in Lunai"
+   home: {
+    nav: {
+      brand: "Lunai",
+      language: "EN"
+    },
+    statusBadge: "Digital Polling System • Online",
+    hero: {
+      title1: "DECENTRALIZED",
+      title2: "CONSENSUS",
+      description: "Participate in the governance of the 22nd century. Secure, immutable, and instant polling powered by quantum-resistant ledgers. Your voice, encrypted forever."
+    },
+    features: {
+      secure: "Secure",
+      unbiased: "UNBIASED",
+      encrypted: "ENCRYPTED"
+    },
+    cta: {
+      title: "DESIGN THE TOMORROW",
+      description: "Take just 2 minutes... Plant the seeds for 5 years of change! Click the button below to leave your feedback now.",
+      startButton: "Start",
+      votingText: "Voting"
+    },
+    footer: {
+      copyright: "© 2025 LUNAI SYSTEMS",
+      protocol: "PROTOCOL: v2.5.1",
+      status: "ENCRYPTED"
+    }
   },
   form: {
     title: "Voter Registration Form",

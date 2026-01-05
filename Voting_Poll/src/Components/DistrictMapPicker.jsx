@@ -5,7 +5,7 @@ import { OrbitControls, Html, Center, Environment } from '@react-three/drei';
 import * as topojson from 'topojson-client';
 
 // --- CONFIGURATION ---
-const MAP_DATA_URL = "../../public/maps/tamilnadu.json";
+const MAP_DATA_URL = "/maps/tamilnadu.json";
 const CENTER_LAT = 10.8;
 const CENTER_LNG = 78.5;
 const SCALE = 4.0;

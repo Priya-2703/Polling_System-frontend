@@ -108,7 +108,7 @@ const Candidate = () => {
     setIsVoting(true);
     playClick()
     setTimeout(() => {
-      navigate("/survey", { 
+      navigate("/thanks", { 
         state: { 
           candidate: selectedCandidate 
         } 
@@ -128,10 +128,10 @@ const Candidate = () => {
         <div className="w-full mx-auto h-dvh relative flex flex-col justify-between py-4">
           
           {/* Enhanced Header */}
-          <div className="flex justify-center items-start z-20 px-4">
+          <div className="flex justify-center items-start z-20 px-4 mt-2">
             <div className="relative">          
               <div className="text-center">               
-                <h1 className="text-[14px] font-heading uppercase font-black tracking-wider leading-5.5 text-transparent bg-linear-to-r from-accet via-accet/80 to-[#017474] bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+                <h1 className="text-[14px] lg:text-[18px] font-heading uppercase font-black tracking-wider leading-5.5 text-transparent bg-linear-to-r from-accet to-accet/80 via-indigo bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
                  {t('vote.question')}
                 </h1>
               </div>
@@ -149,17 +149,13 @@ const Candidate = () => {
 
           {/* Vote Button */}
           <div className="flex justify-center items-center flex-col relative px-4">
-            {/* Button Glow */}
-            <div className={`absolute -inset-2 bg-gradient-to-r from-accet via-[#017474] to-accet/50 rounded-2xl blur-lg transition-all duration-500 ${
-              selectedCandidate ? 'opacity-20' : 'opacity-0'
-            }`} />
             
             <button 
               onClick={handleVote}
               disabled={!selectedCandidate || isVoting}
-              className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] font-heading overflow-hidden transition-all duration-500 ${
+              className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[16px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate 
-                  ? 'bg-linear-to-r from-accet via-[#af70f8] to-accet/50 text-black hover:shadow-[0_0_40px_rgba(0,255,200,0.4)] hover:scale-[1.02] active:scale-[0.98]' 
+                  ? 'bg-linear-to-r from-accet via-indigo-500 to-accet/50 text-black hover:shadow-[0_0_40px_#4C43DD] hover:scale-[1.02] active:scale-[0.98]' 
                   : 'bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10'
               }`}
             >
@@ -188,7 +184,7 @@ const Candidate = () => {
             </button>
             
             {/* Help Text */}
-            <p className={`text-center text-[8px] mt-2 transition-all duration-300 ${
+            <p className={`text-center text-[8px] lg:text-[10px] mt-2 transition-all duration-300 ${
               selectedCandidate ? 'text-accet/60' : 'text-white/40'
             }`}>
               {selectedCandidate 
