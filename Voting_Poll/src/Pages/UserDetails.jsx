@@ -4,9 +4,15 @@ import { MdLocationOn, MdVerifiedUser } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import DistrictMapPicker from "../Components/DistrictMapPicker";
 import { useTranslation } from "react-i18next";
+import click from "../assets/click2.wav";
+import scifi from "../assets/scifi.wav";
+import useSound from "use-sound";
+
 
 const UserDetails = () => {
   const { t } = useTranslation();
+  const [Click] = useSound(click, { volume: 0.2 });
+  const [playClick] = useSound(scifi, { volume: 0.3 });
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -118,11 +124,13 @@ const UserDetails = () => {
   ];
 
   const handleChange = (e) => {
+    Click()
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = (e) => {
+    playClick()
     e.preventDefault();
     if (isFormValid()) {
       localStorage.setItem("voterData", JSON.stringify(formData));
@@ -634,7 +642,9 @@ const UserDetails = () => {
             <input
               type="checkbox"
               checked={agreed}
-              onChange={(e) => setAgreed(e.target.checked)}
+              onChange={(e) =>{ 
+                Click()
+                setAgreed(e.target.checked)}}
               className="custom-checkbox w-3.5 h-3.5"
             />
             <p className="text-[9px] lg:text-[12px] text-white/50 font-sans font-light leading-relaxed">

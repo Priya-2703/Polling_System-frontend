@@ -48,7 +48,7 @@ const Home = () => {
           {/* Logo */}
           <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
             <div className="relative">
-              <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#00d4aa] transition-all duration-500" />
+              <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#4C43DD] transition-all duration-500" />
               <div className="absolute -inset-1.5 border border-accet/30 group-hover:scale-125 transition-transform duration-500" />
             </div>
             <span className="font-heading text-[10px] md:text-sm tracking-widest text-white font-semibold group-hover:text-accet transition-colors duration-300 uppercase">
@@ -214,7 +214,9 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto relative group">
               <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 via-cyan-500 to-indigo-500 rounded-sm opacity-30 group-hover:opacity-100 transition duration-500 blur" />
               <button
-                onClick={() => navigate("/form")}
+                onClick={() =>{
+                  playClick()
+                  navigate("/form")}}
                 className="relative bg-white text-black font-heading font-semibold text-[9px] md:text-xs md:px-8 md:py-3 px-5 py-2 tracking-widest uppercase hover:bg-neutral-200 transition-colors z-10 flex items-center gap-2 justify-center"
               >
                 {t("home.cta.startButton")} {t("home.cta.votingText")}

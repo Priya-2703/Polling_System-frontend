@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 // import HolographicBackground from "./Components/HolographicBackground";
 import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
+import Thanks from "./Pages/Thanks";
 
 function App() {
   const { i18n } = useTranslation();
@@ -67,6 +68,7 @@ function App() {
           <Route path="/vote" element={<Vote />} />
           <Route path="/survey" element={<QnA />} />
           <Route path="/candidate" element={<Candidate />} />
+          <Route path="/thanks" element={<Thanks />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -1,42 +1,44 @@
 const en = {
-   home: {
+  home: {
     nav: {
       brand: "Lunai",
-      language: "EN"
+      language: "EN",
     },
     statusBadge: "Digital Polling System • Online",
     hero: {
       title1: "DECENTRALIZED",
       title2: "CONSENSUS",
-      description: "Participate in the governance of the 22nd century. Secure, immutable, and instant polling powered by quantum-resistant ledgers. Your voice, encrypted forever."
+      description:
+        "Participate in the governance of the 22nd century. Secure, immutable, and instant polling powered by quantum-resistant ledgers. Your voice, encrypted forever.",
     },
     features: {
       secure: "Secure",
       unbiased: "UNBIASED",
-      encrypted: "ENCRYPTED"
+      encrypted: "ENCRYPTED",
     },
     cta: {
       title: "DESIGN THE TOMORROW",
-      description: "Take just 2 minutes... Plant the seeds for 5 years of change! Click the button below to leave your feedback now.",
+      description:
+        "Take just 2 minutes... Plant the seeds for 5 years of change! Click the button below to leave your feedback now.",
       startButton: "Start",
-      votingText: "Voting"
+      votingText: "Voting",
     },
     footer: {
       copyright: "© 2025 LUNAI SYSTEMS",
       protocol: "PROTOCOL: v2.5.1",
-      status: "ENCRYPTED"
-    }
+      status: "ENCRYPTED",
+    },
   },
   form: {
     title: "Voter Registration Form",
     name: "Name",
     age: "Age",
     district: "District",
-    submit: "Submit"
+    submit: "Submit",
   },
   result: {
     thankYou: "Thank You for Voting!",
-    backHome: "Back to Home"
+    backHome: "Back to Home",
   },
   header: {
     title: "Voter Registration",
@@ -66,7 +68,7 @@ const en = {
     fullName: "Enter your full name",
     district: "Click to select from 3D Map",
     phone: "Enter 10-digit number",
-    caste: "Enter your caste",
+    caste: "Example : 'Agamudaiyar'",
     aadhar: "Enter 12-digit Aadhar",
     dl: "Enter DL number",
   },
@@ -100,12 +102,13 @@ const en = {
     ids: {
       aadhar: "Aadhar Card",
       driving: "Driving License",
-    }
+    },
   },
   user_messages: {
     ageWarning: "You must be 18+ to vote, but can participate in this poll.",
     dataSecure: "Your Data is Secure",
-    encryptionNotice: "All information is encrypted and used only for this survey. We never share personal data with third parties.",
+    encryptionNotice:
+      "All information is encrypted and used only for this survey. We never share personal data with third parties.",
     agreement: "I confirm my details are accurate & I agree to the",
     privacyPolicy: "Privacy Policy",
     terms: "Terms of Service",
@@ -113,9 +116,9 @@ const en = {
     proceed: "Proceed to Vote",
   },
   candidates: {
-    p1: { name: "Tamizhaga Vettri Kazhagam", party: "TVK" },
-    p2: { name: "Dravida Munnetra Kazhagam", party: "DMK" },
-    p3: { name: "All India Anna Dravida Munnetra Kazhagam", party: "AIADMK" },
+    p1: { name: "All India Anna Dravida Munnetra Kazhagam", party: "AIADMK" },
+    p2: { name: "Tamizhaga Vettri Kazhagam", party: "TVK" },
+    p3: { name: "Dravida Munnetra Kazhagam", party: "DMK" },
     p4: { name: "Naam Tamilar Katchi", party: "NTK" },
     p5: { name: "Bharatiya Janata Party", party: "BJP" },
     p6: { name: "Indian National Congress", party: "Congress" },
@@ -127,20 +130,23 @@ const en = {
     p12: { name: "Tamizhaga Vaazhvurimai Katchi", party: "TVK" },
     p13: { name: "Communist Party of India (Marxist)", party: "CPI(M)" },
   },
-   messages: {
+  messages: {
     tapToSelect: "Tap to select",
   },
   vote: {
     title: "Make Your Voice Heard",
-    question: "Which leader do you want to be crowned the Chief Minister of Tamil Nadu?",
+    question:
+      "Which leader do you want to be crowned the Chief Minister of Tamil Nadu?",
     submitting: "Submitting...",
     castVote: "Cast Your Vote",
     submit: "Submit",
     selectedSuffix: "selected - Click to confirm",
     instruction: "Swipe & tap on a candidate card to select",
-    tapToSelect: "Tap to select"
+    tapToSelect: "Tap to select",
   },
   qna: {
+    otherPlaceholder: "Please specify your answer...",
+    otherRequired: "Please enter your answer",
     q1: {
       question: "What is the purpose of voting for the party you choose?",
       options: {
@@ -148,8 +154,8 @@ const en = {
         b: "Party Ideology",
         c: "Past performance",
         d: "To form a new government",
-        e: "Welfare / Free schemes"
-      }
+        e: "Welfare / Free schemes",
+      },
     },
     q2: {
       question: "How do you rate the current government’s performance?",
@@ -158,35 +164,37 @@ const en = {
         b: "Good",
         c: "Average",
         d: "Poor",
-        e: "very poor"
-      }
+        e: "very poor",
+      },
     },
     q3: {
-      question: "Which sector do you want to improve from 2026?",
+      question: "Which scheme would you like to see implemented first in 2026?",
       options: {
-        a: "Education",
-        b: "Health Care",
-        c: "Agriculture",
-        d: "Law and order",
-        e: "job opportunity",
-        f: "Sports",
-        g: "Transport",
-        h: "Department of Health",
-        i: "Protection of fishermen",
-        j: "River problems ",
-      }
+        a: "Caste-wise Census",
+        b: "Retrieval of Panchami Land",
+        c: "Protection of Natural Resources",
+        d: "Development of a Self-reliant Economy",
+        e: "Protection of Fisherfolk",
+        f: "Solution to River Water Disputes",
+        g: "Removal from the Scheduled List",
+        h: "Implementation of the Inner Line Permit (ILP) System",
+        i: "Protection of Tamil Language, History, and Culture",
+        j: "Others",
+      },
     },
     q4: {
-      question: "What are the issues that need to be addressed in your constituency?",
+      question:
+        "What are the essential basic facilities needed in your constituency?",
       options: {
-        a: "Water scarcity",
-        b: "Improper road facilities, traffic problems",
-        c: "Insecurity",
-        d: "Mineral thefts",
-        e: "Health department",
-        f: "power outage",
-        g: "Others",
-      }
+        a: "Supply of Drinking Water without Shortage",
+        b: "Proper Healthcare Facilities",
+        c: "Renovation of Government Schools",
+        d: "Uninterrupted Electricity Supply",
+        e: "Proper Road Facilities",
+        f: "Creating a Safe and Hygienic City",
+        g: "Women & Child Safety Measures",
+        h: "Others",
+      },
     },
     q5: {
       question: "Which alliance would you like to be formed?",
@@ -198,7 +206,7 @@ const en = {
         e: "Health department",
         f: "power outage",
         g: "Others",
-      }
+      },
     },
   },
   vote_messages: {
@@ -212,23 +220,39 @@ const en = {
     finish: "Finish",
     submitting: "Submitting...",
     surveyComplete: "Survey Complete!",
-    surveyThankYou: "Thank you for completing the survey. Click submit to confirm your vote.",
+    surveyThankYou:
+      "Thank you for completing the survey. Click submit to confirm your vote.",
     yourVoteFor: "Your vote for",
-    confirmSubmit: "Confirm & Submit Vote"
+    confirmSubmit: "Confirm & Submit Vote",
   },
   cm_candi: {
-    p1: { name: "M.K.Stalin", party: "DMK" },
-    p2: { name: "Kanimozhi", party: "DMK" },
-    p3: { name: "Edappadi K Palaniswami", party: "AIADMK" },
-    p4: { name: "Seeman", party: "NTK" },
-    p5: { name: "Vijay", party: "TVK" },
-    p6: { name: "Annamalai", party: "BJP" },
+    p1: { name: "Vijay", party: "TVK" },
+    p2: { name: "Seeman", party: "NTK" },
+    p3: { name: "Annamalai", party: "BJP" },
+    p4: { name: "M.K.Stalin", party: "DMK" },
+    p5: { name: "Edappadi K Palaniswami", party: "AIADMK" },
+    p6: { name: "Ramadoss", party: "PMK" },
     p7: { name: "Thirumavalavan", party: "VCK" },
-    p8: { name: "Ramadoss", party: "PMK" },
-    p9: { name: "Udhayanidhi Stalin", party: "DMK" },
-    p10: { name: "Anbumani Ramadoss", party: "PMK" },
+    p8: { name: "Kanimozhi", party: "DMK" },
+    p9: { name: "Anbumani Ramadoss", party: "PMK" },
+    p10: { name: "Udhayanidhi Stalin", party: "DMK" },
     p11: { name: "Nainar Nagendran", party: "BJP" },
-    p12: { name: "O.Panneerselvam", party: "AIADMK" },
+  },
+  thanks: {
+    title: "Thank You!",
+    description1:
+      "The voting period has officially ended. Thank you for participating and making your voice heard!",
+    description2: " Stay tuned for the final results",
+    uniqueId: "Your Unique Vote ID",
+    resultDate: "Result Publish Date",
+    poweredBy: "Powered By",
+    spinning: "Spinning...",
+    yourVote: "Your Vote",
+    votedFor: "You Voted For",
+    voteSecured: "Vote Secured",
+    secured: "Secured",
+    backHome: "Home",
+    copySuccess: "Copied!",
   },
 };
 

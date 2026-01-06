@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 import "swiper/css/effect-coverflow";
 import useSound from "use-sound";
 import beep from "../assets/beep.wav";
+import click from "../assets/click2.wav";
 import { useTranslation } from "react-i18next";
 
 const SwiperCard = ({
@@ -14,6 +15,7 @@ const SwiperCard = ({
   setSelectedCandidate,
 }) => {
   const { t } = useTranslation();
+  const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(beep, { volume: 0.3 });
   const prevRef = useRef(null);
   const nextRef = useRef(null);
@@ -34,6 +36,7 @@ const SwiperCard = ({
   }, [swiperReady]);
 
   const handleCardClick = (candidate, isActive) => {
+    Click();
     if (isActive) {
       if (selectedCandidate?.id === candidate.id) {
         setSelectedCandidate(null);
@@ -48,7 +51,7 @@ const SwiperCard = ({
       {/* Swiper Container with proper padding */}
       <div className="relative w-full px-2 sm:px-4">
         <div
-          className="hidden lg:block absolute left-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
+          className="hidden lg:block absolute left-0 xl:left-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
           style={{
             background:
               "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0) 100%)",
@@ -105,11 +108,15 @@ const SwiperCard = ({
               spaceBetween: 60,
             },
             1280: {
-              slidesPerView: 4,
+              slidesPerView: 2.5,
+              spaceBetween: 20,
+            },
+            1400: {
+              slidesPerView: 3,
               spaceBetween: 80,
             },
           }}
-          className="!overflow-visible !py-12"
+          className="overflow-visible! py-12!"
         >
           {candidates.map((item, index) => {
             const isSelected = selectedCandidate?.id === item.id;

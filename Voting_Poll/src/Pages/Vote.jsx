@@ -18,24 +18,24 @@ const Vote = () => {
   const candidates = [
     {
       id: 1,
-      name: t("candidates.p2.name"),
-      party: t("candidates.p2.party"),
-      party_logo: "https://i.pinimg.com/1200x/8d/0a/d6/8d0ad6577fd8aede3244c674ca6bfc3c.jpg",
-      leader_img: "https://images.seeklogo.com/logo-png/41/1/dmk-logo-png_seeklogo-411320.png",
-    },
-    {
-      id: 2,
-      name: t("candidates.p3.name"),
-      party: t("candidates.p3.party"),
+      name: t("candidates.p1.name"),
+      party: t("candidates.p1.party"),
       party_logo: "https://i.pinimg.com/1200x/8e/94/f8/8e94f852a6bf7bc2a3fb7918af013ff4.jpg",
       leader_img: "https://images.seeklogo.com/logo-png/41/1/aiadmk-logo-png_seeklogo-411321.png",
     },
     {
-      id: 3,
-      name: t("candidates.p1.name"),
-      party: t("candidates.p1.party"),
+      id: 2,
+      name: t("candidates.p2.name"),
+      party: t("candidates.p2.party"),
       party_logo: "https://i.pinimg.com/736x/ef/e0/f8/efe0f8970f04bafbb8d5f416cda2fc2f.jpg",
       leader_img: "https://i.pinimg.com/736x/cb/94/47/cb9447a9a518aa16563a2748f428e589.jpg",
+    },
+    {
+      id: 3,
+      name: t("candidates.p3.name"),
+      party: t("candidates.p3.party"),
+      party_logo: "https://i.pinimg.com/1200x/8d/0a/d6/8d0ad6577fd8aede3244c674ca6bfc3c.jpg",
+      leader_img: "https://images.seeklogo.com/logo-png/41/1/dmk-logo-png_seeklogo-411320.png",
     },
   {
     id: 4,
@@ -145,7 +145,7 @@ const Vote = () => {
           <div className="flex justify-center items-start z-20 px-4">
             <div className="relative">          
               <div className="text-center">               
-                <h1 className="text-[18px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 text-transparent bg-linear-to-r from-accet via-accet/80 to-indigo-500 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+                <h1 className="text-[18px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-11 text-transparent bg-linear-to-r from-accet via-accet/80 to-indigo-500 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
                  {t('vote.title')}
                 </h1>
               </div>
