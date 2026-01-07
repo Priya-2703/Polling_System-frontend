@@ -126,19 +126,19 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
           </div>
 
           {/* Card Header */}
-          <div className="flex items-center gap-2 md:gap-4 mb-2 md:mb-4">
+          <div className="flex items-center gap-3 md:gap-4 mb-2 md:mb-4">
             <div className="md:w-14 md:h-14 w-10 h-10 rounded-lg md:rounded-xl bg-linear-to-br from-indigo-900 to-indigo-900/20 border border-white/10 flex items-center justify-center text-[16px] md:text-2xl">
               {data.gender === "male" ? "👨🏻" : data.gender === "female" ? "👩🏻" : "👤"}
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-white font-heading font-bold text-[10px] lg:text-base leading-tight uppercase truncate">
+              <h3 className="text-white font-heading font-bold text-[11px] lg:text-base leading-tight uppercase truncate">
                 {data.name || t("placeholders.fullName")}
               </h3>
-              <p className="text-accet/70 text-[8px] lg:text-[12px] font-mono mt-0.5 tracking-wider">
+              <p className="text-accet/70 text-[8px] lg:text-[12px] font-mono mt-1 tracking-wider">
                 ID: {data.idNumber ? `XXXX-XXXX-${data.idNumber.slice(-4).toUpperCase()}` : "PENDING..."}
               </p>
-              <div className="flex items-center gap-1.5 mt-0.5 md:mt-1.5">
-                <span className={`text-[6px] lg:text-[10px] px-1.5 lg:px-3 lg:py-1 py-0.5  font-heading uppercase ${
+              <div className="flex items-center gap-1.5 mt-1 md:mt-1.5">
+                <span className={`text-[6px] lg:text-[10px] px-2 lg:px-3 py-1  font-heading uppercase ${
                   data.age === 'below-18' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-accet/50 text-white'
                 }`}>
                   {data.age || "AGE"}
@@ -167,23 +167,23 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-2 font-heading text-sm uppercase border-t border-white/10 pt-2 md:pt-3">
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5 flex items-center gap-1">
+              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5 flex items-center gap-1">
                 {t("labels.district")}
               </p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium truncate">{data.district || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.religion")}</p>
+              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.religion")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.religion || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.motherTongue")}</p>
+              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.motherTongue")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.motherTongue || "---"}</p>
             </div>
             <div className="bg-white/5  p-2 lg:p-3">
-              <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.community")}</p>
+              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.community")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium uppercase">{data.community || "---"}</p>
             </div>
           </div>
@@ -416,7 +416,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[9px] lg:text-[12px] font-heading tracking-wide">
+                    <span className="text-[10px] lg:text-[12px] font-heading tracking-wide">
                       {age.label}
                     </span>
                   </button>
@@ -425,7 +425,7 @@ const UserDetails = () => {
               {formData.age === "below-18" && (
                 <div className="mt-3 bg-yellow-500/10 border border-yellow-500/30 p-3 flex items-center gap-2">
                   <span className="text-sm">⚠️</span>
-                  <p className="text-[10px] text-yellow-400 font-body">
+                  <p className="text-[8px] md:text-[10px] text-yellow-400 font-body">
                     {t("user_messages.ageWarning")}
                   </p>
                 </div>
@@ -479,7 +479,7 @@ const UserDetails = () => {
                     }`}
                   >
                     {/* <img src={religion.icon} alt={religion.label} className="w-6 lg:w-8" /> */}
-                    <span className="text-[7px] lg:text-[10px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[10px] font-heading uppercase tracking-widest">
                       {religion.label}
                     </span>
                   </button>
@@ -504,7 +504,7 @@ const UserDetails = () => {
                     }`}
                   >
                     {/* <div className="text-xl font-normal mb-1">{lang.icon}</div> */}
-                    <span className="text-[7px] lg:text-[11px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[11px] font-heading uppercase tracking-widest">
                       {lang.label}
                     </span>
                   </button>
@@ -638,7 +638,7 @@ const UserDetails = () => {
                     }`}
                   >
                     {/* <img src={id.icon} alt={id.label} className="w-8 lg:w-10" /> */}
-                    <span className="text-[8px] lg:text-[11px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] lg:text-[11px] font-heading uppercase tracking-widest">
                       {id.label}
                     </span>
                   </button>
@@ -778,7 +778,7 @@ const UserDetails = () => {
               <div className="flex justify-between items-center mt-3 md:mt-8 pt-3 md:pt-6 border-t border-white/10">
                 <button
                   onClick={handleBack}
-                  className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 text-[8px] lg:text-[12px] uppercase font-heading font-bold tracking-widest transition-all ${
+                  className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 text-[10px] lg:text-[12px] uppercase font-heading font-bold tracking-widest transition-all ${
                     step === 1 ? "opacity-0 pointer-events-none" : "text-white/50 hover:text-white"
                   }`}
                 >
@@ -789,7 +789,7 @@ const UserDetails = () => {
                   <button
                     onClick={handleNext}
                     disabled={!isStepValid()}
-                    className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 font-heading text-[8px] lg:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
+                    className={`flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 font-heading text-[10px] lg:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
                       isStepValid()
                         ? "bg-gradient-to-r from-accet/80 to-accet text-white hover:shadow-lg hover:shadow-accet/30"
                         : "bg-white/5 text-white/30 cursor-not-allowed"
