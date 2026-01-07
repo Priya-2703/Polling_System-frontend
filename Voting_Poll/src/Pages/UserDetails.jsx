@@ -110,7 +110,7 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
   };
 
   return (
-    <div className={`w-full transition-all duration-500 overflow-hidden max-h-100  opacity-100 mb-2 lg:max-h-[500px] lg:opacity-100 lg:mb-0 $`}>
+    <div className={`w-full transition-all duration-500 overflow-hidden max-h-100  opacity-100 mb-4 lg:max-h-[500px] lg:opacity-100 lg:mb-0 $`}>
       <div className="w-full mx-auto lg:mx-0">
         <div className="relative bg-shade/40 backdrop-blur-xs border border-white/10 rounded-xl p-4 md:p-5 overflow-hidden">
           {/* Decorative Elements */}
@@ -170,21 +170,21 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
               <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5 flex items-center gap-1">
                 {t("labels.district")}
               </p>
-              <p className="text-white text-[10px] lg:text-[12px] lg:mt-1 font-medium truncate">{data.district || "---"}</p>
+              <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium truncate">{data.district || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
               <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.religion")}</p>
-              <p className="text-white text-[10px] lg:text-[12px] lg:mt-1 font-medium ">{data.religion || "---"}</p>
+              <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.religion || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
               <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.motherTongue")}</p>
-              <p className="text-white text-[10px] lg:text-[12px] lg:mt-1 font-medium ">{data.motherTongue || "---"}</p>
+              <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.motherTongue || "---"}</p>
             </div>
             <div className="bg-white/5  p-2 lg:p-3">
               <p className="text-[6px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.community")}</p>
-              <p className="text-white text-[10px] lg:text-[12px] lg:mt-1 font-medium uppercase">{data.community || "---"}</p>
+              <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium uppercase">{data.community || "---"}</p>
             </div>
           </div>
 
@@ -370,7 +370,7 @@ const UserDetails = () => {
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   placeholder={t("placeholders.fullName")}
-                  className="w-full bg-transparent text-white font-body text-[10px] lg:text-[15px] capitalize outline-none placeholder:text-white/30"
+                  className="w-full bg-transparent text-white font-body text-[11px] lg:text-[15px] capitalize outline-none placeholder:text-white/30"
                 />
               </div>
             </div>
@@ -446,7 +446,7 @@ const UserDetails = () => {
 
             {/* District Selection */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block md:px-1">
                 {t("labels.district")}
               </label>
               <div
@@ -455,7 +455,7 @@ const UserDetails = () => {
                   formData.district ? "border-accet/50" : "border-white/20 hover:border-white/30"
                 }`}
               >
-                <span className={formData.district ? "text-white font-medium" : "text-white/30 text-[9px] lg:text-[14px]"}>
+                <span className={formData.district ? "text-white font-medium text-[10px] lg:text-[14px]" : "text-white/30 text-[9px] lg:text-[14px]"}>
                   {formData.district || t("placeholders.district")}
                 </span>
                 <MdLocationOn className="text-accet text-[14px] lg:text-xl animate-pulse" />
@@ -464,7 +464,7 @@ const UserDetails = () => {
 
             {/* Religion Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.religion")}
               </label>
               <div className="grid grid-cols-4 gap-1 lg:gap-3">
@@ -472,7 +472,7 @@ const UserDetails = () => {
                   <button
                     key={religion.value}
                     onClick={() => handleChange("religion", religion.value)}
-                    className={`py-1.5 md:py-3 px-2 border backdrop-blur-xl flex flex-col gap-2 justify-center items-center text-center transition-all duration-300 ${
+                    className={`py-2 md:py-3 px-2 border backdrop-blur-xl flex flex-col gap-2 justify-center items-center text-center transition-all duration-300 ${
                       formData.religion === religion.value
                         ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
@@ -489,7 +489,7 @@ const UserDetails = () => {
 
             {/* Mother Tongue Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.motherTongue")}
               </label>
               <div className="grid grid-cols-3 gap-2 lg:gap-3">
@@ -497,7 +497,7 @@ const UserDetails = () => {
                   <button
                     key={lang.value}
                     onClick={() => handleChange("motherTongue", lang.value)}
-                    className={`py-1.5 md:py-3 px-2 border backdrop-blur-xl flex justify-center items-center text-center transition-all duration-300 ${
+                    className={`py-2 md:py-3 px-2 border backdrop-blur-xl flex justify-center items-center text-center transition-all duration-300 ${
                       formData.motherTongue === lang.value
                         ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
@@ -565,7 +565,7 @@ const UserDetails = () => {
 
             {/* Community Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.community")}
               </label>
               <div className="grid grid-cols-3 gap-2 lg:gap-3">
@@ -573,7 +573,7 @@ const UserDetails = () => {
                   <button
                     key={community.value}
                     onClick={() => handleChange("community", community.value)}
-                    className={`py-1.5 md:py-3 px-2 md:min-h-[70px] backdrop-blur-xl border text-center flex flex-col justify-center items-center transition-all duration-300 ${
+                    className={`py-2 md:py-3 px-2 md:min-h-[70px] backdrop-blur-xl border text-center flex flex-col justify-center items-center transition-all duration-300 ${
                       formData.community === community.value
                         ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
@@ -592,7 +592,7 @@ const UserDetails = () => {
 
             {/* Caste Input */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-2 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-2 block md:px-1">
                 {t("labels.caste")}
               </label>
               <div className="relative bg-shade flex justify-center items-center border border-white/20 md:px-4 py-2 md:py-3 px-3 group-hover:border-accet/30 transition-colors">
@@ -620,7 +620,7 @@ const UserDetails = () => {
 
             {/* ID Type Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block px-1">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.idType")}
               </label>
               <div className="grid grid-cols-2 gap-1.5 lg:gap-3">
@@ -731,7 +731,7 @@ const UserDetails = () => {
     <div className="h-dvh lg:h-screen relative lg:overflow-hidden font-body">        
       <div className="container mx-auto px-4 py-3 md:py-6 relative z-10">
         {/* Header */}
-        <div className="flex justify-center items-center mb-2 md:mb-6">
+        <div className="flex justify-center items-center mb-4 md:mb-6">
           <div className="text-center">
             <h1 className="text-xl lg:text-3xl font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-linear-to-r from-accet to-indigo-400 bg-clip-text">
               {t("header.title")}
@@ -743,10 +743,10 @@ const UserDetails = () => {
         </div>
 
         {/* Main Content */}
-        <div className="lg:flex lg:gap-8 lg:items-start w-[95%] justify-center mx-auto">
+        <div className="lg:flex lg:gap-8 lg:items-start md:w-[95%] justify-center mx-auto">
           
           {/* Left Column - ID Card (Desktop: Sticky, Mobile: Toggleable) */}
-          <div className="lg:sticky lg:top-6 lg:w-[450px] lg:shrink-0">
+          <div className="sticky top-3 lg:top-6 lg:w-[450px] lg:shrink-0 z-10">
             <DigitalIDCard
               data={formData}
               t={t}
@@ -768,7 +768,7 @@ const UserDetails = () => {
           <div className="flex-1 lg:w-[90%]">
             {/* <StepIndicator currentStep={step} totalSteps={totalSteps} steps={steps} /> */}
 
-            <div className="bg-shade/50 backdrop-blur-[2px] border border-white/10 rounded-xl p-5 lg:px-8 lg:py-6 lg:min-h-112.5 flex flex-col">
+            <div className="bg-shade/50 backdrop-blur-[2px] border border-white/10 rounded-xl p-4 lg:px-8 lg:py-6 lg:min-h-112.5 flex flex-col">
               {/* Form Content */}
               <div className="lg:flex-1">
                 {renderStepContent()}
