@@ -198,7 +198,7 @@ const Thanks = () => {
   const currentImageHeight = isMobile ? imageHeightMobile : imageHeight;
 
   return (
-    <div className="w-full md:w-[90%] mx-auto h-screen relative overflow-hidden flex flex-col">
+    <div className="w-full md:w-[90%] mx-auto h-dvh relative overflow-hidden flex flex-col">
       {/* ========== TOP CONTENT SECTION ========== */}
       <div className="relative z-10 flex flex-col items-center px-4 pt-16 md:pt-8">
         <motion.div

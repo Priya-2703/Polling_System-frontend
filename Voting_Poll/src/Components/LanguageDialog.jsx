@@ -31,6 +31,12 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
     } else {
       document.body.classList.remove("tamil-mode");
     }
+
+     if (selectedLang === "ta") {
+      document.body.classList.add("ta-lang");
+    } else {
+      document.body.classList.remove("ta-lang");
+    }
     
     // Close dialog and go to home
     onLanguageSelect();
