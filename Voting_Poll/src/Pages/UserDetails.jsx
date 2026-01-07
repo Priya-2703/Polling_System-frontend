@@ -112,7 +112,7 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
   return (
     <div className={`w-full transition-all duration-500 overflow-hidden max-h-100  opacity-100 mb-4 lg:max-h-[500px] lg:opacity-100 lg:mb-0 $`}>
       <div className="w-full mx-auto lg:mx-0">
-        <div className="relative bg-shade/40 backdrop-blur-xs border border-white/10 rounded-xl p-4 md:p-5 overflow-hidden">
+        <div className="relative bg-accet/20 backdrop-blur-xs border border-white/10 rounded-xl p-4 md:p-5 overflow-hidden">
           {/* Decorative Elements */}
           <div className="absolute top-0 right-0 w-32 h-32 bg-accet/10 rounded-full blur-3xl -mr-10 -mt-10" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-indigo-500/10 rounded-full blur-2xl -ml-5 -mb-5" />
@@ -134,7 +134,7 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
               <h3 className="text-white font-heading font-bold text-[11px] lg:text-base leading-tight uppercase truncate">
                 {data.name || t("placeholders.fullName")}
               </h3>
-              <p className="text-accet/70 text-[8px] lg:text-[12px] font-mono mt-1 tracking-wider">
+              <p className="text-indigo-400 text-[8px] lg:text-[12px] font-mono mt-1 tracking-wider">
                 ID: {data.idNumber ? `XXXX-XXXX-${data.idNumber.slice(-4).toUpperCase()}` : "PENDING..."}
               </p>
               <div className="flex items-center gap-1.5 mt-1 md:mt-1.5">
@@ -165,25 +165,25 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
           </div>
 
           {/* Details Grid */}
-          <div className="grid grid-cols-2 gap-2 font-heading text-sm uppercase border-t border-white/10 pt-2 md:pt-3">
+          <div className="grid grid-cols-2 gap-2 font-heading text-sm uppercase border-t border-white/20 pt-2 md:pt-3">
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5 flex items-center gap-1">
+              <p className="text-[7px] lg:text-[10px] text-indigo-500 uppercase font-bold tracking-widest mb-0.5 flex items-center gap-1">
                 {t("labels.district")}
               </p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium truncate">{data.district || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.religion")}</p>
+              <p className="text-[7px] lg:text-[10px] text-indigo-500 uppercase font-bold tracking-widest mb-0.5">{t("labels.religion")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.religion || "---"}</p>
             </div>
             
             <div className="bg-white/5 p-2 lg:p-3">
-              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.motherTongue")}</p>
+              <p className="text-[7px] lg:text-[10px] text-indigo-500 uppercase font-bold tracking-widest mb-0.5">{t("labels.motherTongue")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium ">{data.motherTongue || "---"}</p>
             </div>
             <div className="bg-white/5  p-2 lg:p-3">
-              <p className="text-[7px] lg:text-[10px] text-accet/70 uppercase font-bold tracking-widest mb-0.5">{t("labels.community")}</p>
+              <p className="text-[7px] lg:text-[10px] text-indigo-500 uppercase font-bold tracking-widest mb-0.5">{t("labels.community")}</p>
               <p className="text-white text-[9px] lg:text-[12px] lg:mt-1 font-medium uppercase">{data.community || "---"}</p>
             </div>
           </div>
@@ -193,7 +193,7 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
             <div className="flex items-center gap-2 font-heading">
               <MdFingerprint className={`text-xl ${data.idNumber ? "text-accet" : "text-gray-600"}`} />
               <div className="flex flex-col">
-                <span className="text-[6px] lg:text-[10px] tracking-widest text-white/30 uppercase">Status</span>
+                <span className="text-[6px] lg:text-[10px] tracking-widest text-white/50 uppercase">Status</span>
                 <span className={`text-[7px] md:text-[9px] font-bold tracking-widest ${
                   data.idNumber && data.phone?.length === 10 ? "text-green-400" : "text-yellow-400"
                 }`}>
@@ -202,7 +202,7 @@ const DigitalIDCard = ({ data, t, isExpanded, onToggle }) => {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[6px] lg:text-[10px] font-medium lg:leading-3 font-heading text-white/30 tracking-widest">LUNAI</p>
+              <p className="text-[6px] lg:text-[10px] font-medium lg:leading-3 font-heading text-white/50 tracking-widest">LUNAI</p>
               <p className="text-[7px] lg:text-[8px] text-white/50">Digital Voting Online</p>
             </div>
           </div>
@@ -467,7 +467,7 @@ const UserDetails = () => {
               <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.religion")}
               </label>
-              <div className="grid grid-cols-4 gap-1 lg:gap-3">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-1 lg:gap-3">
                 {religions.map((religion) => (
                   <button
                     key={religion.value}
@@ -601,7 +601,7 @@ const UserDetails = () => {
                   value={formData.caste}
                   onChange={(e) => handleChange("caste", e.target.value)}
                   placeholder={t("placeholders.caste")}
-                  className="w-full bg-transparent text-white font-body text-[10px] lg:text-[14px] outline-none placeholder:text-white/30"
+                  className="w-full bg-transparent text-white font-body text-[11 px] lg:text-[14px] outline-none placeholder:text-white/30"
                 />
               </div>
             </div>

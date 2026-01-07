@@ -150,7 +150,7 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#111827] z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-1 h-8 bg-linear-to-b from-accet/60 to-accet/30 rounded-full"></div>
-                        <div><h3 className="text-white font-heading font-bold text-lg tracking-wide">SELECT DISTRICT</h3><p className="text-[10px] text-white/50 uppercase tracking-widest">Interactive 3D Map</p></div>
+                        <div><h3 className="text-white font-heading font-bold text-[15px] md:text-lg tracking-wide">SELECT DISTRICT</h3><p className="text-[8px] md:text-[10px] text-white/50 uppercase tracking-widest">Interactive 3D Map</p></div>
                     </div>
                     <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 text-white/50 hover:text-red-400 flex items-center justify-center transition-all">✕</button>
                 </div>
@@ -190,14 +190,14 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                     
                     {/* Instructions */}
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/5 pointer-events-none min-w-50">
-                        <p className="text-[9px] text-cyan-200/80 font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
+                        <p className="text-[8px] md:text-[9px] text-cyan-200/80 text-center font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
                     </div>
 
                     {/* Selected Info */}
                     {selected && (
-                        <div className="absolute bottom-2 left-2 md:bottom-6 md:left-6 bg-black backdrop-blur-xl border border-white/10 p-4 md:p-5 rounded-xl shadow-2xl md:min-w-[200px] animate-in slide-in-from-bottom-5 z-999">
+                        <div className="absolute bottom-2 left-2 md:bottom-6 md:left-6 bg-black backdrop-blur-xl border border-white/10 p-3 md:p-5 rounded-xl shadow-2xl md:min-w-[200px] animate-in slide-in-from-bottom-5 z-999">
                             <span className="text-[8px] md:text-[9px] text-cyan-400 font-heading font-bold uppercase tracking-widest block mb-1 z-999">Selected Region</span>
-                            <h2 className="text-[16px] md:text-2xl font-black uppercase text-white leading-none z-999">{selected}</h2>
+                            <h2 className="text-[15px] md:text-2xl font-black uppercase text-white leading-none z-999">{selected}</h2>
                             <div className="h-0.5 md:h-1 w-12 bg-yellow-500 rounded-full mt-2 md:mt-3 z-999"></div>
                         </div>
                     )}
@@ -206,7 +206,7 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                 {/* Footer */}
                 <div className="p-4 border-t border-white/10 bg-[#111827] z-10 flex justify-between md:justify-end items-center gap-3">
                     <button onClick={onClose} className="px-5 py-1.5 md:py-2.5 rounded-lg text-[10px] md:text-xs font-bold font-heading text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider">Cancel</button>
-                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-5 md:px-8 py-2 md:py-2.5 rounded-lg font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/50 to-accet/10 font-heading text-white hover:shadow-cyan-500/30 hover:scale-[1.02]" : "bg-white/10 text-white/20 cursor-not-allowed"}`}>
+                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-4 md:px-8 py-2 md:py-2.5 rounded-lg font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/70 to-accet/30 font-heading text-white hover:shadow-cyan-500/30 hover:scale-[1.02]" : "bg-white/10 text-white/40 cursor-not-allowed"}`}>
                         <span>Confirm Selection</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </button>

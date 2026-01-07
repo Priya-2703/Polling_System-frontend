@@ -64,7 +64,7 @@ const Home = () => {
                 playClick();
                 setShowLangDialog(true);
               }}
-              className="md:px-4 md:py-2 px-2 py-1.5 bg-white/5 backdrop-blur-sm border border-accet/20 text-white/80 text-[10px] md:text-[11px] font-heading tracking-widest uppercase hover:text-accet hover:border-accet/50 hover:bg-accet/10 transition-all duration-300 rounded flex items-center gap-2 group"
+              className="md:px-4 md:py-2 px-2 py-1.5 bg-white/5 backdrop-blur-sm border border-accet/20 text-white/80 text-[10px] md:text-[11px] font-heading tracking-widest uppercase hover:text-accet hover:border-accet/50 hover:bg-accet/10 transition-all duration-300 rounded flex items-center gap-1 md:gap-2 group"
             >
               <svg
                 className="w-3 h-3 md:w-4 md:h-4 text-accet"
@@ -80,7 +80,7 @@ const Home = () => {
                 />
               </svg>
               <div className="flex justify-center items-center gap-1">
-                <span>{currentLang === "en" ? "EN" : "தமிழ்"}</span>
+                <span className="text-[8px] lg:text-[11px]">{currentLang === "en" ? "EN" : "தமிழ்"}</span>
                 <svg
                   className="w-3 h-3 group-hover:rotate-180 transition-transform duration-300"
                   fill="none"
@@ -102,7 +102,7 @@ const Home = () => {
 
       {/* Main Content */}
       <div className="w-full mx-auto relative z-10 md:min-h-dvh flex flex-col justify-center">
-        <section className="w-[90%] md:w-[80%] mx-auto  pt-24 pb-20 md:pb-32">
+        <section className="w-[93%] md:w-[80%] mx-auto  pt-24 pb-20 md:pb-32">
           {/* Floating Status Badge */}
           <div className=" animate-float flex justify-center md:inline-flex items-center gap-3 border border-accet/20 bg-accet/5 backdrop-blur-md rounded-full px-4 py-2 w-fit mb-8">
             <div className="relative">
@@ -134,12 +134,12 @@ const Home = () => {
           </div>
 
           <div className="flex justify-center items-center border border-accet/40 backdrop-blur-lg px-5 py-3 md:px-10 md:py-4 w-full md:w-fit ">
-            <div className=" flex justify-center items-center gap-14 md:gap-20">
+            <div className=" flex justify-center items-center gap-10 md:gap-20">
               <div className="text-center">
                 <div className="text-[14px] md:text-3xl font-heading font-semibold text-accet text-glow-subtle">
                   100%
                 </div>
-                <div className="text-[7px] md:text-xs text-white font-light uppercase tracking-wider mt-1 font-heading">
+                <div className="text-[6px] md:text-xs text-white font-light uppercase tracking-wider mt-1 font-heading">
                   {t("home.features.secure")}
                 </div>
               </div>
@@ -147,7 +147,7 @@ const Home = () => {
                 <div className="text-[19px] md:text-3xl font-heading font-bold text-accet text-glow-subtle">
                   <GoLaw className="font-bold icon-glow-subtle" />
                 </div>
-                <div className="text-[7px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
+                <div className="text-[6px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
                    {t("home.features.unbiased")} 
                 </div>
               </div>
@@ -155,7 +155,7 @@ const Home = () => {
                 <div className="text-[14px] md:text-3xl font-heading font-bold text-accet icon-glow-subtle">
                  <MdNoEncryption />
                 </div>
-                <div className="text-[7px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
+                <div className="text-[6px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
                    {t("home.features.encrypted")} 
                 </div>
               </div>
