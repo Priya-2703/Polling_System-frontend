@@ -13,6 +13,14 @@ import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
 import Thanks from "./Pages/Thanks";
 
+import AdminLayout from "./Admin/AdminLayout";
+import CandidatesPage from "./Admin/CandidatesPage";
+import VotersPage from "./Admin/VotersPage";
+import ResultsPage from "./Admin/ResultsPage";
+import SettingsPage from "./Admin/SettingsPage";
+import Dashboard from "./Admin/Dashboard";  
+import AdminLogin from "./Admin/AdminLogin";
+
 function App() {
   const { i18n } = useTranslation();
   const [languageSelected, setLanguageSelected] = useState(false);
@@ -68,6 +76,18 @@ function App() {
           <Route path="/vote" element={<Vote />} />
           <Route path="/survey" element={<QnA />} />
           <Route path="/candidate" element={<Candidate />} />
+
+          //admin page
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminLayout />}/>
+           {/* <Route index element={<Dashboard />} /> */}
+          <Route path="/admin/candidates" element={<CandidatesPage />} />
+          <Route path="/admin/voters" element={<VotersPage />} />
+          <Route path="/admin/results" element={<ResultsPage />} />
+          <Route path="/admin/settings" element={<SettingsPage />} />
+          {/* <Route path="/admin/poll" element={<} */}
+
+
           <Route path="/thanks" element={<Thanks />} />
         </Routes>
       </BrowserRouter>
