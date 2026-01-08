@@ -31,6 +31,12 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
     } else {
       document.body.classList.remove("tamil-mode");
     }
+
+     if (selectedLang === "ta") {
+      document.body.classList.add("ta-lang");
+    } else {
+      document.body.classList.remove("ta-lang");
+    }
     
     // Close dialog and go to home
     onLanguageSelect();
@@ -103,7 +109,7 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
               {/* English */}
               <button
                 onClick={() => handleLanguageClick("en")}
-                className="w-full group relative overflow-hidden rounded border-2 border-transparent bg-white/15 p-1.5 md:p-2 transition-all duration-300 hover:bg-accet/20 hover:border-accet active:scale-[0.98]"
+                className="w-full group relative overflow-hidden rounded border-2 border-transparent bg-white/15 p-2 transition-all duration-300 hover:bg-accet/20 hover:border-accet active:scale-[0.98]"
               >
                 <div className="flex items-center justify-center">
                   <div className="text-center flex-1">
@@ -130,7 +136,7 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
               {/* Tamil */}
               <button
                 onClick={() => handleLanguageClick("ta")}
-                className="w-full group relative overflow-hidden rounded border-2 border-transparent bg-white/15 p-1.5 md:p-2 transition-all duration-300 hover:bg-accet/20 hover:border-accet active:scale-[0.98]"
+                className="w-full group relative overflow-hidden rounded border-2 border-transparent bg-white/15 p-2 transition-all duration-300 hover:bg-accet/20 hover:border-accet active:scale-[0.98]"
               >
                 <div className="flex items-center justify-center">
                   <div className="text-center flex-1">
@@ -190,7 +196,7 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
             {/* Confirm Button */}
             <button
               onClick={handleConfirm}
-              className={`${selectedLang === "en" ? "font-heading": "font-tamil"} w-full bg-gradient-to-r from-accet/40 to-accet/50 text-white py-1.5 md:py-2 rounded tracking-wide font-heading font-bold text-[12px] md:text-[16px] transition-all duration-300 hover:shadow-lg hover:shadow-accet/30 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2`}
+              className={`${selectedLang === "en" ? "font-heading": "font-tamil"} w-full bg-gradient-to-r from-accet/40 to-accet/50 text-white py-2 rounded tracking-wide font-heading font-bold text-[13px] md:text-[16px] transition-all duration-300 hover:shadow-lg hover:shadow-accet/30 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2`}
             >
               {selectedLang === "en" ? "Confirm & Continue" : "உறுதிப்படுத்து"}
               <svg

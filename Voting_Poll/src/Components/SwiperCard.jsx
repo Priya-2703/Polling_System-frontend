@@ -6,6 +6,7 @@ import "swiper/css/navigation";
 import "swiper/css/effect-coverflow";
 import useSound from "use-sound";
 import beep from "../assets/beep.wav";
+import click from "../assets/click2.wav";
 import { useTranslation } from "react-i18next";
 
 const SwiperCard = ({
@@ -14,6 +15,7 @@ const SwiperCard = ({
   setSelectedCandidate,
 }) => {
   const { t } = useTranslation();
+  const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(beep, { volume: 0.3 });
   const prevRef = useRef(null);
   const nextRef = useRef(null);
@@ -21,6 +23,11 @@ const SwiperCard = ({
   const [swiperReady, setSwiperReady] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [hoveredIndex, setHoveredIndex] = useState(null);
+
+  // Popup States
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupCandidate, setPopupCandidate] = useState(null);
+  const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
     if (!swiperReady) return;
@@ -33,7 +40,28 @@ const SwiperCard = ({
     swiper.navigation.update();
   }, [swiperReady]);
 
+  const handleDescriptionClick = (e, candidate) => {
+    e.stopPropagation();
+    Click();
+    setPopupCandidate(candidate);
+    setShowPopup(true);
+    setIsClosing(false);
+    document.body.style.overflow = "hidden";
+  };
+
+  const closePopup = () => {
+    Click();
+    setIsClosing(true);
+    setTimeout(() => {
+      setShowPopup(false);
+      setPopupCandidate(null);
+      setIsClosing(false);
+      document.body.style.overflow = "auto";
+    }, 300);
+  };
+
   const handleCardClick = (candidate, isActive) => {
+    Click();
     if (isActive) {
       if (selectedCandidate?.id === candidate.id) {
         setSelectedCandidate(null);
@@ -45,17 +73,234 @@ const SwiperCard = ({
 
   return (
     <div className="w-full bg-transparent">
-      {/* Swiper Container with proper padding */}
+      {/* ========== DESCRIPTION POPUP MODAL ========== */}
+      {showPopup && popupCandidate && (
+        <div
+          className={`fixed inset-0 z-[100] flex items-center justify-center p-4 ${
+            isClosing ? "animate-fade-out" : "animate-fade-in"
+          }`}
+          onClick={closePopup}
+          style={{
+            animation: isClosing
+              ? "fadeIn 0.3s ease-out reverse forwards"
+              : undefined,
+          }}
+        >
+          {/* Backdrop with blur */}
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-md" />
+
+          {/* Animated Glow Background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accet/20 rounded-full blur-3xl animate-pulse" />
+          </div>
+
+          {/* Popup Container - Width Animation */}
+          <div
+            className="relative max-w-lg flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Width Expanding Wrapper */}
+            <div
+              className={`relative overflow-hidden ${
+                isClosing ? "" : "animate-expand-width"
+              }`}
+              style={{
+                animation: isClosing
+                  ? "expandWidth 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) reverse forwards"
+                  : undefined,
+              }}
+            >
+              {/* Outer Glow */}
+              <div className="absolute -inset-2 bg-gradient-to-r from-accet via-[#017474] to-accet blur-xl opacity-40" />
+
+              {/* Main Popup Card */}
+              <div className="relative bg-gradient-to-b from-gray-900/98 via-black to-gray-900/98 border-2 border-accet/60 overflow-hidden shadow-[0_0_60px_rgba(95,98,233,0.4)]">
+                {/* ===== 4 CORNER DECORATIVE BORDERS ===== */}
+                {/* Top Left Corner */}
+                <div className="absolute -top-0.5 -left-0.5 w-6 h-6 animate-corner">
+                  <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-accet to-transparent" />
+                  <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-accet to-transparent" />
+                  <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-accet rounded-tl-lg" />
+                </div>
+
+                {/* Top Right Corner */}
+                <div className="absolute -top-0.5 -right-0.5 w-6 h-6 animate-corner">
+                  <div className="absolute top-0 right-0 w-full h-0.5 bg-gradient-to-l from-accet to-transparent" />
+                  <div className="absolute top-0 right-0 h-full w-0.5 bg-gradient-to-b from-accet to-transparent" />
+                  <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-accet rounded-tr-lg" />
+                </div>
+
+                {/* Bottom Left Corner */}
+                <div className="absolute -bottom-0.5 -left-0.5 w-6 h-6 animate-corner">
+                  <div className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-accet to-transparent" />
+                  <div className="absolute bottom-0 left-0 h-full w-0.5 bg-gradient-to-t from-accet to-transparent" />
+                  <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-accet rounded-bl-lg" />
+                </div>
+
+                {/* Bottom Right Corner */}
+                <div className="absolute -bottom-0.5 -right-0.5 w-6 h-6 animate-corner">
+                  <div className="absolute bottom-0 right-0 w-full h-0.5 bg-gradient-to-l from-accet to-transparent" />
+                  <div className="absolute bottom-0 right-0 h-full w-0.5 bg-gradient-to-t from-accet to-transparent" />
+                  <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-accet rounded-br-lg" />
+                </div>
+
+                {/* Top Decorative Line */}
+                <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-accet to-transparent" />
+
+                {/* Close Button */}
+                <button
+                  onClick={closePopup}
+                  className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-black/60 border border-accet/50 flex items-center justify-center hover:bg-accet/30 hover:border-accet hover:scale-110 active:scale-95 transition-all duration-300 group"
+                >
+                  <svg
+                    className="w-5 h-5 text-white/70 group-hover:text-white transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+
+                {/* Content Container with Fade Animation */}
+                <div className="p-6 pt-8 animate-content-fade min-w-[320px] sm:min-w-[400px] md:min-w-[450px]">
+                  {/* Party Logo with Corner Borders */}
+                  {popupCandidate.party_logo && (
+                    <div className="flex justify-center mb-5">
+                      <div className="relative">
+                        {/* Logo Glow */}
+                        <div className="absolute inset-0 bg-accet/40 rounded-full blur-xl animate-pulse" />
+
+                        {/* Logo Container with Corner Borders */}
+                        <div className="relative">
+                          {/* Corner Decorations for Logo */}
+                          <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-accet/80 rounded-tl-lg" />
+                          <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-accet/80 rounded-tr-lg" />
+                          <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-accet/80 rounded-bl-lg" />
+                          <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-accet/80 rounded-br-lg" />
+
+                          <div className="relative w-24 h-24 rounded-full bg-gradient-to-b from-gray-800 to-black p-0.5 border-2 border-accet/60 overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.8)]">
+                            <div className="w-full h-full rounded-full overflow-hidden bg-shade flex justify-center items-center">
+                              <img
+                                src={popupCandidate.party_logo}
+                                alt={popupCandidate.party}
+                                className="w-[90%] h-[90%] object-cover rounded-full"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Party Name */}
+                  <h2 className="text-xl md:text-2xl font-heading uppercase font-black text-center tracking-widest text-transparent bg-gradient-to-r from-accet via-blue-300 to-accet bg-clip-text mb-2">
+                    {popupCandidate.party}
+                  </h2>
+
+                  {/* Candidate Name */}
+                  <p className="text-center text-white/50 text-sm font-body tracking-wide mb-4">
+                    Party :{" "}
+                    <span className="text-white/80">{popupCandidate.name}</span>
+                  </p>
+
+                  {/* Decorative Divider */}
+                  <div className="flex items-center justify-center gap-3 my-5">
+                    <div className="h-px w-16 bg-gradient-to-r from-transparent to-accet/60" />
+                    <div className="flex gap-1">
+                      <div className="w-1.5 h-1.5 bg-accet/40 rounded-full" />
+                      <div className="w-2 h-2 bg-accet rounded-full animate-pulse" />
+                      <div className="w-1.5 h-1.5 bg-accet/40 rounded-full" />
+                    </div>
+                    <div className="h-px w-16 bg-gradient-to-l from-transparent to-accet/60" />
+                  </div>
+
+                  {/* Description Section with Corner Borders */}
+                  <div className="relative">
+                    {/* Section Title */}
+                    <h3 className="text-xs font-heading uppercase tracking-[0.3em] text-accet/80 mb-3 text-center">
+                      About Party
+                    </h3>
+
+                    {/* Description Box with Corner Borders */}
+                    <div className="relative p-4 bg-black/40 rounded-xl border border-accet/20">
+                      {/* Corner Decorations */}
+                      <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-accet/60 rounded-tl-md" />
+                      <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-accet/60 rounded-tr-md" />
+                      <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-accet/60 rounded-bl-md" />
+                      <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-accet/60 rounded-br-md" />
+
+                      {/* Description Content */}
+                      <div className="max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                        <p className="text-white/75 text-sm md:text-base leading-relaxed font-heading text-center">
+                          {popupCandidate.description ||
+                            "இந்த கட்சியின் விவரங்கள் விரைவில் கிடைக்கும். தயவுசெய்து பிறகு பார்க்கவும்."}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Leader Image with Corner Borders */}
+                  {popupCandidate.leader_img && (
+                    <div className="mt-6 flex justify-center">
+                      <div className="relative">
+                        {/* Corner Decorations */}
+                        <div className="absolute -top-1.5 -left-1.5 w-3 h-3 border-t-2 border-l-2 border-accet/70 rounded-tl-md" />
+                        <div className="absolute -top-1.5 -right-1.5 w-3 h-3 border-t-2 border-r-2 border-accet/70 rounded-tr-md" />
+                        <div className="absolute -bottom-1.5 -left-1.5 w-3 h-3 border-b-2 border-l-2 border-accet/70 rounded-bl-md" />
+                        <div className="absolute -bottom-1.5 -right-1.5 w-3 h-3 border-b-2 border-r-2 border-accet/70 rounded-br-md" />
+
+                        <div className="w-16 h-16 rounded-lg border-2 border-accet/40 overflow-hidden bg-gradient-to-b from-gray-800 to-black p-0.5">
+                          <img
+                            src={popupCandidate.leader_img}
+                            alt={popupCandidate.name}
+                            className="w-full h-full object-cover rounded-md"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Close Button at Bottom */}
+                  <div className="relative mt-6">
+                    {/* Button Corner Decorations */}
+                    <div className="absolute -top-1 -left-1 w-3 h-3 border-t-2 border-l-2 border-accet/50 rounded-tl-md" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 border-t-2 border-r-2 border-accet/50 rounded-tr-md" />
+                    <div className="absolute -bottom-1 -left-1 w-3 h-3 border-b-2 border-l-2 border-accet/50 rounded-bl-md" />
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b-2 border-r-2 border-accet/50 rounded-br-md" />
+
+                    <button
+                      onClick={closePopup}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-accet/20 via-accet/40 to-accet/20 border border-accet/50 text-white font-heading uppercase text-sm tracking-widest hover:from-accet/30 hover:via-accet/50 hover:to-accet/30 hover:border-accet transition-all duration-300 hover:shadow-[0_0_20px_rgba(95,98,233,0.3)]"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom Decorative Line */}
+                <div className="h-0.5 w-full bg-gradient-to-r from-transparent via-accet/50 to-transparent" />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Swiper Container */}
       <div className="relative w-full px-2 sm:px-4">
         <div
-          className="hidden lg:block absolute left-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
+          className="hidden lg:block absolute left-0 xl:left-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
           style={{
             background:
               "linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 30%, rgba(0,0,0,0) 100%)",
           }}
         />
 
-        {/* ========== RIGHT FADE - Desktop Only ========== */}
         <div
           className="hidden lg:block absolute right-0 top-0 bottom-0 w-32 xl:w-48 2xl:w-64 z-20 pointer-events-none"
           style={{
@@ -88,28 +333,14 @@ const SwiperCard = ({
           }}
           onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
           breakpoints={{
-            480: {
-              slidesPerView: 1.4,
-              spaceBetween: 30,
-            },
-            640: {
-              slidesPerView: 1.8,
-              spaceBetween: 40,
-            },
-            768: {
-              slidesPerView: 2.2,
-              spaceBetween: 50,
-            },
-            1024: {
-              slidesPerView: 2.5,
-              spaceBetween: 60,
-            },
-            1280: {
-              slidesPerView: 4,
-              spaceBetween: 80,
-            },
+            480: { slidesPerView: 1.4, spaceBetween: 30 },
+            640: { slidesPerView: 1.8, spaceBetween: 40 },
+            768: { slidesPerView: 2.2, spaceBetween: 50 },
+            1024: { slidesPerView: 2.5, spaceBetween: 60 },
+            1280: { slidesPerView: 2.5, spaceBetween: 20 },
+            1400: { slidesPerView: 3, spaceBetween: 80 },
           }}
-          className="!overflow-visible !py-12"
+          className="overflow-visible! py-12!"
         >
           {candidates.map((item, index) => {
             const isSelected = selectedCandidate?.id === item.id;
@@ -131,7 +362,6 @@ const SwiperCard = ({
                       opacity: isActive ? 1 : 0.6,
                     }}
                   >
-                    {/* Card Container */}
                     <div
                       className={`relative group cursor-pointer transition-all duration-500 ${
                         isSelected && isActive ? "scale-[1.02]" : ""
@@ -140,7 +370,6 @@ const SwiperCard = ({
                       onMouseEnter={() => isActive && setHoveredIndex(index)}
                       onMouseLeave={() => setHoveredIndex(null)}
                     >
-                      {/* Card Glow Effect */}
                       <div
                         className={`absolute -inset-1 bg-linear-to-r from-accet via-[#017474] to-accet rounded-3xl blur-lg transition-all duration-500 ${
                           isSelected && isActive
@@ -151,15 +380,13 @@ const SwiperCard = ({
                         }`}
                       />
 
-                      {/* Main Card */}
                       <div
-                        className={`relative w-70 sm:w-70 p-4 rounded-2xl backdrop-blur-xl transition-all duration-500 ${
+                        className={`relative w-70 md:w-70 lg:w-80 p-4 rounded-2xl backdrop-blur-xl transition-all duration-500 ${
                           isSelected && isActive
-                            ? "bg-linear-to-b from-accet/20 via-black/80 to-black/90 border-2 border-accet shadow-[0_0_40px_rgba(95, 98, 233,0.2)]"
+                            ? "bg-linear-to-b from-accet/20 via-black/80 to-black/90 border-2 border-accet shadow-[0_0_40px_rgba(95,98,233,0.2)]"
                             : "bg-shade border-2 border-accet/30 hover:border-accet/60"
                         }`}
                       >
-                        {/* Selection Indicator */}
                         {isSelected && isActive && (
                           <div className="absolute top-2 right-2 z-20">
                             <div className="relative">
@@ -183,7 +410,6 @@ const SwiperCard = ({
                           </div>
                         )}
 
-                        {/* Party Logo - Positioned properly */}
                         {item.party_logo && (
                           <div className="absolute left-1/2 -translate-x-1/2 -top-10 z-10">
                             <div className="relative">
@@ -194,7 +420,6 @@ const SwiperCard = ({
                                     : "opacity-0"
                                 }`}
                               />
-
                               <div
                                 className={`absolute -inset-1 border-2 border-accet/40 rounded-full transition-all duration-500 ${
                                   (isHovered || isSelected) && isActive
@@ -202,7 +427,6 @@ const SwiperCard = ({
                                     : "scale-100 opacity-0"
                                 }`}
                               />
-
                               <div className="relative w-20 h-20 rounded-full bg-linear-to-b from-gray-800 to-black p-0.5 border-2 border-accet/50 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.8)]">
                                 <div className="w-full h-full rounded-full overflow-hidden bg-shade flex justify-center items-center">
                                   <img
@@ -216,15 +440,12 @@ const SwiperCard = ({
                           </div>
                         )}
 
-                        {/* Card Content */}
                         <div
                           className={`flex flex-col justify-center items-center ${
                             item.party ? "mt-10" : "mt-3"
-                          } `}
+                          }`}
                         >
-                          {/* Candidate Image */}
                           <div className="relative">
-                            {/* Image Glow */}
                             <div
                               className={`absolute -inset-2 bg-gradient-to-r from-accet/40 via-[#017474]/40 to-accet/40 rounded-2xl blur-xl transition-all duration-500 ${
                                 isSelected && isActive
@@ -232,8 +453,6 @@ const SwiperCard = ({
                                   : "opacity-0 group-hover:opacity-40"
                               }`}
                             />
-
-                            {/* Image Border Gradient */}
                             <div className="relative p-0.75 overflow-hidden rounded-2xl bg-linear-to-br from-accet/50 via-purple-400 to-accet/50">
                               <div className="rounded-xl overflow-hidden bg-black">
                                 <img
@@ -245,20 +464,15 @@ const SwiperCard = ({
                                       : "scale-100"
                                   }`}
                                 />
-
-                                {/* Image Overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                               </div>
                             </div>
-
-                            {/* Decorative Corner Elements */}
                             <div className="absolute -top-1 -left-1 w-4 h-4 border-t-2 border-l-2 border-accet/60 rounded-tl-lg" />
                             <div className="absolute -top-1 -right-1 w-4 h-4 border-t-2 border-r-2 border-accet/60 rounded-tr-lg" />
                             <div className="absolute -bottom-1 -left-1 w-4 h-4 border-b-2 border-l-2 border-accet/60 rounded-bl-lg" />
                             <div className="absolute -bottom-1 -right-1 w-4 h-4 border-b-2 border-r-2 border-accet/60 rounded-br-lg" />
                           </div>
 
-                          {/* Candidate Info */}
                           <div
                             className={`text-center mt-4 ${
                               item.party ? "mb-0" : "mb-2"
@@ -267,8 +481,6 @@ const SwiperCard = ({
                             <h1 className="text-[16px] px-2 font-heading uppercase font-black tracking-wide text-transparent bg-linear-to-r from-accet via-blue-300 to-blue-800 bg-clip-text leading-5">
                               {item.name}
                             </h1>
-
-                            {/* Divider */}
                             {item.party && (
                               <div className="flex items-center justify-center gap-2 my-2">
                                 <div className="h-px w-8 bg-linear-to-r from-transparent to-accet/50" />
@@ -276,16 +488,24 @@ const SwiperCard = ({
                                 <div className="h-px w-8 bg-linear-to-l from-transparent to-accet/50" />
                               </div>
                             )}
-
                             <div className="flex items-center justify-center gap-2">
                               <span className="text-[15px] sm:text-[18px] font-heading uppercase font-black tracking-widest text-transparent bg-linear-to-r from-accet to-blue-300 bg-clip-text">
                                 {item.party}
                               </span>
                             </div>
                           </div>
+
+                          {/* DESCRIPTION BUTTON */}
+                          {item.party && (
+                            <button
+                              onClick={(e) => handleDescriptionClick(e, item)}
+                              className="py-2.5 tracking-widest font-bold  w-full bg-linear-to-r from-accet/30 to-accet/70 font-heading uppercase text-[13px] mt-2 rounded-b-lg hover:from-accet/50 hover:to-accet/90 transition-all duration-300 hover:shadow-[0px_0px_40px_rgba(95,98,233,0.8)]"
+                            >
+                              Description
+                            </button>
+                          )}
                         </div>
 
-                        {/* Tap Indicator for Active Card */}
                         {isActive && !isSelected && (
                           <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
                             <p className="text-[8px] text-white/80 tracking-widest font-body uppercase animate-pulse">
@@ -304,17 +524,10 @@ const SwiperCard = ({
 
         {/* Navigation Buttons */}
         <button
-          onClick={() => {
-            playClick();
-          }}
+          onClick={() => playClick()}
           ref={prevRef}
           aria-label="Previous"
-          className="absolute top-1/2 -translate-y-1/2 left-0 sm:left-2 lg:left-16 z-40 
-            w-10 h-10 sm:w-12 sm:h-12
-            rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet
-            flex justify-center items-center
-            hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95
-            transition-all duration-300"
+          className="absolute top-1/2 -translate-y-1/2 left-0 sm:left-2 lg:left-16 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet flex justify-center items-center hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95 transition-all duration-300"
         >
           <svg
             className="w-5 h-5 sm:w-6 sm:h-6 text-accet"
@@ -332,17 +545,10 @@ const SwiperCard = ({
         </button>
 
         <button
-          onClick={() => {
-            playClick();
-          }}
+          onClick={() => playClick()}
           ref={nextRef}
           aria-label="Next"
-          className="absolute top-1/2 -translate-y-1/2 right-0 sm:right-2 lg:right-16 z-40 
-            w-10 h-10 sm:w-12 sm:h-12
-            rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet
-            flex justify-center items-center
-            hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95
-            transition-all duration-300"
+          className="absolute top-1/2 -translate-y-1/2 right-0 sm:right-2 lg:right-16 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/50 backdrop-blur-md border border-accet/30 lg:border-accet flex justify-center items-center hover:bg-accet/20 hover:border-accet/60 hover:scale-110 active:scale-95 transition-all duration-300"
         >
           <svg
             className="w-5 h-5 sm:w-6 sm:h-6 text-accet"

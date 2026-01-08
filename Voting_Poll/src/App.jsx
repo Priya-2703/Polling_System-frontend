@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 // import HolographicBackground from "./Components/HolographicBackground";
 import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
+import Thanks from "./Pages/Thanks";
 
 import AdminLayout from "./Admin/AdminLayout";
 import CandidatesPage from "./Admin/CandidatesPage";
@@ -87,6 +88,7 @@ function App() {
           {/* <Route path="/admin/poll" element={<} */}
 
 
+          <Route path="/thanks" element={<Thanks />} />
         </Routes>
       </BrowserRouter>
     </>

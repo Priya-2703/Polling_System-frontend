@@ -3,9 +3,14 @@ import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import DigitalGlobeBackground from "../Components/DigitalGlobeBackground";
+import scifi from "../assets/scifi.wav";
+import click from "../assets/click2.wav";
+import useSound from "use-sound";
 
 const QnA = () => {
   const { t } = useTranslation();
+  const [Click] = useSound(click, { volume: 0.2 });
+  const [playClick] = useSound(scifi, { volume: 0.3 });
   const location = useLocation();
   const navigate = useNavigate();
   const selectedCandidate = location.state?.candidate;
@@ -15,13 +20,15 @@ const QnA = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [isCompleting, setIsCompleting] = useState(false); // 👈 புதிய state
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [otherText, setOtherText] = useState(""); // 👈 "Others" input text state
 
   const questions = [
     {
       id: 1,
       question: t("qna.q1.question"),
       type: "text",
+      hasOther: false,
       options: [
         { id: "a", text: t("qna.q1.options.a") },
         { id: "b", text: t("qna.q1.options.b") },
@@ -34,6 +41,7 @@ const QnA = () => {
       id: 2,
       question: t("qna.q2.question"),
       type: "text",
+      hasOther: false,
       options: [
         { id: "a", text: t("qna.q2.options.a") },
         { id: "b", text: t("qna.q2.options.b") },
@@ -46,6 +54,7 @@ const QnA = () => {
       id: 3,
       question: t("qna.q3.question"),
       type: "text",
+      hasOther: true,
       options: [
         { id: "a", text: t("qna.q3.options.a") },
         { id: "b", text: t("qna.q3.options.b") },
@@ -56,13 +65,14 @@ const QnA = () => {
         { id: "g", text: t("qna.q3.options.g") },
         { id: "h", text: t("qna.q3.options.h") },
         { id: "i", text: t("qna.q3.options.i") },
-        { id: "j", text: t("qna.q3.options.j") },
+        { id: "j", text: t("qna.q3.options.j"), isOther: true },
       ],
     },
     {
       id: 4,
       question: t("qna.q4.question"),
       type: "text",
+      hasOther: true,
       options: [
         { id: "a", text: t("qna.q4.options.a") },
         { id: "b", text: t("qna.q4.options.b") },
@@ -70,13 +80,15 @@ const QnA = () => {
         { id: "d", text: t("qna.q4.options.d") },
         { id: "e", text: t("qna.q4.options.e") },
         { id: "f", text: t("qna.q4.options.f") },
-        { id: "g", text: t("qna.q4.options.g") },
+        { id: "g", text: t("qna.q4.options.g")},
+        { id: "h", text: t("qna.q4.options.h"), isOther: true },
       ],
     },
     {
       id: 5,
       question: t("qna.q5.question"),
       type: "image",
+      hasOther: false,
       options: [
         {
           id: "a",
@@ -150,27 +162,58 @@ const QnA = () => {
   const question = questions[currentQuestion];
   const isLastQuestion = currentQuestion === questions.length - 1;
 
+  // Check if current selected option is "Other"
+  const isOtherSelected = () => {
+    if (!selectedOption) return false;
+    const currentOption = question.options.find(opt => opt.id === selectedOption);
+    return currentOption?.isOther === true;
+  };
+
   const handleOptionSelect = (optionId) => {
     if (isAnimating || isCompleting) return;
     setSelectedOption(optionId);
     setShowError(false);
+    
+    // If not "Other" option, clear the other text
+    const selectedOpt = question.options.find(opt => opt.id === optionId);
+    if (!selectedOpt?.isOther) {
+      setOtherText("");
+    }
+  };
+
+  const handleOtherTextChange = (e) => {
+    setOtherText(e.target.value);
+    setShowError(false);
   };
 
   const handleNext = () => {
+    playClick()
+    // Validation
     if (!selectedOption) {
+      setShowError(true);
+      return;
+    }
+
+    // If "Other" is selected, check if text is entered
+    if (isOtherSelected() && !otherText.trim()) {
       setShowError(true);
       return;
     }
 
     if (isAnimating || isCompleting) return;
 
+    // Store answer - if "Other", store the custom text
+    const answerValue = isOtherSelected() 
+      ? { type: "other", text: otherText.trim() }
+      : { type: "option", value: selectedOption };
+
     const updatedAnswers = {
       ...answers,
-      [question.id]: selectedOption,
+      [question.id]: answerValue,
     };
     setAnswers(updatedAnswers);
 
-    if (isLastQuestion) {      
+    if (isLastQuestion) {
       navigate("/candidate", {
         state: {
           candidate: selectedCandidate,
@@ -185,24 +228,61 @@ const QnA = () => {
 
     setTimeout(() => {
       setCurrentQuestion((prev) => prev + 1);
-      setSelectedOption(answers[questions[currentQuestion + 1]?.id] || null);
+      
+      // Restore previous answer if exists
+      const nextQuestionId = questions[currentQuestion + 1]?.id;
+      const previousAnswer = answers[nextQuestionId];
+      
+      if (previousAnswer) {
+        if (previousAnswer.type === "other") {
+          // Find the "other" option
+          const otherOption = questions[currentQuestion + 1]?.options.find(opt => opt.isOther);
+          setSelectedOption(otherOption?.id || null);
+          setOtherText(previousAnswer.text || "");
+        } else {
+          setSelectedOption(previousAnswer.value || null);
+          setOtherText("");
+        }
+      } else {
+        setSelectedOption(null);
+        setOtherText("");
+      }
+      
       setIsAnimating(false);
       setShowError(false);
     }, 300);
   };
 
   const handlePrevious = () => {
+    playClick()
     if (currentQuestion > 0 && !isAnimating && !isCompleting) {
       setIsAnimating(true);
       setShowError(false);
       setTimeout(() => {
         setCurrentQuestion((prev) => prev - 1);
-        setSelectedOption(answers[questions[currentQuestion - 1].id] || null);
+        
+        // Restore previous answer
+        const prevQuestionId = questions[currentQuestion - 1]?.id;
+        const previousAnswer = answers[prevQuestionId];
+        
+        if (previousAnswer) {
+          if (previousAnswer.type === "other") {
+            const otherOption = questions[currentQuestion - 1]?.options.find(opt => opt.isOther);
+            setSelectedOption(otherOption?.id || null);
+            setOtherText(previousAnswer.text || "");
+          } else {
+            setSelectedOption(previousAnswer.value || null);
+            setOtherText("");
+          }
+        } else {
+          setSelectedOption(null);
+          setOtherText("");
+        }
+        
         setIsAnimating(false);
       }, 300);
     }
   };
-
 
   if (!selectedCandidate) {
     return (
@@ -232,7 +312,6 @@ const QnA = () => {
       </div>
     );
   }
-
 
   const renderAllianceImages = (images, isSelected) => {
     return (
@@ -266,6 +345,81 @@ const QnA = () => {
             )}
           </React.Fragment>
         ))}
+      </div>
+    );
+  };
+
+  // 👈 Render "Other" option with input field
+  const renderOtherOption = (option, isSelected) => {
+    return (
+      <div className="w-full">
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <div className="flex-1 text-left">
+            <p
+              className={`font-heading capitalize font-medium tracking-wide lg:text-[16px] text-[13px] sm:text-[14px] transition-colors duration-300 ${
+                isSelected
+                  ? "text-accet"
+                  : "text-white/90 group-hover:text-white"
+              }`}
+            >
+              {option.text}
+            </p>
+          </div>
+          <div
+            className={`w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center transition-all duration-300 shrink-0 ${
+              isSelected
+                ? "bg-accet scale-100"
+                : "bg-white/10 scale-75 opacity-0 group-hover:opacity-100 group-hover:scale-100"
+            }`}
+          >
+            {isSelected ? (
+              <svg
+                className="w-3 h-3 sm:w-4 sm:h-4 text-black"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            ) : (
+              <div className="w-1.5 h-1.5 rounded-full bg-white/30" />
+            )}
+          </div>
+        </div>
+        
+        {/* 👈 Input field - only show when "Other" is selected */}
+        {isSelected && (
+          <div 
+            className="mt-3 animate-fadeIn"
+            onClick={(e) => e.stopPropagation()} // Prevent button click
+          >
+            <input
+              type="text"
+              value={otherText}
+              onChange={handleOtherTextChange}
+              placeholder={t("qna.otherPlaceholder") || "Please specify..."}
+              className={`w-full px-4 py-2.5 bg-black/50 border rounded-lg text-white text-sm font-heading placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-accet/50 transition-all duration-300 ${
+                showError && !otherText.trim()
+                  ? "border-red-500/50"
+                  : "border-accet/30 focus:border-accet"
+              }`}
+              autoFocus
+            />
+            {showError && !otherText.trim() && (
+              <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
+                </svg>
+                {t("qna.otherRequired") || "Please enter your answer"}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     );
   };
@@ -372,7 +526,7 @@ const QnA = () => {
                 </p>
               </div>
 
-              {showError && (
+              {showError && !isOtherSelected() && (
                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-center animate-shake">
                   <p className="text-red-400 text-sm font-medium flex items-center justify-center gap-2">
                     <svg
@@ -403,17 +557,20 @@ const QnA = () => {
                 {question.options.map((option, index) => {
                   const isSelected = selectedOption === option.id;
                   const hasImages = option.images && option.images.length > 0;
+                  const isOther = option.isOther === true;
 
                   return (
                     <button
                       key={`${option.id}-${index}`}
-                      onClick={() => handleOptionSelect(option.id)}
+                      onClick={() => {
+                        Click()
+                        handleOptionSelect(option.id)}}
                       disabled={isAnimating || isCompleting}
                       className={`group relative overflow-hidden transition-all duration-300 transform ${
                         isSelected
                           ? "scale-[1.02] bg-linear-to-br from-accet/20 via-accet/10 to-shade backdrop-blur-sm border-2 border-accet shadow-[0_0_20px_rgba(95,98,233,0.3)]"
                           : `bg-shade border ${
-                              showError
+                              showError && !isOtherSelected()
                                 ? "border-red-500/30"
                                 : "border-white/10"
                             } hover:border-accet/40 hover:bg-white/10 active:scale-[0.98]`
@@ -421,14 +578,19 @@ const QnA = () => {
                         question.type === "image"
                           ? "px-3 py-4 sm:px-4 sm:py-5"
                           : "px-4 py-3 sm:p-4"
-                      } ${isAnimating || isCompleting ? "pointer-events-none" : ""}`}
+                      } ${isAnimating || isCompleting ? "pointer-events-none" : ""} ${
+                        isOther && isSelected ? "sm:col-span-2" : "" // Other option spans full width when selected
+                      }`}
                     >
                       {isSelected && (
                         <div className="absolute inset-0 bg-linear-to-r from-accet/10 via-transparent to-accet/10 animate-pulse" />
                       )}
 
                       <div className="relative flex items-center justify-between gap-3">
-                        {question.type === "image" && hasImages ? (
+                        {/* 👈 Check if it's "Other" option */}
+                        {isOther ? (
+                          renderOtherOption(option, isSelected)
+                        ) : question.type === "image" && hasImages ? (
                           <>
                             <div className="flex-1">
                               {renderAllianceImages(option.images, isSelected)}
@@ -551,7 +713,7 @@ const QnA = () => {
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0 || isAnimating || isCompleting}
-              className={`flex items-center gap-2 px-4 py-2.5  font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2.5 font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
                 currentQuestion === 0 || isAnimating || isCompleting
                   ? "bg-white/5 text-white/20 cursor-not-allowed"
                   : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10 hover:border-white/30"
@@ -590,10 +752,7 @@ const QnA = () => {
                   : t("vote_messages.next")}
               </span>
               {isCompleting ? (
-                <svg
-                  className="animate-spin w-4 h-4"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -637,6 +796,13 @@ const QnA = () => {
         }
         .animate-shake {
           animation: shake 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(-10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.3s ease-out;
         }
       `}</style>
     </div>
