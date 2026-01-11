@@ -1113,7 +1113,7 @@ const FormPage = () => {
         ═══════════════════════════════════════════════ */}
         <div
           ref={formLayerRef}
-          className={`absolute inset-0 z-10 bg-black ${
+          className={`absolute inset-0 z-10 ${
             isRevealed ? "" : "pointer-events-none"
           }`}
           style={{
@@ -1121,8 +1121,8 @@ const FormPage = () => {
             willChange: "transform, opacity",
           }}
         >
-          <div className="h-full w-full overflow-y-auto">
-            <div className="min-h-screen py-8 lg:py-12">
+          <div className="h-full w-full overflow-hidden lg:overflow-y-auto">
+            <div className="max-h-screen lg:min-h-screen py-8 lg:py-12">
               <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="flex justify-center items-center mb-4 md:mb-6">
@@ -1230,7 +1230,7 @@ const FormPage = () => {
         ═══════════════════════════════════════════════ */}
         <div
           ref={imageLayerRef}
-          className="absolute bottom-0 inset-0 z-20 pointer-events-none"
+          className="absolute bottom-0 inset-0 z-20 pointer-events-none overflow-hidden"
           style={{
             transformOrigin: "center center",
             willChange: "transform, opacity",
