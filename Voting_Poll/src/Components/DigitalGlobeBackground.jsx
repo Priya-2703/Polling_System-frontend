@@ -170,7 +170,7 @@ const DigitalGlobeBackground = () => {
     const clock = new THREE.Clock();
 
     // Reduce animation speed on mobile for smoother performance
-    const rotationSpeed = isMobile ? 0.0008 : 0.001;
+    const rotationSpeed = isMobile ? 0.0008 : 0.11;
     const breathingSpeed = isMobile ? 1.5 : 2;
     const breathingAmount = isMobile ? 0.003 : 0.005;
 

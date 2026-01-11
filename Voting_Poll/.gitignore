@@ -13,12 +13,7 @@ dist-ssr
 *.local
 .gitignore
 .env
-Components
-Pages
-Canditdate.jsx
-UserDetails.jsx
-Vote.jsx
-QnA.jsx
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

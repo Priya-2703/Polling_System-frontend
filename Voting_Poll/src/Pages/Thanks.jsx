@@ -17,10 +17,40 @@ const Thanks = () => {
   const [isSpinning, setIsSpinning] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
+  // ========== VIEWPORT-BASED SIZING ==========
+  const [dimensions, setDimensions] = useState({
+    vw: typeof window !== "undefined" ? window.innerWidth : 1024,
+    vh: typeof window !== "undefined" ? window.innerHeight : 768,
+  });
+
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        vw: window.innerWidth,
+        vh: window.innerHeight,
+      });
+    };
+
+    // Update on resize and zoom
+    window.addEventListener("resize", updateDimensions);
+
+    // Also update on zoom changes (detected via visualViewport if available)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateDimensions);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", updateDimensions);
+      }
+    };
+  }, []);
+
   // Get selected candidate from navigation state
   const selectedCandidate = location.state?.candidate || {
     id: 1,
-    name: "M.K. Stalin",
+    name: "NO one",
     leader_img:
       "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767350158/d971ca4cf51445e099353789a35beef7_g5ill3.jpg",
   };
@@ -103,20 +133,10 @@ const Thanks = () => {
   const totalCandidates = allCandidates.length;
 
   const targetAngle = useMemo(() => {
-    // Each candidate's initial angle (starting from top, going clockwise)
-    // Candidate 0 is at top (-90°), candidate 1 is at (-90° + 45°), etc.
     const anglePerCandidate = 360 / totalCandidates;
-
-    // Selected candidate's initial position angle
-    // At rotation 0: candidate i is at angle = (i * anglePerCandidate) degrees from top
     const selectedInitialAngle = selectedIndex * anglePerCandidate;
-
-    // To bring selected candidate to top (0° from top), we need to rotate BACKWARDS
-    // by the amount of its initial angle
-    // Add 720° for 2 full dramatic spins
     const rotationNeeded = -selectedInitialAngle;
-
-    return 720 + rotationNeeded; // 2 spins + adjustment
+    return 720 + rotationNeeded;
   }, [selectedIndex, totalCandidates]);
 
   const anglePerCandidate = 360 / totalCandidates;
@@ -147,10 +167,7 @@ const Thanks = () => {
     const animate = () => {
       const elapsed = Date.now() - startTime;
       const progress = Math.min(elapsed / spinDuration, 1);
-
-      // Cubic ease out - slows down smoothly at end
       const easeOut = 1 - Math.pow(1 - progress, 3);
-
       const currentAngle = easeOut * targetAngle;
       setRotationAngle(currentAngle);
 
@@ -166,8 +183,6 @@ const Thanks = () => {
           origin: { y: 0.5 },
           colors: ["#00d4aa", "#6366f1", "#06b6d4", "#8b5cf6"],
         });
-
-        // playClick();
       }
     };
 
@@ -179,28 +194,55 @@ const Thanks = () => {
     playClick();
   };
 
-  // ========== WHEEL CONFIGURATION ==========
-  const wheelRadius = 280;
-  const wheelSize = 600;
-  const imageWidth = 150;
-  const imageHeight = 180;
+  // ========== VIEWPORT-RELATIVE WHEEL CONFIGURATION ==========
+  // This calculates sizes based on actual viewport, so zoom doesn't affect layout
 
-  const wheelRadiusMobile = 200;
-  const wheelSizeMobile = 450;
-  const imageWidthMobile = 120;
-  const imageHeightMobile = 150;
+  const isMobile = dimensions.vw < 768;
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+  // Calculate wheel size as percentage of viewport height
+  // This ensures wheel always fits regardless of zoom level
+  const wheelConfig = useMemo(() => {
+    const { vh, vw } = dimensions;
 
-  const currentWheelRadius = isMobile ? wheelRadiusMobile : wheelRadius;
-  const currentWheelSize = isMobile ? wheelSizeMobile : wheelSize;
-  const currentImageWidth = isMobile ? imageWidthMobile : imageWidth;
-  const currentImageHeight = isMobile ? imageHeightMobile : imageHeight;
+    if (isMobile) {
+      // Mobile: wheel is 60% of viewport height
+      const wheelSize = Math.min(vh * 0.6, vw * 0.95);
+      return {
+        wheelSize: wheelSize,
+        wheelRadius: wheelSize * 0.5,
+        imageWidth: wheelSize * 0.29,
+        imageHeight: wheelSize * 0.33,
+        hubSize: wheelSize * 0.12,
+        bottomOffset: wheelSize * 0.48,
+      };
+    } else {
+      // Desktop: wheel is 70% of viewport height, capped at reasonable max
+      const wheelSize = Math.min(vh * 0.75, 600); // Max 600px
+      return {
+        wheelSize: wheelSize,
+        wheelRadius: wheelSize * 0.49,
+        imageWidth: wheelSize * 0.28,
+        imageHeight: wheelSize * 0.33,
+        hubSize: wheelSize * 0.125,
+        bottomOffset: wheelSize * 0.48,
+      };
+    }
+  }, [dimensions, isMobile]);
+
+  const {
+    wheelSize: currentWheelSize,
+    wheelRadius: currentWheelRadius,
+    imageWidth: currentImageWidth,
+    imageHeight: currentImageHeight,
+    hubSize: currentHubSize,
+    bottomOffset,
+  } = wheelConfig;
 
   return (
     <div className="w-full md:w-[90%] mx-auto h-dvh relative overflow-hidden flex flex-col">
       {/* ========== TOP CONTENT SECTION ========== */}
-      <div className="relative z-10 flex flex-col items-center px-4 pt-16 md:pt-8">
+      {/* Using flex-shrink-0 to prevent content from shrinking */}
+      <div className="relative z-10 flex flex-col items-center px-4 pt-[4vh] md:pt-[2vh] shrink-0">
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{
@@ -211,14 +253,22 @@ const Thanks = () => {
           className="text-center"
         >
           {/* Animated Checkmark */}
-          <div className="relative flex justify-center mb-6 md:mb-3">
+          <div className="relative flex justify-center mb-[1.5vh]">
             <motion.div
-              className="absolute w-14 h-14 md:w-16 md:h-16 bg-accet/20 rounded-full"
+              className="absolute bg-accet/20 rounded-full"
+              style={{
+                width: `${Math.max(dimensions.vh * 0.07, 40)}px`,
+                height: `${Math.max(dimensions.vh * 0.07, 40)}px`,
+              }}
               animate={{ scale: [1, 1.4, 1], opacity: [0.4, 0, 0.4] }}
               transition={{ duration: 2, repeat: Infinity }}
             />
             <motion.div
-              className="relative w-12 h-12 md:w-24 md:h-24  backdrop-blur-xl rounded-full flex items-center justify-center"
+              className="relative backdrop-blur-xl rounded-full flex items-center justify-center"
+              style={{
+                width: `${Math.max(dimensions.vh * 0.08, 48)}px`,
+                height: `${Math.max(dimensions.vh * 0.08, 48)}px`,
+              }}
               initial={{ scale: 0, rotate: -180 }}
               animate={{
                 scale: showContent ? 1 : 0,
@@ -229,7 +279,12 @@ const Thanks = () => {
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1.5">
                   {sponsors.map((sponsor) => (
-                    <div key={sponsor.id} className="w-24">
+                    <div
+                      key={sponsor.id}
+                      style={{
+                        width: `${Math.max(dimensions.vh * 0.1, 60)}px`,
+                      }}
+                    >
                       <img
                         src={sponsor.img}
                         alt={sponsor.name}
@@ -242,24 +297,39 @@ const Thanks = () => {
             </motion.div>
           </div>
 
-          {/* Thank You Title */}
-          <h1 className="font-heading text-3xl md:text-5xl uppercase font-bold text-white mb-1">
+          {/* Thank You Title - Using clamp for responsive font size */}
+          <h1
+            className="font-heading uppercase font-bold text-white mb-1"
+            style={{
+              fontSize: `clamp(1.5rem, ${dimensions.vh * 0.05}px, 3rem)`,
+            }}
+          >
             {t("thanks.title")}
           </h1>
 
           {/* Description */}
-          <div className="mb-2 md:mb-3 max-w-2xl mx-auto">
-            <p className="text-neutral-400 text-[9px] md:text-[11px] leading-relaxed">
+          <div className="mb-[1vh] max-w-2xl mx-auto">
+            <p
+              className="text-neutral-400 leading-relaxed"
+              style={{
+                fontSize: `clamp(8px, ${dimensions.vh * 0.014}px, 11px)`,
+              }}
+            >
               {t("thanks.description1")}
             </p>
-            <p className="text-neutral-400 text-[9px] md:text-[11px] leading-relaxed">
+            <p
+              className="text-neutral-400 leading-relaxed"
+              style={{
+                fontSize: `clamp(8px, ${dimensions.vh * 0.014}px, 11px)`,
+              }}
+            >
               {t("thanks.description2")}
             </p>
           </div>
 
           {/* Unique ID Card */}
           <motion.div
-            className="relative mx-auto mb-2 md:mb-3 max-w-xs md:max-w-md"
+            className="relative mx-auto mb-[1vh] max-w-xs md:max-w-md"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{
               scale: showContent ? 1 : 0.8,
@@ -267,38 +337,68 @@ const Thanks = () => {
             }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <div className="relative flex items-center gap-2 bg-black/90 backdrop-blur-xl border border-accet/40  px-3 py-2 md:px-5 md:py-3">
+            <div
+              className="relative flex items-center gap-2 bg-black/90 backdrop-blur-xl border border-accet/40"
+              style={{
+                padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
+                  dimensions.vh * 0.02,
+                  12
+                )}px`,
+              }}
+            >
               <div className="flex-1">
-                <p className="text-[7px] md:text-[9px] text-white uppercase tracking-widest font-heading mb-0.5">
+                <p
+                  className="text-white uppercase tracking-widest font-heading mb-0.5"
+                  style={{
+                    fontSize: `clamp(6px, ${dimensions.vh * 0.011}px, 9px)`,
+                  }}
+                >
                   {t("thanks.uniqueId")}
                 </p>
-                <p className="text-accet font-heading text-sm md:text-lg font-bold tracking-wider">
+                <p
+                  className="text-accet font-heading font-bold tracking-wider"
+                  style={{
+                    fontSize: `clamp(12px, ${dimensions.vh * 0.022}px, 18px)`,
+                  }}
+                >
                   {uniqueId}
                 </p>
               </div>
-              {/* <button
-                onClick={copyUniqueId}
-                className="p-2 bg-accet/10 hover:bg-accet/20 rounded-lg transition-all group border border-accet/30"
-              >
-                <Icon
-                  icon="lucide:copy"
-                  className="text-accet text-base md:text-lg group-hover:scale-110 transition-transform"
-                />
-              </button> */}
             </div>
           </motion.div>
 
           {/* Result Date & Sponsors */}
           <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5">
-            <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-2">
+            <div
+              className="flex items-center gap-1.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
+              style={{
+                padding: `${Math.max(dimensions.vh * 0.008, 4)}px ${Math.max(
+                  dimensions.vh * 0.02,
+                  12
+                )}px`,
+              }}
+            >
               <Icon
                 icon="lucide:calendar-check"
-                className="text-indigo-400 text-xs"
+                className="text-indigo-400"
+                style={{
+                  fontSize: `clamp(10px, ${dimensions.vh * 0.018}px, 14px)`,
+                }}
               />
-              <span className="text-[8px] md:text-[10px] text-neutral-400 tracking-wide font-heading">
+              <span
+                className="text-neutral-400 tracking-wide font-heading"
+                style={{
+                  fontSize: `clamp(7px, ${dimensions.vh * 0.013}px, 10px)`,
+                }}
+              >
                 {t("thanks.resultDate")} :
               </span>
-              <span className="text-[8px] md:text-[10px] text-white font-heading font-semibold">
+              <span
+                className="text-white font-heading font-semibold"
+                style={{
+                  fontSize: `clamp(7px, ${dimensions.vh * 0.013}px, 10px)`,
+                }}
+              >
                 {resultDate}
               </span>
             </div>
@@ -307,12 +407,13 @@ const Thanks = () => {
       </div>
 
       {/* ========== 2D CIRCLE WHEEL SECTION ========== */}
-      <div className="absolute bottom-0 md:-bottom-15 left-0 right-0 h-[72%] md:h-[60%] overflow-hidden">
+      {/* Takes remaining space with flex-1 */}
+      <div className="absolute bottom-0 left-0 right-0 h-[65%] md:h-[60%] overflow-hidden">
         {/* Wheel Container */}
         <div
           className="absolute left-1/2 -translate-x-1/2"
           style={{
-            bottom: `-${currentWheelSize * 0.48}px`,
+            bottom: `-${bottomOffset}px`,
             width: `${currentWheelSize}px`,
             height: `${currentWheelSize}px`,
           }}
@@ -321,14 +422,14 @@ const Thanks = () => {
           <div
             className="absolute rounded-full border-2 border-accet/20"
             style={{
-              inset: "10px",
+              inset: `${currentWheelSize * 0.016}px`,
               boxShadow:
                 "0 0 60px rgba(99, 102, 241, 0.2), inset 0 0 40px rgba(99, 102, 241, 0.06)",
             }}
           />
           <div
             className="absolute rounded-full border border-indigo-500/15"
-            style={{ inset: "30px" }}
+            style={{ inset: `${currentWheelSize * 0.05}px` }}
           />
 
           {/* ✅ ROTATING WHEEL - Contains all candidates */}
@@ -345,7 +446,7 @@ const Thanks = () => {
                   key={`spoke-${index}`}
                   className="absolute top-1/2 left-1/2 origin-left h-px"
                   style={{
-                    width: `${currentWheelRadius + 30}px`,
+                    width: `${currentWheelRadius + currentWheelSize * 0.05}px`,
                     background:
                       "linear-gradient(90deg, rgba(0,212,170,0.4), rgba(99,102,241,0.2), transparent)",
                     transform: `rotate(${angle}deg)`,
@@ -356,8 +457,7 @@ const Thanks = () => {
 
             {/* ✅ CANDIDATES ON THE WHEEL */}
             {allCandidates.map((candidate, index) => {
-              // Position on circle - starting from TOP (270° or -90°)
-              const angleDegrees = index * anglePerCandidate - 90; // -90 puts first candidate at top
+              const angleDegrees = index * anglePerCandidate - 90;
               const angleRadians = (angleDegrees * Math.PI) / 180;
 
               const x = Math.cos(angleRadians) * currentWheelRadius;
@@ -374,7 +474,7 @@ const Thanks = () => {
                 ? 0
                 : isSelected
                 ? 0
-                : normalizedEffectiveAngle * 0.90;
+                : normalizedEffectiveAngle * 0.9;
 
               return (
                 <div
@@ -387,7 +487,6 @@ const Thanks = () => {
                     zIndex: isSelected && !isSpinning ? 20 : 10,
                   }}
                 >
-                  {/* ✅ COUNTER-ROTATE to keep images upright */}
                   <motion.div
                     animate={{ rotate: -rotationAngle + cardTiltAngle }}
                     transition={{
@@ -395,7 +494,6 @@ const Thanks = () => {
                       ease: "easeOut",
                     }}
                   >
-                    {/* Scale animation for selected/unselected */}
                     <motion.div
                       className="relative"
                       animate={{
@@ -408,23 +506,19 @@ const Thanks = () => {
                       }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     >
-                      {/* ✅ GLOW for Selected Candidate */}
                       {!isSpinning && isSelected && (
-                        <>
-                          <motion.div
-                            className="absolute rounded-xl"
-                            style={{
-                              inset: "-5px",
-                              background: "rgba(99, 102, 241, 0.6)",
-                              filter: "blur(15px)",
-                            }}
-                            animate={{ opacity: [0.4, 0.8, 0.4] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          />
-                        </>
+                        <motion.div
+                          className="absolute rounded-xl"
+                          style={{
+                            inset: "-5px",
+                            background: "rgba(99, 102, 241, 0.6)",
+                            filter: "blur(15px)",
+                          }}
+                          animate={{ opacity: [0.4, 0.8, 0.4] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        />
                       )}
 
-                      {/* ✅ IMAGE CARD */}
                       <div
                         className={`relative overflow-hidden rounded-lg transition-all duration-500 ${
                           !isSpinning && isSelected
@@ -438,7 +532,6 @@ const Thanks = () => {
                             "linear-gradient(145deg, #1a1a2e, #0a0a12)",
                         }}
                       >
-                        {/* Image */}
                         <img
                           src={candidate.leader_img}
                           alt={candidate.name}
@@ -449,11 +542,8 @@ const Thanks = () => {
                           }`}
                         />
 
-                        {/* Gradient Overlay */}
                         <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
 
-                        
-                        {/* ✅ SHINE Effect for Selected */}
                         {!isSpinning && isSelected && (
                           <motion.div
                             className="absolute inset-0 bg-linear-to-r from-transparent via-white/40 to-transparent"
@@ -467,7 +557,6 @@ const Thanks = () => {
                           />
                         )}
 
-                        {/* Dark Overlay for non-selected */}
                         {!isSpinning && !isSelected && (
                           <div className="absolute inset-0 bg-black/10" />
                         )}
@@ -479,12 +568,12 @@ const Thanks = () => {
             })}
           </motion.div>
 
-          {/* ✅ CENTER HUB (Fixed, doesn't rotate) */}
+          {/* ✅ CENTER HUB */}
           <div
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-br from-gray-900 to-black border-2 border-accet/50 flex items-center justify-center z-30"
             style={{
-              width: isMobile ? "55px" : "75px",
-              height: isMobile ? "55px" : "75px",
+              width: `${currentHubSize}px`,
+              height: `${currentHubSize}px`,
               boxShadow:
                 "0 0 40px rgba(0, 212, 170, 0.4), inset 0 0 20px rgba(0, 212, 170, 0.1)",
             }}
@@ -493,8 +582,8 @@ const Thanks = () => {
               <motion.div
                 className="border-3 border-accet/20 border-t-accet rounded-full"
                 style={{
-                  width: isMobile ? "28px" : "38px",
-                  height: isMobile ? "28px" : "38px",
+                  width: `${currentHubSize * 0.5}px`,
+                  height: `${currentHubSize * 0.5}px`,
                 }}
                 animate={{ rotate: 360 }}
                 transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
@@ -508,7 +597,10 @@ const Thanks = () => {
               >
                 <Icon
                   icon="lucide:vote"
-                  className="text-accet text-2xl md:text-3xl drop-shadow-[0_0_10px_rgba(0,212,170,0.8)]"
+                  className="text-accet drop-shadow-[0_0_10px_rgba(0,212,170,0.8)]"
+                  style={{
+                    fontSize: `${currentHubSize * 0.4}px`,
+                  }}
                 />
               </motion.div>
             )}
@@ -517,7 +609,10 @@ const Thanks = () => {
 
         {/* ✅ SELECTED CANDIDATE INFO CARD */}
         <motion.div
-          className="absolute bottom-12 md:bottom-24 left-1/2 -translate-x-1/2 z-40"
+          className="absolute left-1/2 -translate-x-1/2 z-40"
+          style={{
+            bottom: `${Math.max(dimensions.vh * 0.03, 40)}px`,
+          }}
           initial={{ opacity: 0, y: -20, scale: 0.9 }}
           animate={{
             opacity: showContent ? 1 : 0,
@@ -526,11 +621,33 @@ const Thanks = () => {
           }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <div className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md px-6 py-2 md:px-4 md:py-2 shadow-[0_0_50px_rgba(99, 102, 241, 0.6)]">
-            <p className="text-[7px] md:text-[8px] text-accet font-light md:font-medium uppercase tracking-widest md:tracking-[0.2em] font-heading md:mb-1">
+          <div
+            className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md shadow-[0_0_50px_rgba(99,102,241,0.6)]"
+            style={{
+              padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
+                dimensions.vh * 0.025,
+                16
+              )}px`,
+            }}
+          >
+            <p
+              className="text-accet font-light md:font-medium uppercase tracking-widest md:tracking-[0.2em] font-heading md:mb-1"
+              style={{
+                fontSize: isMobile
+                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 6px)` // Mobile: smaller
+                  : `clamp(8px, ${dimensions.vh * 0.022}px, 8px)`,
+              }}
+            >
               {t("thanks.votedFor")}
             </p>
-            <h3 className="text-white font-heading font-bold text-[10px] md:text-[12px] uppercase tracking-wider">
+            <h3
+              className="text-white font-heading font-bold uppercase tracking-wider"
+              style={{
+                fontSize: isMobile
+                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 10px)` // Mobile: smaller
+                  : `clamp(8px, ${dimensions.vh * 0.022}px, 16px)`,
+              }}
+            >
               {selectedCandidate.name}
             </h3>
           </div>

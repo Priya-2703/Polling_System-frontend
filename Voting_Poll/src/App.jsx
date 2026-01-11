@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Form } from "react-router-dom";
 import Home from "./Pages/Home";
 import UserData from "./Pages/UserDetails";
 import Vote from "./Pages/Vote";
@@ -8,18 +8,43 @@ import QnA from "./Pages/QnA";
 import LanguageDialog from "./Components/LanguageDialog";
 import "./i18n/i18n";
 import { useTranslation } from "react-i18next";
-// import HolographicBackground from "./Components/HolographicBackground";
 import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
 import Thanks from "./Pages/Thanks";
+import PrivacyPolicy from "./Pages/PrivacyPolicy";
+import TermsAndConditions from "./Pages/TermsAndConditions";
+import FormPage from "./Pages/FormPage";
 
-import AdminLayout from "./Admin/AdminLayout";
-import CandidatesPage from "./Admin/CandidatesPage";
-import VotersPage from "./Admin/VotersPage";
-import ResultsPage from "./Admin/ResultsPage";
-import SettingsPage from "./Admin/SettingsPage";
-import Dashboard from "./Admin/Dashboard";  
-import AdminLogin from "./Admin/AdminLogin";
+
+const getRedirectPath = (status) => {
+  switch (status) {
+    case "registered": return "/vote";
+    case "voted": return "/survey";
+    case "survey_completed": return "/candidate";
+    case "candidate_selected": return "/thanks";
+    default: return "/form";
+  }
+};
+
+
+const StepGuard = ({ children, requiredStatus }) => {
+  const currentStatus = localStorage.getItem("voter_status");
+
+  if (!currentStatus && requiredStatus !== "new") {
+    return <Navigate to="/form" replace />;
+  }
+
+  if (currentStatus !== requiredStatus) {
+    if (currentStatus === "registered") return <Navigate to="/vote" replace />;
+    if (currentStatus === "voted") return <Navigate to="/survey" replace />;
+    if (currentStatus === "survey_completed") return <Navigate to="/candidate" replace />;
+    if (currentStatus === "candidate_selected") return <Navigate to="/thanks" replace />;
+    
+    return <Navigate to="/form" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   const { i18n } = useTranslation();
@@ -28,7 +53,6 @@ function App() {
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
-
     if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);
       if (savedLanguage === "ta") {
@@ -36,10 +60,8 @@ function App() {
       } else {
         document.body.classList.remove("tamil-mode");
       }
-
       setLanguageSelected(true);
     }
-
     setLoading(false);
   }, [i18n]);
 
@@ -54,7 +76,6 @@ function App() {
   if (!languageSelected) {
     return (
       <>
-        {/* <HolographicBackground /> */}
         <DigitalGlobeBackground />
         <div className="scanline" />
         <div className="vignette" />
@@ -65,30 +86,45 @@ function App() {
 
   return (
     <>
-      {/* <HolographicBackground /> */}
       <DigitalGlobeBackground />
       <div className="scanline" />
 
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/form" element={<UserData />} />
-          <Route path="/vote" element={<Vote />} />
-          <Route path="/survey" element={<QnA />} />
-          <Route path="/candidate" element={<Candidate />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsAndConditions />} />
+          <Route path="/user" element={<FormPage />} />
 
-          //admin page
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminLayout />}/>
-           {/* <Route index element={<Dashboard />} /> */}
-          <Route path="/admin/candidates" element={<CandidatesPage />} />
-          <Route path="/admin/voters" element={<VotersPage />} />
-          <Route path="/admin/results" element={<ResultsPage />} />
-          <Route path="/admin/settings" element={<SettingsPage />} />
-          {/* <Route path="/admin/poll" element={<} */}
+          <Route path="/form" element={
+            localStorage.getItem("voter_status") ? <Navigate to={getRedirectPath(localStorage.getItem("voter_status"))} replace /> : <UserData />
+          } />
 
+          <Route path="/vote" element={
+            <StepGuard requiredStatus="registered">
+              <Vote />
+            </StepGuard>
+          } />
 
-          <Route path="/thanks" element={<Thanks />} />
+          <Route path="/survey" element={
+            <StepGuard requiredStatus="voted">
+              <QnA />
+            </StepGuard>
+          } />
+
+          <Route path="/candidate" element={
+            <StepGuard requiredStatus="survey_completed">
+              <Candidate />
+            </StepGuard>
+          } />
+
+          <Route path="/thanks" element={
+            <StepGuard requiredStatus="candidate_selected">
+              <Thanks />
+            </StepGuard>
+          } />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </>

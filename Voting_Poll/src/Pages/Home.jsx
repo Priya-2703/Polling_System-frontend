@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useSound from "use-sound";
@@ -13,6 +13,7 @@ const Home = () => {
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
   const [showLangDialog, setShowLangDialog] = useState(false);
+  // const videoRef = useRef(null);
 
   const sponser = [
     {
@@ -32,13 +33,20 @@ const Home = () => {
     },
   ];
 
-  const handleClose = () => {
-    setShowLangDialog(false);
-  };
+
+  // useEffect(() => {
+  //   if (videoRef.current) {
+  //     videoRef.current.playbackRate = 0.5; // 👈 0.5 = half speed (slow motion)
+  //   }
+  // }, []);
+
+  // const handleClose = () => {
+  //   setShowLangDialog(false);
+  // };
 
   const currentLang = i18n.language;
 
-  const isMobile = window.innerWidth <= 460
+  const isMobile = window.innerWidth <= 460;
 
   return (
     <>
@@ -80,7 +88,9 @@ const Home = () => {
                 />
               </svg>
               <div className="flex justify-center items-center gap-1">
-                <span className="text-[8px] lg:text-[11px]">{currentLang === "en" ? "EN" : "தமிழ்"}</span>
+                <span className="text-[8px] lg:text-[11px]">
+                  {currentLang === "en" ? "EN" : "தமிழ்"}
+                </span>
                 <svg
                   className="w-3 h-3 group-hover:rotate-180 transition-transform duration-300"
                   fill="none"
@@ -101,7 +111,7 @@ const Home = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="w-full mx-auto relative z-10 md:min-h-dvh flex flex-col justify-center">
+      <div className="w-full mx-auto relative z-10 min-h-dvh flex flex-col justify-center">
         <section className="w-[93%] md:w-[80%] mx-auto  pt-24 pb-20 md:pb-32">
           {/* Floating Status Badge */}
           <div className=" animate-float flex justify-center md:inline-flex items-center gap-3 border border-accet/20 bg-accet/5 backdrop-blur-md rounded-full px-4 py-2 w-fit mb-8">
@@ -129,7 +139,7 @@ const Home = () => {
           <div className="relative mb-8">
             <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-accet/50 via-accet/20 to-transparent rounded-full" />
             <p className="text-neutral-400 max-w-xl  text-[8px] md:text-base leading-relaxed pl-3 md:pl-6 font-light">
-             {t("home.hero.description")}
+              {t("home.hero.description")}
             </p>
           </div>
 
@@ -148,15 +158,15 @@ const Home = () => {
                   <GoLaw className="font-bold icon-glow-subtle" />
                 </div>
                 <div className="text-[6px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
-                   {t("home.features.unbiased")} 
+                  {t("home.features.unbiased")}
                 </div>
               </div>
               <div className="text-center flex flex-col justify-center items-center">
                 <div className="text-[14px] md:text-3xl font-heading font-bold text-accet icon-glow-subtle">
-                 <MdNoEncryption />
+                  <MdNoEncryption />
                 </div>
                 <div className="text-[6px] md:text-xs text-white uppercase tracking-wider mt-1 font-heading">
-                   {t("home.features.encrypted")} 
+                  {t("home.features.encrypted")}
                 </div>
               </div>
             </div>
@@ -190,6 +200,101 @@ const Home = () => {
         </section>
       </div>
 
+      {/* video */}
+      <div className="w-full mx-auto bg-black/30 h-[90dvh] mb-32">
+        <div className="w-[90%] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3">
+          <div className="w-[90%] mx-auto flex flex-col justify-start items-start">
+            <h1 className="font-heading text-[32px] md:text-2xl lg:text-3xl font-bold tracking-tight text-white mb-5 md:mb-6 leading-none drop-shadow-[0px_0px_10px] drop-shadow-accet/70">
+              LUNAI
+            </h1>
+            <p className="text-white text-[14px] font-tamil ">
+              Printers in the 1500s scrambled the words from Cicero's "De
+              Finibus Bonorum et Malorum'' after mixing the words in each
+              sentence. The familiar "lorem ipsum dolor sit amet" text emerged
+              when 16th-century printers adapted Cicero's original work,
+              beginning with the phrase "dolor sit amet consectetur." They
+              abbreviated "dolorem" (meaning "pain") to "lorem," which carries
+              no meaning in Latin. "Ipsum" translates to "itself," and the text
+              frequently includes phrases such as "consectetur adipiscing elit"
+              and "ut labore et dolore." These Latin fragments, derived from
+              Cicero's philosophical treatise, were rearranged to create the
+              standard dummy text that has become a fundamental tool in design
+              and typography across generations.
+            </p>
+            <div className="flex items-center gap-4 md:gap-6 mt-4 md:mt-5">
+              <div className="text-start">
+                <p className="text-base md:text-lg lg:text-xl font-num font-bold text-white">
+                  Ra Origins
+                </p>
+                <p className="text-[8px] md:text-[9px] uppercase tracking-wider text-white/30 font-num">
+                  Founded
+                </p>
+              </div>
+              <div className="w-px h-6 md:h-8 bg-white/10" />
+              <div className="text-end">
+                <p className="text-base md:text-lg lg:text-xl font-heading font-bold text-white">
+                  234
+                </p>
+                <p className="text-[8px] md:text-[9px] uppercase tracking-wider text-white/30 font-heading">
+                  Constituencies
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="h-[90dvh] bg-black flex flex-col justify-center items-center z-50 rounded-[30px] drop-shadow-[0px_0px_20px] drop-shadow-accet/30 overflow-hidden">
+            <video 
+            // ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            loop
+            src="https://res.cloudinary.com/dfgyjzm7c/video/upload/v1768040895/Project_01-08_4__Full_HD_1080p_MEDIUM_FR30__1_lkxlve.mp4"
+            ></video>
+          </div>
+
+          <div className="w-[90%] mx-auto flex flex-col justify-end items-end">
+            <div className="flex items-center gap-4 md:gap-6 mb-6">
+              <div className="text-start">
+                <p className="text-base md:text-lg lg:text-xl font-num font-bold text-white">
+                  Ra Origins
+                </p>
+                <p className="text-[8px] md:text-[9px] uppercase tracking-wider text-white/30 font-num">
+                  Founded
+                </p>
+              </div>
+              <div className="w-px h-6 md:h-8 bg-white/10" />
+              <div className="text-end">
+                <p className="text-base md:text-lg lg:text-xl font-heading font-bold text-white">
+                  234
+                </p>
+                <p className="text-[8px] md:text-[9px] uppercase tracking-wider text-white/30 font-heading">
+                  Constituencies
+                </p>
+              </div>
+            </div>
+            <p className="text-white text-end text-[14px] font-tamil mb-5">
+              Printers in the 1500s scrambled the words from Cicero's "De
+              Finibus Bonorum et Malorum'' after mixing the words in each
+              sentence. The familiar "lorem ipsum dolor sit amet" text emerged
+              when 16th-century printers adapted Cicero's original work,
+              beginning with the phrase "dolor sit amet consectetur." They
+              abbreviated "dolorem" (meaning "pain") to "lorem," which carries
+              no meaning in Latin. "Ipsum" translates to "itself," and the text
+              frequently includes phrases such as "consectetur adipiscing elit"
+              and "ut labore et dolore." These Latin fragments, derived from
+              Cicero's philosophical treatise, were rearranged to create the
+              standard dummy text that has become a fundamental tool in design
+              and typography across generations.
+            </p>
+
+            <h1 className="font-heading text-[32px] md:text-2xl lg:text-3xl font-bold tracking-tight text-white mb-5 md:mb-6 leading-none drop-shadow-[0px_0px_10px] drop-shadow-accet/70">
+              LUNAI
+            </h1>
+          </div>
+        </div>
+      </div>
+
       <section className="max-w-7xl mx-auto px-6 py-5 md:py-10">
         <div className="glass-panel p-6 md:p-16 rounded-sm border-t border-indigo-500/30 text-center relative overflow-hidden">
           {/* Decorative background elements */}
@@ -206,7 +311,7 @@ const Home = () => {
               strokeWidth={1}
             />
             <h2 className="font-heading text-lg md:text-4xl text-white mb-2 md:mb-4 tracking-wide">
-               {t("home.cta.title")}
+              {t("home.cta.title")}
             </h2>
             <p className="text-neutral-400 mb-5 md:mb-10 max-w-lg mx-auto text-[10px] md:text-sm">
               {t("home.cta.description")}
@@ -214,9 +319,10 @@ const Home = () => {
             <div className="flex flex-col sm:flex-row gap-0 max-w-md mx-auto relative group">
               <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 via-cyan-500 to-indigo-500 rounded-sm opacity-30 group-hover:opacity-100 transition duration-500 blur" />
               <button
-                onClick={() =>{
-                  playClick()
-                  navigate("/form")}}
+                onClick={() => {
+                  playClick();
+                  navigate("/form");
+                }}
                 className="relative bg-white text-black font-heading font-semibold text-[9px] md:text-xs md:px-8 md:py-3 px-5 py-2 tracking-widest uppercase hover:bg-neutral-200 transition-colors z-10 flex items-center gap-2 justify-center"
               >
                 {t("home.cta.startButton")} {t("home.cta.votingText")}
@@ -232,7 +338,9 @@ const Home = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between text-[10px] font-heading text-neutral-600">
           <span>{t("home.footer.copyright")}</span>
           <div className="flex items-center gap-4">
-            <span className="hidden sm:inline">{t("home.footer.protocol")}</span>
+            <span className="hidden sm:inline">
+              {t("home.footer.protocol")}
+            </span>
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-accet rounded-full animate-pulse" />
               <span className="text-accet">{t("home.footer.status")}</span>
