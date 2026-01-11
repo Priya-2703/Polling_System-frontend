@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useSound from "use-sound";
 import scifi from "../assets/scifi.wav";
@@ -54,15 +54,17 @@ const Home = () => {
       <nav className="fixed top-0 w-full z-40  bg-black/40 backdrop-blur-xl">
         <div className="w-[90%] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
-            <div className="relative">
-              <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#4C43DD] transition-all duration-500" />
-              <div className="absolute -inset-1.5 border border-accet/30 group-hover:scale-125 transition-transform duration-500" />
+         <Link to={'/user'}>
+            <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
+              <div className="relative">
+                <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#4C43DD] transition-all duration-500" />
+                <div className="absolute -inset-1.5 border border-accet/30 group-hover:scale-125 transition-transform duration-500" />
+              </div>
+              <span className="font-heading text-[10px] md:text-sm tracking-widest text-white font-semibold group-hover:text-accet transition-colors duration-300 uppercase">
+                {t("home.nav.brand")}
+              </span>
             </div>
-            <span className="font-heading text-[10px] md:text-sm tracking-widest text-white font-semibold group-hover:text-accet transition-colors duration-300 uppercase">
-              {t("home.nav.brand")}
-            </span>
-          </div>
+         </Link>
 
           {/* Right Side Controls */}
           <div className="flex items-center">
@@ -171,32 +173,6 @@ const Home = () => {
               </div>
             </div>
           </div>
-
-          {/* Action Buttons */}
-          {/* <div className="flex flex-col md:flex-row gap-6 md:gap-8">
-            <p className="text-center md:text-start mb-4 md:mb-0 font-heading text-[8px] md:text-[12px] uppercase tracking-wider text-white">
-              Powered By{" "}
-            </p>
-            <div className="flex justify-center items-center gap-12 md:gap-14">
-              {sponser.map((item, id) => (
-                <div
-                  key={id}
-                  className="flex items-center gap-3 md:gap-4 group cursor-pointer"
-                >
-                  <div className="relative flex justify-center items-center">
-                    <div className="w-10 h-10 rotate-45 md:w-16 md:h-16 bg-[#ffffff]/10 backdrop-blur-lg group-hover:shadow-[0_0_20px_#6366f1] transition-all duration-500" />
-                    <div className="absolute -inset-1.5 flex justify-center items-center rotate-45 border border-accet/50 group-hover:scale-125 transition-transform duration-500">
-                      <img
-                        src={item.img}
-                        alt="logo"
-                        className="w-6 md:w-10 -rotate-45"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div> */}
         </section>
       </div>
 
@@ -363,35 +339,3 @@ const Home = () => {
 
 export default Home;
 
-{
-  /* <button
-  onClick={() => {
-    playClick();
-    navigate("/form");
-  }}
-  className="btn-cyber group relative px-5 py-3 bg-accet text-white text-[10px] md:text-[12px] font-heading font-light tracking-widest uppercase transition-all duration-300 shadow-[0_0_30px_rgba(99, 102, 241, 0.3)] hover:shadow-[0_0_50px_rgba(99, 102, 241, 0.3)] hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
->
-  <span className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-
-  <span className="relative z-10 flex items-center justify-center gap-2">
-    {t("home.startButton")} {t("home.votingText")}
-    <svg
-      className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M14 5l7 7m0 0l-7 7m7-7H3"
-      />
-    </svg>
-  </span>
-</button>; */
-}
-
-{
-  /* Stats Row */
-}
