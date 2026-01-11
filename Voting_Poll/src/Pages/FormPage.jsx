@@ -380,6 +380,18 @@ const FormPage = () => {
   const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(scifi, { volume: 0.3 });
 
+  useEffect(() => {
+    const setVh = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+    setVh();
+    window.addEventListener('resize', setVh);
+    return () => {
+      window.removeEventListener('resize', setVh);
+    };
+  }, []); 
+
   // ✅ GSAP Refs
   const mainContainerRef = useRef(null);
   const imageLayerRef = useRef(null);
@@ -1104,7 +1116,7 @@ const FormPage = () => {
       {/* ✅ MAIN SCROLL CONTAINER */}
       <div
         ref={mainContainerRef}
-        className="relative h-dvh w-full overflow-hidden"
+        className="relative h-[calc(var(--vh,1vh)*100)] w-full overflow-hidden"
       >
         {/* ═══════════════════════════════════════════════
             ✅ FORM LAYER - BEHIND (z-index: 10)
@@ -1121,7 +1133,7 @@ const FormPage = () => {
             willChange: "transform, opacity",
           }}
         >
-          <div className="h-dvh lg:h-full w-full overflow-hidden lg:overflow-y-auto">
+          <div className="h-[calc(var(--vh,1vh)*100)] lg:h-full w-full overflow-hidden lg:overflow-y-auto">
             <div className="lg:min-h-screen py-8 lg:py-12">
               <div className="container mx-auto px-4">
                 {/* Header */}
@@ -1240,7 +1252,7 @@ const FormPage = () => {
           <img
             src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768047744/ChatGPT_Image_Jan_10_2026_05_39_30_PM_uilkls.png"
             alt="Hero Background"
-            className="w-full h-dvh object-fit"
+            className="w-full h-[calc(var(--vh,1vh)*100)] object-fit"
           />
 
           {/* Dark Overlay */}

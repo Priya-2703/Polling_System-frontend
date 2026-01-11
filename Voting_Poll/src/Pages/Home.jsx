@@ -179,7 +179,7 @@ const Home = () => {
       {/* video */}
       <div className="w-full mx-auto bg-black/30 h-full lg:h-[90dvh] mb-20 lg:mb-32">
         <div className="w-[90%] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3">
-          <div className="w-[90%] mx-auto flex flex-col justify-start items-start">
+          <div className="w-[98%] md:w-[90%] mx-auto flex flex-col justify-start items-start">
             <h1 className="font-heading text-[22px] md:text-2xl lg:text-3xl font-bold tracking-tight text-white mb-3 md:mb-6 leading-none drop-shadow-[0px_0px_10px] drop-shadow-accet/70">
               LUNAI
             </h1>
@@ -229,7 +229,7 @@ const Home = () => {
             ></video>
           </div>
 
-          <div className="w-[90%] mx-auto flex flex-col justify-end items-end mt-3 lg:mt-0">
+          <div className="w-[98%] md:w-[90%] mx-auto flex flex-col justify-end items-end mt-3 lg:mt-0">
             <div className="flex items-center gap-4 md:gap-6 mb-3 md:mb-6">
               <div className="text-start">
                 <p className="text-[12px] md:text-lg lg:text-xl font-num font-bold text-white">
