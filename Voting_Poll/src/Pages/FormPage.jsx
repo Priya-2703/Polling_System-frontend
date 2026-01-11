@@ -378,24 +378,14 @@ const FormPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(scifi, { volume: 0.3 });
-
-  useEffect(() => {
-    const setVh = () => {
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
-    };
-    setVh();
-    window.addEventListener('resize', setVh);
-    return () => {
-      window.removeEventListener('resize', setVh);
-    };
-  }, []); 
+  const [playClick] = useSound(scifi, { volume: 0.3 }); 
 
   // ✅ GSAP Refs
   const mainContainerRef = useRef(null);
   const imageLayerRef = useRef(null);
   const formLayerRef = useRef(null);
+
+  const [fixedHeight, setFixedHeight] = useState(null);
 
   // States
   const [step, setStep] = useState(1);
@@ -428,6 +418,26 @@ const FormPage = () => {
     idNumber: "",
   });
 
+
+  useEffect(() => {
+    // First load la height ah capture panni store pannrom
+    const initialHeight = window.innerHeight;
+    setFixedHeight(initialHeight);
+
+    // Orientation change la mattum update pannrom (optional)
+    const handleOrientationChange = () => {
+      setTimeout(() => {
+        setFixedHeight(window.innerHeight);
+      }, 100);
+    };
+
+    window.addEventListener('orientationchange', handleOrientationChange);
+    
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
+
   // ✅ GSAP ANIMATION - Image Zoom+Fade, Form Reveal from Behind
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -440,11 +450,9 @@ const FormPage = () => {
           scrub: 1.5,
           pin: true,
           anticipatePin: 1,
+            pinSpacing: true,
           onUpdate: (self) => {
-            // Form starts animating at 0.6 of the scroll progress.
-            // We want it interactable once it has started to appear.
             if (self.progress > 0.6) {
-              // Make interactable once the form animation begins
               setIsRevealed(true);
             } else {
               setIsRevealed(false);
@@ -486,7 +494,7 @@ const FormPage = () => {
     }, mainContainerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [fixedHeight]);
 
   // Fetch Caste List
   useEffect(() => {
@@ -1116,7 +1124,11 @@ const FormPage = () => {
       {/* ✅ MAIN SCROLL CONTAINER */}
       <div
         ref={mainContainerRef}
-        className="relative h-[calc(var(--vh,1vh)*100)] w-full overflow-hidden"
+        className="relative w-full overflow-hidden"
+        style={{ 
+          height: fixedHeight ? `${fixedHeight}px` : '100vh',
+          // ✅ Fallback: 100vh use pannrom height set aagum varaikkum
+        }}
       >
         {/* ═══════════════════════════════════════════════
             ✅ FORM LAYER - BEHIND (z-index: 10)
@@ -1129,11 +1141,14 @@ const FormPage = () => {
             isRevealed ? "" : "pointer-events-none"
           }`}
           style={{
+             height: fixedHeight ? `${fixedHeight}px` : '100vh',
             transformOrigin: "center center",
             willChange: "transform, opacity",
           }}
         >
-          <div className="h-[calc(var(--vh,1vh)*100)] lg:h-full w-full overflow-hidden lg:overflow-y-auto">
+          <div className="lg:h-full w-full overflow-hidden lg:overflow-y-auto"
+          style={{ height: fixedHeight ? `${fixedHeight}px` : '100vh' }}
+          >
             <div className="lg:min-h-screen py-8 lg:py-12">
               <div className="container mx-auto px-4">
                 {/* Header */}
@@ -1244,6 +1259,7 @@ const FormPage = () => {
           ref={imageLayerRef}
           className="absolute bottom-0 inset-0 z-20 pointer-events-none overflow-hidden"
           style={{
+            height: fixedHeight ? `${fixedHeight}px` : '100vh',
             transformOrigin: "center center",
             willChange: "transform, opacity",
           }}
@@ -1252,7 +1268,8 @@ const FormPage = () => {
           <img
             src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768047744/ChatGPT_Image_Jan_10_2026_05_39_30_PM_uilkls.png"
             alt="Hero Background"
-            className="w-full h-[calc(var(--vh,1vh)*100)] object-fit"
+            className="w-full object-fit"
+            style={{ height: fixedHeight ? `${fixedHeight}px` : '100vh' }}
           />
 
           {/* Dark Overlay */}
