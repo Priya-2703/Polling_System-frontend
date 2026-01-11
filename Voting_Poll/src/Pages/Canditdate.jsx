@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SwiperCard from "../Components/SwiperCard";
 import useSound from "use-sound";
@@ -10,6 +10,7 @@ const Candidate = () => {
   const { t } = useTranslation();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
+
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isVoting, setIsVoting] = useState(false);
 
@@ -87,11 +88,15 @@ const Candidate = () => {
 
     setIsVoting(true);
     playClick();
+
+      localStorage.setItem("voter_status", "candidate_selected");
+
     setTimeout(() => {
       navigate("/thanks", {
         state: {
           candidate: selectedCandidate,
         },
+         replace: true,
       });
     }, 500);
   };

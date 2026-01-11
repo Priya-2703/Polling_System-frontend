@@ -50,7 +50,7 @@ const Thanks = () => {
   // Get selected candidate from navigation state
   const selectedCandidate = location.state?.candidate || {
     id: 1,
-    name: "M.K. Stalin",
+    name: "NO one",
     leader_img:
       "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767350158/d971ca4cf51445e099353789a35beef7_g5ill3.jpg",
   };

@@ -1,4 +1,3 @@
-// src/Pages/QnA.jsx
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,15 +12,13 @@ const QnA = () => {
   const [playClick] = useSound(scifi, { volume: 0.3 });
   const location = useLocation();
   const navigate = useNavigate();
-  const selectedCandidate = location.state?.candidate;
-
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [selectedOption, setSelectedOption] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
-  const [otherText, setOtherText] = useState(""); // 👈 "Others" input text state
+  const [otherText, setOtherText] = useState(""); 
 
   const questions = [
     {
@@ -152,11 +149,6 @@ const QnA = () => {
     },
   ];
 
-  useEffect(() => {
-    if (!selectedCandidate) {
-      navigate("/vote", { replace: true });
-    }
-  }, [selectedCandidate, navigate]);
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const question = questions[currentQuestion];
@@ -188,13 +180,11 @@ const QnA = () => {
 
   const handleNext = () => {
     playClick()
-    // Validation
     if (!selectedOption) {
       setShowError(true);
       return;
     }
 
-    // If "Other" is selected, check if text is entered
     if (isOtherSelected() && !otherText.trim()) {
       setShowError(true);
       return;
@@ -202,7 +192,6 @@ const QnA = () => {
 
     if (isAnimating || isCompleting) return;
 
-    // Store answer - if "Other", store the custom text
     const answerValue = isOtherSelected() 
       ? { type: "other", text: otherText.trim() }
       : { type: "option", value: selectedOption };
@@ -214,11 +203,8 @@ const QnA = () => {
     setAnswers(updatedAnswers);
 
     if (isLastQuestion) {
+      localStorage.setItem("voter_status", "survey_completed");
       navigate("/candidate", {
-        state: {
-          candidate: selectedCandidate,
-          answers: updatedAnswers,
-        },
         replace: true,
       });
       return;
@@ -284,34 +270,6 @@ const QnA = () => {
     }
   };
 
-  if (!selectedCandidate) {
-    return (
-      <div className="min-h-dvh h-dvh bg-black flex items-center justify-center">
-        <div className="text-center">
-          <svg
-            className="animate-spin h-10 w-10 text-accet mx-auto mb-4"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-              fill="none"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            />
-          </svg>
-          <p className="text-white/50">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
 
   const renderAllianceImages = (images, isSelected) => {
     return (
@@ -435,7 +393,7 @@ const QnA = () => {
         <div className="flex-1 flex flex-col py-4 px-4 min-h-0">
           {/* Header with Candidate Info */}
           <div className="shrink-0 mb-4 mt-3">
-            <div className="flex items-center justify-center gap-2 mb-4">
+            {/* <div className="flex items-center justify-center gap-2 mb-4">
               <img
                 src={selectedCandidate.party_logo}
                 alt={selectedCandidate.party}
@@ -447,7 +405,7 @@ const QnA = () => {
                   <span className="font-bold">{selectedCandidate.name}</span>
                 </span>
               </div>
-            </div>
+            </div> */}
 
             {/* Progress Section */}
             <div className="relative max-w-md lg:max-w-[50%] mx-auto mt-4 lg:mt-8">

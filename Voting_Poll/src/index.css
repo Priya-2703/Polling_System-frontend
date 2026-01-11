@@ -3,6 +3,7 @@
 
 @theme {
   --font-heading: "Orbitron", sans-serif ; /* "Geologica", sans-serif , "Orbitron", sans-serif */
+  --font-num: "Orbitron", sans-serif ; /* "Geologica", sans-serif , "Orbitron", sans-serif */
   --font-body: "Exo 2", sans-serif ; /* "Geologica", sans-serif , "Exo 2", sans-serif */
   --font-tamil: "Anek Tamil", sans-serif ; 
   --color-accet: #4C43DD;   
