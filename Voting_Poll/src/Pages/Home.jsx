@@ -39,9 +39,9 @@ const Home = () => {
   //   }
   // }, []);
 
-  // const handleClose = () => {
-  //   setShowLangDialog(false);
-  // };
+  const handleClose = () => {
+    setShowLangDialog(false);
+  };
 
   const currentLang = i18n.language;
 
@@ -115,7 +115,7 @@ const Home = () => {
       <div className="w-full mx-auto relative z-10 h-[80dvh] lg:min-h-dvh flex flex-col justify-center">
         <section className="w-[93%] md:w-[80%] mx-auto  pt-24 pb-20 md:pb-32">
           {/* Floating Status Badge */}
-          <div className=" animate-float flex justify-center md:inline-flex items-center gap-3 border border-accet/20 bg-accet/5 backdrop-blur-md rounded-full px-4 py-2 w-fit mb-8">
+          <div className=" animate-float flex justify-center md:inline-flex items-center gap-3 border border-accet/20 bg-accet/5 backdrop-blur-md rounded-full px-4 py-2 w-fit mb-2">
             <div className="relative">
               <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full animate-ping absolute" />
               <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full relative" />

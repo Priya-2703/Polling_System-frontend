@@ -81,7 +81,7 @@ const PrivacyPolicy = () => {
           <button
             onClick={() => {
               playClick();
-              navigate("/");
+              navigate("/form");
             }}
             className="flex items-center gap-2 md:gap-3 group cursor-pointer"
           >

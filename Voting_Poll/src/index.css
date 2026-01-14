@@ -21,24 +21,24 @@
  font-family: "Anek Tamil", sans-serif !important;
 }
 
-.ta-lang .text-\[6px\] { font-size: 7px !important; }
-.ta-lang .text-\[7px\] { font-size: 8px !important; }
-.ta-lang .text-\[8px\] { font-size: 9px !important; }
-.ta-lang .text-\[9px\] { font-size: 10px !important; }
-.ta-lang .text-\[10px\] { font-size: 11px !important; }
-.ta-lang .text-\[11px\] { font-size: 12px !important; }
-.ta-lang .text-\[12px\] { font-size: 13px !important; }
-.ta-lang .text-\[13px\] { font-size: 14px !important; }
-.ta-lang .text-\[14px\] { font-size: 15px !important; }
-.ta-lang .text-\[15px\] { font-size: 16px !important; }
-.ta-lang .text-\[16px\] { font-size: 17px !important; }
+.ta-lang .text-\[6px\] { font-size: 8px !important; }
+.ta-lang .text-\[7px\] { font-size: 9px !important; }
+.ta-lang .text-\[8px\] { font-size: 10px !important; }
+.ta-lang .text-\[9px\] { font-size: 11px !important; }
+.ta-lang .text-\[10px\] { font-size: 12px !important; }
+.ta-lang .text-\[11px\] { font-size: 13px !important; }
+.ta-lang .text-\[12px\] { font-size: 14px !important; }
+.ta-lang .text-\[13px\] { font-size: 15px !important; }
+.ta-lang .text-\[14px\] { font-size: 16px !important; }
+.ta-lang .text-\[15px\] { font-size: 17px !important; }
+.ta-lang .text-\[16px\] { font-size: 18px !important; }
 
 /* Standard Tailwind Classes */
-.ta-lang .text-xs { font-size: 13px !important; } /* Usually 12px -> 14px */
-.ta-lang .text-sm { font-size: 15px !important; } /* Usually 14px -> 16px */
-.ta-lang .text-base { font-size: 17px !important; } /* Usually 16px -> 18px */
-.ta-lang .text-lg { font-size: 18px !important; }
-.ta-lang .text-xl { font-size: 21px !important; }
+.ta-lang .text-xs { font-size: 14px !important; } /* Usually 12px -> 14px */
+.ta-lang .text-sm { font-size: 16px !important; } /* Usually 14px -> 16px */
+.ta-lang .text-base { font-size: 18px !important; } /* Usually 16px -> 18px */
+.ta-lang .text-lg { font-size: 20px !important; }
+.ta-lang .text-xl { font-size: 24px !important; }
 
 
 /* src/index.css */

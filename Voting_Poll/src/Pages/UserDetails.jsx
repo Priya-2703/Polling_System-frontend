@@ -10,6 +10,7 @@ import {
   MdFingerprint,
   MdVerifiedUser,
   MdCheck,
+  MdCalendarToday,
 } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import DistrictMapPicker from "../Components/DistrictMapPicker";
@@ -356,7 +357,7 @@ const SuccessModal = ({ trackerId, onContinue }) => (
   </div>
 );
 
-// --- ✅ CLICK INDICATOR (Changed from ScrollIndicator) ---
+// --- ✅ CLICK INDICATOR ---
 const ClickIndicator = ({ onClick, isAnimating }) => (
   <div className="absolute bottom-16 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-30">
     <button
@@ -364,40 +365,45 @@ const ClickIndicator = ({ onClick, isAnimating }) => (
       disabled={isAnimating}
       className="group cursor-pointer disabled:cursor-not-allowed flex flex-col items-center gap-5"
     >
-      {/* Minimal text */}
       <span className="text-white/50 text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-heading group-hover:text-white/80 transition-colors duration-500">
         Enter
       </span>
 
-      {/* Animated Line with Circle */}
       <div className="relative flex flex-col items-center">
-        {/* Top line */}
         <div className="w-[1px] h-8 bg-gradient-to-b from-transparent via-white/20 to-white/40 group-hover:via-accet/30 group-hover:to-accet/60 transition-colors duration-500" />
-        
-        {/* Center circle */}
+
         <div className="relative my-2">
-          {/* Outer ring */}
-          <div className="absolute -inset-2 rounded-full border border-white/10 group-hover:border-accet/30 group-hover:scale-125 transition-all duration-500" />
-          
-          {/* Main circle */}
+          <div className="absolute -inset-2 rounded-full border border-white/10 group-hover:border-accet/50 group-hover:scale-125 transition-all duration-500" />
+
           <div className="w-10 h-10 rounded-full border border-white/20 group-hover:border-accet/50 bg-black/30 backdrop-blur-sm flex items-center justify-center transition-all duration-300 group-hover:bg-accet/10 group-active:scale-90">
             {isAnimating ? (
-              <div className="w-4 h-4 border border-accet/30 border-t-accet rounded-full animate-spin" />
+              <div className="border border-accet/30 border-t-accet rounded-full animate-spin">
+                <img
+                  src="https://ik.imagekit.io/saransk03/Voting%20Poll/Photoroom-20251227_104203323.png?updatedAt=1766832650714"
+                  alt="vote"
+                  className="w-9"
+                />
+              </div>
             ) : (
-              <div className="w-2 h-2 rounded-full bg-white/40 group-hover:bg-accet group-hover:shadow-lg group-hover:shadow-accet/50 transition-all duration-300" />
+              <div className="border border-white/30 rounded-full group-hover:border-accet/50">
+                <img
+                  src="https://ik.imagekit.io/saransk03/Voting%20Poll/Photoroom-20251227_104203323.png?updatedAt=1766832650714"
+                  alt="vote"
+                  className="w-10"
+                />
+              </div>
             )}
           </div>
         </div>
 
-        {/* Bottom animated dots */}
         <div className="flex flex-col items-center gap-1 mt-1">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
               className="w-[2px] h-[2px] rounded-full bg-white/20 group-hover:bg-accet/60 transition-all duration-300 animate-pulse"
-              style={{ 
+              style={{
                 animationDelay: `${i * 200}ms`,
-                opacity: 1 - (i * 0.2)
+                opacity: 1 - i * 0.2,
               }}
             />
           ))}
@@ -407,77 +413,192 @@ const ClickIndicator = ({ onClick, isAnimating }) => (
   </div>
 );
 
+// ========================================
+// ✅ PAN CARD VALIDATION HELPER
+// ========================================
+const validatePAN = (pan) => {
+  // PAN Format: AAAAA9999A (5 letters + 4 numbers + 1 letter)
+  const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+  return panRegex.test(pan);
+};
 
-// hexagonal button
-// const ClickIndicator = ({ onClick, isAnimating }) => (
-//   <div className="absolute bottom-16 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-30">
-//     <button
-//       onClick={onClick}
-//       disabled={isAnimating}
-//       className="group cursor-pointer disabled:cursor-not-allowed flex flex-col items-center gap-3"
-//     >
-//       <div className="relative">
-//         <svg className="absolute -inset-4 w-24 h-24 md:w-28 md:h-28 opacity-0 group-hover:opacity-100 transition-opacity duration-500" viewBox="0 0 100 100">
-//           <polygon 
-//             points="50,2 95,25 95,75 50,98 5,75 5,25" 
-//             fill="none" 
-//             stroke="url(#hexGlow)" 
-//             strokeWidth="1"
-//             className="animate-pulse"
-//           />
-//           <defs>
-//             <linearGradient id="hexGlow" x1="0%" y1="0%" x2="100%" y2="100%">
-//               <stop offset="0%" stopColor="#00D4FF" stopOpacity="0.3"/>
-//               <stop offset="100%" stopColor="#6366F1" stopOpacity="0.3"/>
-//             </linearGradient>
-//           </defs>
-//         </svg>
+const formatPANInput = (value) => {
+  // Remove all non-alphanumeric characters
+  let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
 
-//         <svg className="w-16 h-16 md:w-20 md:h-20 group-hover:scale-105 transition-transform duration-300" viewBox="0 0 100 100">
-//           <polygon 
-//             points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" 
-//             fill="rgba(0,0,0,0.5)"
-//             stroke="url(#hexBorder)" 
-//             strokeWidth="2"
-//             className="group-hover:fill-[rgba(0,212,255,0.1)] transition-all duration-300"
-//           />
-//           <defs>
-//             <linearGradient id="hexBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-//               <stop offset="0%" stopColor="rgba(255,255,255,0.2)"/>
-//               <stop offset="50%" stopColor="rgba(0,212,255,0.5)"/>
-//               <stop offset="100%" stopColor="rgba(99,102,241,0.5)"/>
-//             </linearGradient>
-//           </defs>
-//         </svg>
+  // Apply format constraints
+  let formatted = "";
 
-//         <div className="absolute inset-0 flex items-center justify-center">
-//           {isAnimating ? (
-//             <div className="w-5 h-5 border-2 border-accet/30 border-t-accet rounded-full animate-spin" />
-//           ) : (
-//             <svg 
-//               className="w-5 h-5 md:w-6 md:h-6 text-white/70 group-hover:text-accet transition-colors duration-300"
-//               fill="currentColor" 
-//               viewBox="0 0 24 24"
-//             >
-//               <path d="M8 5v14l11-7z"/>
-//             </svg>
-//           )}
-//         </div>
-//       </div>
+  for (let i = 0; i < cleaned.length && i < 10; i++) {
+    if (i < 5) {
+      // First 5 characters must be letters
+      if (/[A-Z]/.test(cleaned[i])) {
+        formatted += cleaned[i];
+      }
+    } else if (i >= 5 && i < 9) {
+      // Next 4 characters must be numbers
+      if (/[0-9]/.test(cleaned[i])) {
+        formatted += cleaned[i];
+      }
+    } else if (i === 9) {
+      // Last character must be a letter
+      if (/[A-Z]/.test(cleaned[i])) {
+        formatted += cleaned[i];
+      }
+    }
+  }
 
-//       <div className="flex flex-col items-center">
-//         <span className="text-[8px] md:text-[9px] text-white/30 uppercase tracking-[0.4em] font-mono">
-//           initialize
-//         </span>
-//         <span className="text-[10px] md:text-[11px] text-white/60 uppercase tracking-widest font-heading group-hover:text-accet transition-colors duration-300">
-//           Continue
-//         </span>
-//       </div>
-//     </button>
-//   </div>
-// );
+  return formatted;
+};
 
+// ========================================
+// ✅ DRIVING LICENSE VALIDATION HELPER
+// ========================================
+const formatDLInput = (value) => {
+  // Format: TN00 0000 0000000 or similar state codes
+  let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+  return cleaned.slice(0, 16);
+};
 
+// ========================================
+// ✅ DATE INPUT COMPONENT FOR DOB
+// ========================================
+const DateInput = ({ value, onChange, placeholder }) => {
+  const [day, setDay] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+
+  const dayRef = useRef(null);
+  const monthRef = useRef(null);
+  const yearRef = useRef(null);
+
+  useEffect(() => {
+    if (value) {
+      const parts = value.split("-");
+      if (parts.length === 3) {
+        setDay(parts[0]);
+        setMonth(parts[1]);
+        setYear(parts[2]);
+      }
+    }
+  }, []);
+
+  const updateParent = (d, m, y) => {
+    if (d && m && y && y.length === 4) {
+      onChange(`${d}-${m}-${y}`);
+    } else {
+      onChange("");
+    }
+  };
+
+  const handleDayChange = (e) => {
+    let val = e.target.value.replace(/\D/g, "").slice(0, 2);
+    if (parseInt(val) > 31) val = "31";
+    setDay(val);
+    updateParent(val, month, year);
+    if (val.length === 2) monthRef.current?.focus();
+  };
+
+  const handleMonthChange = (e) => {
+    let val = e.target.value.replace(/\D/g, "").slice(0, 2);
+    if (parseInt(val) > 12) val = "12";
+    setMonth(val);
+    updateParent(day, val, year);
+    if (val.length === 2) yearRef.current?.focus();
+  };
+
+  const handleYearChange = (e) => {
+    let val = e.target.value.replace(/\D/g, "").slice(0, 4);
+    setYear(val);
+    updateParent(day, month, val);
+  };
+
+  const handleKeyDown = (e, field) => {
+    if (e.key === "Backspace" && e.target.value === "") {
+      if (field === "month") dayRef.current?.focus();
+      if (field === "year") monthRef.current?.focus();
+    }
+  };
+
+  const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
+  const isValidDate = () => {
+    if (!isComplete) return false;
+    const d = parseInt(day);
+    const m = parseInt(month);
+    const y = parseInt(year);
+    const currentYear = new Date().getFullYear();
+    if (y < 1900 || y > currentYear) return false;
+    if (m < 1 || m > 12) return false;
+    if (d < 1 || d > 31) return false;
+    return true;
+  };
+
+  return (
+    <div className="relative bg-shade border border-white/20 md:px-4 py-2.5 md:py-3 px-3 group-hover:border-accet/30 transition-colors">
+      <div className="flex items-center gap-2">
+        <MdCalendarToday className="text-white/40 text-sm shrink-0" />
+        <div className="flex items-center gap-1">
+          <input
+            ref={dayRef}
+            type="text"
+            value={day}
+            onChange={handleDayChange}
+            placeholder="DD"
+            className="w-8 bg-transparent text-white font-body text-[12px] lg:text-[14px] outline-none placeholder:text-white/30 text-center"
+            maxLength={2}
+          />
+          <span className="text-white/30">/</span>
+          <input
+            ref={monthRef}
+            type="text"
+            value={month}
+            onChange={handleMonthChange}
+            onKeyDown={(e) => handleKeyDown(e, "month")}
+            placeholder="MM"
+            className="w-8 bg-transparent text-white font-body text-[12px] lg:text-[14px] outline-none placeholder:text-white/30 text-center"
+            maxLength={2}
+          />
+          <span className="text-white/30">/</span>
+          <input
+            ref={yearRef}
+            type="text"
+            value={year}
+            onChange={handleYearChange}
+            onKeyDown={(e) => handleKeyDown(e, "year")}
+            placeholder="YYYY"
+            className="w-12 bg-transparent text-white font-body text-[12px] lg:text-[14px] outline-none placeholder:text-white/30 text-center"
+            maxLength={4}
+          />
+        </div>
+
+        {/* Validation indicator */}
+        {isComplete && (
+          <div className="ml-auto">
+            {isValidDate() ? (
+              <MdCheck className="text-green-500 text-lg" />
+            ) : (
+              <span className="text-red-500 text-sm">✕</span>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Progress bar */}
+      <div className="mt-2 flex items-center gap-2">
+        <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-300 ${
+              isComplete && isValidDate() ? "bg-green-500" : "bg-accet"
+            }`}
+            style={{
+              width: `${((day.length + month.length + year.length) / 8) * 100}%`,
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // ========================================
 // ✅ MAIN COMPONENT
@@ -492,7 +613,7 @@ const UserDetails = () => {
   const mainContainerRef = useRef(null);
   const imageLayerRef = useRef(null);
   const formLayerRef = useRef(null);
-  const animationTlRef = useRef(null); // ✅ NEW: Timeline ref for button click
+  const animationTlRef = useRef(null);
 
   const [fixedHeight, setFixedHeight] = useState(null);
 
@@ -504,7 +625,7 @@ const UserDetails = () => {
   const [direction, setDirection] = useState("next");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false); // ✅ NEW: Animation state
+  const [isAnimating, setIsAnimating] = useState(false);
 
   // API States
   const [casteList, setCasteList] = useState([]);
@@ -514,6 +635,7 @@ const UserDetails = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [trackerId, setTrackerId] = useState(null);
 
+  // ✅ Updated formData with dob field
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
@@ -526,6 +648,7 @@ const UserDetails = () => {
     community: "",
     idType: "",
     idNumber: "",
+    dob: "", 
   });
 
   useEffect(() => {
@@ -545,12 +668,11 @@ const UserDetails = () => {
     };
   }, []);
 
-  // ✅ GSAP ANIMATION - Button Click Triggered (No ScrollTrigger)
+  // ✅ GSAP ANIMATION
   useEffect(() => {
     if (!fixedHeight) return;
 
     const ctx = gsap.context(() => {
-      // ✅ Create timeline but DON'T play automatically (paused: true)
       const tl = gsap.timeline({
         paused: true,
         onStart: () => {
@@ -562,7 +684,6 @@ const UserDetails = () => {
         },
       });
 
-      // ✅ IMAGE: Zoom IN + Fade OUT
       tl.to(
         imageLayerRef.current,
         {
@@ -575,7 +696,6 @@ const UserDetails = () => {
         0
       );
 
-      // ✅ FORM: Scale UP from center + Fade IN (from behind)
       tl.fromTo(
         formLayerRef.current,
         {
@@ -591,17 +711,15 @@ const UserDetails = () => {
         0.4
       );
 
-      // ✅ Store timeline in ref for button click access
       animationTlRef.current = tl;
     }, mainContainerRef);
 
     return () => ctx.revert();
   }, [fixedHeight]);
 
-  // ✅ NEW: Handle Continue Button Click
   const handleContinueClick = () => {
     if (animationTlRef.current && !isAnimating && !isRevealed) {
-      playClick(); // Play sound
+      playClick();
       animationTlRef.current.play();
     }
   };
@@ -637,7 +755,7 @@ const UserDetails = () => {
     },
   ];
   const subtitle = [
-    { label: "Establish your identity" || t("sections.location") },
+    { label: "Establish your identity" },
     { label: "Map your background" },
     { label: "Contact & Community details" },
     { label: "Final verification step" },
@@ -660,10 +778,7 @@ const UserDetails = () => {
 
   const religions = [
     { value: "hindu", label: t("options.religions.hindu") || "Hindu" },
-    {
-      value: "christian",
-      label: t("options.religions.christian") || "Christian",
-    },
+    { value: "christian", label: t("options.religions.christian") || "Christian" },
     { value: "muslim", label: t("options.religions.muslim") || "Muslim" },
     { value: "others", label: t("options.religions.others") || "Others" },
   ];
@@ -671,65 +786,57 @@ const UserDetails = () => {
   const motherTongues = [
     { value: "tamil", label: t("options.languages.tamil") || "Tamil" },
     { value: "telugu", label: t("options.languages.telugu") || "Telugu" },
-    {
-      value: "malayalam",
-      label: t("options.languages.malayalam") || "Malayalam",
-    },
+    { value: "malayalam", label: t("options.languages.malayalam") || "Malayalam" },
     { value: "kannada", label: t("options.languages.kannada") || "Kannada" },
     { value: "hindi", label: t("options.languages.hindi") || "Hindi" },
     { value: "others", label: t("options.languages.others") || "Others" },
   ];
 
   const communities = [
-    {
-      value: "bc",
-      label: "BC",
-      full: t("options.communities.bc") || "Backward Class",
-    },
-    {
-      value: "mbc",
-      label: "MBC",
-      full: t("options.communities.mbc") || "Most Backward",
-    },
-    {
-      value: "fc",
-      label: "FC",
-      full: t("options.communities.fc") || "Forward Class",
-    },
-    {
-      value: "sc",
-      label: "SC",
-      full: t("options.communities.sc") || "Scheduled Caste",
-    },
-    {
-      value: "st",
-      label: "ST",
-      full: t("options.communities.st") || "Scheduled Tribe",
-    },
+    { value: "bc", label: "BC", full: t("options.communities.bc") || "Backward Class" },
+    { value: "mbc", label: "MBC", full: t("options.communities.mbc") || "Most Backward" },
+    { value: "fc", label: "FC", full: t("options.communities.fc") || "Forward Class" },
+    { value: "sc", label: "SC", full: t("options.communities.sc") || "Scheduled Caste" },
+    { value: "st", label: "ST", full: t("options.communities.st") || "Scheduled Tribe" },
     { value: "obc", label: "OBC", full: "Other Backward" },
   ];
 
+  // ✅ UPDATED: ID Types with PAN Card instead of Aadhar
   const idTypes = [
     {
-      value: "aadhar",
-      label: t("options.ids.aadhar") || "Aadhar Card",
-      placeholder: "XXXX XXXX XXXX",
-      maxLength: 12,
+      value: "pan",
+      label: t("options.ids.pan") || "PAN Card",
+      placeholder: "ABCDE1234F",
+      maxLength: 10,
+      description: "5 Letters + 4 Numbers + 1 Letter",
     },
     {
       value: "driving",
       label: t("options.ids.driving") || "Driving License",
-      placeholder: "TN-00-0000-0000000",
+      placeholder: "TN0020230000000",
       maxLength: 16,
+      description: "License Number + DOB Required",
     },
   ];
 
   // Handlers
   const handleChange = (name, value) => {
-    Click();
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ UPDATED: Handle PAN input with proper formatting
+  const handlePANChange = (value) => {
+    const formatted = formatPANInput(value);
+    handleChange("idNumber", formatted);
+  };
+
+  // ✅ UPDATED: Handle DL input
+  const handleDLChange = (value) => {
+    const formatted = formatDLInput(value);
+    handleChange("idNumber", formatted);
+  };
+
+  // ✅ UPDATED: Step 4 validation
   const isStepValid = () => {
     switch (step) {
       case 1:
@@ -737,14 +844,71 @@ const UserDetails = () => {
       case 2:
         return formData.district && formData.religion && formData.motherTongue;
       case 3:
-        return (
-          formData.community && formData.caste && formData.phone.length === 10
-        );
+        return formData.community && formData.caste && formData.phone.length === 10;
       case 4:
-        return formData.idType && formData.idNumber.length > 4 && agreed;
+        if (!formData.idType || !agreed) return false;
+
+        if (formData.idType === "pan") {
+          // PAN validation: 5 letters + 4 numbers + 1 letter
+          return validatePAN(formData.idNumber);
+        }
+
+        if (formData.idType === "driving") {
+          // DL requires license number (min 10 chars) + valid DOB
+          const dlValid = formData.idNumber.length >= 10;
+          const dobParts = formData.dob.split("-");
+          const dobValid =
+            dobParts.length === 3 &&
+            dobParts[0].length === 2 &&
+            dobParts[1].length === 2 &&
+            dobParts[2].length === 4;
+          return dlValid && dobValid;
+        }
+
+        return false;
       default:
         return false;
     }
+  };
+
+  // ✅ Get validation status for real-time feedback
+  const getPANValidationStatus = () => {
+    const pan = formData.idNumber;
+    if (!pan) return { valid: false, message: "", progress: 0 };
+
+    const lettersPart = pan.slice(0, 5);
+    const numbersPart = pan.slice(5, 9);
+    const lastLetter = pan.slice(9, 10);
+
+    let progress = 0;
+    let message = "";
+
+    // Check first 5 letters
+    const validLetters = /^[A-Z]{0,5}$/.test(lettersPart);
+    if (lettersPart.length < 5) {
+      message = `Enter ${5 - lettersPart.length} more letter(s)`;
+      progress = (lettersPart.length / 10) * 100;
+    } else if (lettersPart.length === 5 && numbersPart.length < 4) {
+      message = `Enter ${4 - numbersPart.length} more number(s)`;
+      progress = ((5 + numbersPart.length) / 10) * 100;
+    } else if (numbersPart.length === 4 && !lastLetter) {
+      message = "Enter last letter";
+      progress = 90;
+    } else if (pan.length === 10) {
+      if (validatePAN(pan)) {
+        message = "Valid PAN";
+        progress = 100;
+      } else {
+        message = "Invalid format";
+        progress = 100;
+      }
+    }
+
+    return {
+      valid: validatePAN(pan),
+      message,
+      progress,
+    };
   };
 
   const handleNext = () => {
@@ -771,6 +935,7 @@ const UserDetails = () => {
       const registrationData = {
         idType: formData.idType,
         idNumber: formData.idNumber,
+        ...(formData.idType === "driving" && { dob: formData.dob }), // ✅ Include DOB for DL
         gender: formData.gender,
         age: formData.age,
         district: formData.district,
@@ -813,10 +978,7 @@ const UserDetails = () => {
     switch (step) {
       case 1:
         return (
-          <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
-            key="step1"
-          >
+          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step1">
             <SectionTitle
               icon={<HiMiniUser className="text-gray-900 text-sm" />}
               title={t("sections.personal")}
@@ -899,10 +1061,7 @@ const UserDetails = () => {
 
       case 2:
         return (
-          <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
-            key="step2"
-          >
+          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step2">
             <SectionTitle
               icon={<MdLocationOn className="text-gray-900 text-sm" />}
               title={t("sections.location")}
@@ -990,10 +1149,7 @@ const UserDetails = () => {
 
       case 3:
         return (
-          <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
-            key="step3"
-          >
+          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step3">
             <SectionTitle
               icon={<HiPhone className="text-gray-900 text-sm" />}
               title={t("sections.contact")}
@@ -1026,9 +1182,7 @@ const UserDetails = () => {
                     <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${
-                          formData.phone.length === 10
-                            ? "bg-green-500"
-                            : "bg-accet"
+                          formData.phone.length === 10 ? "bg-green-500" : "bg-accet"
                         }`}
                         style={{
                           width: `${(formData.phone.length / 10) * 100}%`,
@@ -1092,21 +1246,21 @@ const UserDetails = () => {
           </div>
         );
 
+      // ✅ UPDATED STEP 4 - PAN Card & Driving License with DOB
       case 4:
+        const panStatus = getPANValidationStatus();
+
         return (
-          <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
-            key="step4"
-          >
+          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step4">
             <SectionTitle
               icon={<MdVerifiedUser className="text-gray-900 text-sm" />}
               title={t("sections.idVerification")}
               subtitle="Final verification step"
             />
 
-            {/* ID Type */}
+            {/* ID Type Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.idType")}
               </label>
               <div className="grid grid-cols-2 gap-1.5 lg:gap-3">
@@ -1115,45 +1269,168 @@ const UserDetails = () => {
                     key={id.value}
                     onClick={() => {
                       handleChange("idType", id.value);
-                      setFormData((prev) => ({ ...prev, idNumber: "" }));
+                      setFormData((prev) => ({ ...prev, idNumber: "", dob: "" }));
                     }}
-                    className={`py-2.5 md:p-5 border backdrop-blur-xl text-center transition-all duration-300 ${
+                    className={`py-3 md:p-5 border backdrop-blur-xl text-center transition-all flex flex-col justify-center gap-1 items-center duration-300 ${
                       formData.idType === id.value
                         ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[9px] lg:text-[11px] font-heading uppercase tracking-widest">
+                    <span className="text-[10px] lg:text-[12px] font-heading uppercase tracking-widest font-bold">
                       {id.label}
+                    </span>
+                    <span className="text-[7px] lg:text-[9px] text-white/50 font-body">
+                      {id.description}
                     </span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* ID Number */}
-            {formData.idType && (
+            {/* ═══════════════════════════════════════════════
+                ✅ PAN CARD INPUT WITH VALIDATION
+            ═══════════════════════════════════════════════ */}
+            {formData.idType === "pan" && (
               <div className="relative group animate-fadeIn">
-                <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block">
-                  {formData.idType === "aadhar"
-                    ? t("labels.aadharNumber")
-                    : t("labels.dlNumber")}
+                <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                  PAN Card Number
                 </label>
-                <div className="relative bg-shade border border-white/20 md:px-4 py-2 md:py-3 px-3 group-hover:border-accet/30 transition-colors">
-                  <input
-                    type="text"
-                    value={formData.idNumber}
-                    onChange={(e) => handleChange("idNumber", e.target.value)}
-                    placeholder={
-                      idTypes.find((id) => id.value === formData.idType)
-                        ?.placeholder
-                    }
-                    maxLength={
-                      idTypes.find((id) => id.value === formData.idType)
-                        ?.maxLength
-                    }
-                    className="w-full bg-transparent text-white font-body text-[10px] md:text-[14px] outline-none placeholder:text-white/30 tracking-widest uppercase"
+                <div
+                  className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
+                    panStatus.valid
+                      ? "border-green-500/50"
+                      : formData.idNumber
+                      ? "border-accet/50"
+                      : "border-white/20 group-hover:border-accet/30"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="text"
+                      value={formData.idNumber}
+                      onChange={(e) => handlePANChange(e.target.value)}
+                      placeholder="ABCDE1234F"
+                      maxLength={10}
+                      className="w-full bg-transparent text-white font-mono text-[12px] md:text-[16px] outline-none placeholder:text-white/30 tracking-[0.3em] uppercase"
+                    />
+                    {formData.idNumber && (
+                      <div className="shrink-0">
+                        {panStatus.valid ? (
+                          <MdCheck className="text-green-500 text-xl" />
+                        ) : (
+                          <span className="text-white/40 text-sm">
+                            {formData.idNumber.length}/10
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Progress & Hint */}
+                  {formData.idNumber && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300 ${
+                              panStatus.valid ? "bg-green-500" : "bg-accet"
+                            }`}
+                            style={{ width: `${panStatus.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                      <p
+                        className={`text-[8px] md:text-[10px] font-body ${
+                          panStatus.valid ? "text-green-400" : "text-white/50"
+                        }`}
+                      >
+                        {panStatus.message}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                
+              </div>
+            )}
+
+            {/* ═══════════════════════════════════════════════
+                ✅ DRIVING LICENSE INPUT WITH DOB
+            ═══════════════════════════════════════════════ */}
+            {formData.idType === "driving" && (
+              <div className="space-y-4 animate-fadeIn">
+                {/* License Number */}
+                <div className="relative group">
+                  <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                    Driving License Number
+                  </label>
+                  <div
+                    className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
+                      formData.idNumber.length >= 10
+                        ? "border-green-500/50"
+                        : "border-white/20 group-hover:border-accet/30"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="text"
+                        value={formData.idNumber}
+                        onChange={(e) => handleDLChange(e.target.value)}
+                        placeholder="TN0020230000000"
+                        maxLength={16}
+                        className="w-full bg-transparent text-white font-mono text-[12px] md:text-[16px] outline-none placeholder:text-white/30 tracking-[0.2em] uppercase"
+                      />
+                      {formData.idNumber && (
+                        <div className="shrink-0">
+                          {formData.idNumber.length >= 8 ? (
+                            <MdCheck className="text-green-500 text-xl" />
+                          ) : (
+                            <span className="text-white/40 text-sm">
+                              {formData.idNumber.length}/16
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {formData.idNumber && (
+                      <div className="mt-2">
+                        <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300 ${
+                              formData.idNumber.length >= 10
+                                ? "bg-green-500"
+                                : "bg-accet"
+                            }`}
+                            style={{
+                              width: `${(formData.idNumber.length / 16) * 100}%`,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Format hint */}
+                  <p className="text-[8px] text-white/40 mt-1 px-1 font-body">
+                    Format: State Code + RTO Code + Year + Number (e.g., TN0020230000000)
+                  </p>
+                </div>
+
+                {/* Date of Birth */}
+                <div className="relative group">
+                  <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                    Date of Birth
+                  </label>
+                  <DateInput
+                    value={formData.dob}
+                    onChange={(value) => handleChange("dob", value)}
+                    placeholder="DD / MM / YYYY"
                   />
+                  <p className="text-[8px] text-white/40 mt-1 px-1 font-body">
+                    Enter your date of birth as per your driving license
+                  </p>
                 </div>
               </div>
             )}
@@ -1194,9 +1471,7 @@ const UserDetails = () => {
                 setAgreed(!agreed);
               }}
               className={`flex items-start gap-2 md:gap-3 p-2 md:p-4 border cursor-pointer transition-all ${
-                agreed
-                  ? "bg-accet/10 border-accet/50"
-                  : "bg-shade border-white/20"
+                agreed ? "bg-accet/10 border-accet/50" : "bg-shade border-white/20"
               }`}
             >
               <div
@@ -1239,20 +1514,16 @@ const UserDetails = () => {
           height: fixedHeight ? `${fixedHeight}px` : "100vh",
         }}
       >
-        {/* ═══════════════════════════════════════════════
-            ✅ FORM LAYER - BEHIND (z-index: 10)
-        ═══════════════════════════════════════════════ */}
+        {/* FORM LAYER */}
         <div
           ref={formLayerRef}
-          className={`absolute inset-0 z-10 ${
-            isRevealed ? "" : "pointer-events-none"
-          }`}
+          className={`absolute inset-0 z-10 ${isRevealed ? "" : "pointer-events-none"}`}
           style={{
             height: fixedHeight ? `${fixedHeight}px` : "100vh",
             transformOrigin: "center center",
             willChange: "transform, opacity",
-            opacity: 0, // ✅ Start hidden
-            transform: "scale(0.2)", // ✅ Start small
+            opacity: 0,
+            transform: "scale(0.2)",
           }}
         >
           <div className="lg:h-full w-full h-screen overflow-hidden lg:overflow-y-scroll">
@@ -1281,7 +1552,6 @@ const UserDetails = () => {
                 {/* Form Card */}
                 <div className="lg:max-w-4xl mx-auto">
                   <div className="bg-shade/50 backdrop-blur-[2px] border border-white/10 rounded-xl p-4 lg:px-8 lg:py-6 lg:min-h-[450px] flex flex-col">
-                    {/* Form Content */}
                     <div className="flex-1">{renderStepContent()}</div>
 
                     {/* Navigation */}
@@ -1307,8 +1577,7 @@ const UserDetails = () => {
                               : "bg-white/5 text-white/30 cursor-not-allowed"
                           }`}
                         >
-                          {t("vote_messages.next") || "Continue"}{" "}
-                          <HiArrowRight />
+                          {t("vote_messages.next") || "Continue"} <HiArrowRight />
                         </button>
                       ) : (
                         <button
@@ -1357,9 +1626,7 @@ const UserDetails = () => {
           </div>
         </div>
 
-        {/* ═══════════════════════════════════════════════
-            ✅ IMAGE LAYER - FRONT (z-index: 20)
-        ═══════════════════════════════════════════════ */}
+        {/* IMAGE LAYER */}
         <div
           ref={imageLayerRef}
           className={`absolute bottom-0 inset-0 z-20 overflow-hidden ${
@@ -1371,23 +1638,15 @@ const UserDetails = () => {
             willChange: "transform, opacity",
           }}
         >
-          {/* Background Image */}
           <img
             src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768047744/ChatGPT_Image_Jan_10_2026_05_39_30_PM_uilkls.png"
             alt="Hero Background"
             className="w-full object-fit"
             style={{ height: fixedHeight ? `${fixedHeight}px` : "100vh" }}
           />
-
-          {/* Dark Overlay */}
           <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/60" />
-
-          {/* ✅ CLICK INDICATOR (Changed from ScrollIndicator) */}
           {!isRevealed && (
-            <ClickIndicator
-              onClick={handleContinueClick}
-              isAnimating={isAnimating}
-            />
+            <ClickIndicator onClick={handleContinueClick} isAnimating={isAnimating} />
           )}
         </div>
       </div>
@@ -1404,14 +1663,9 @@ const UserDetails = () => {
         />
       )}
 
-      {showError && (
-        <ErrorModal message={error} onClose={() => setShowError(false)} />
-      )}
+      {showError && <ErrorModal message={error} onClose={() => setShowError(false)} />}
       {showSuccess && (
-        <SuccessModal
-          trackerId={trackerId}
-          onContinue={handleSuccessContinue}
-        />
+        <SuccessModal trackerId={trackerId} onContinue={handleSuccessContinue} />
       )}
 
       {/* ✅ ANIMATIONS */}

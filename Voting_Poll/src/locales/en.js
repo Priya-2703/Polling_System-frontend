@@ -100,7 +100,7 @@ const en = {
       st: "Scheduled Tribe",
     },
     ids: {
-      aadhar: "Aadhar Card",
+      pan: "PAN Card",
       driving: "Driving License",
     },
   },
@@ -115,20 +115,204 @@ const en = {
     completeFields: "Complete All Fields",
     proceed: "Proceed to Vote",
   },
-  candidates: {
-    p1: { name: "All India Anna Dravida Munnetra Kazhagam", party: "AIADMK" },
-    p2: { name: "Tamizhaga Vettri Kazhagam", party: "TVK" },
-    p3: { name: "Dravida Munnetra Kazhagam", party: "DMK" },
-    p4: { name: "Naam Tamilar Katchi", party: "NTK" },
-    p5: { name: "Bharatiya Janata Party", party: "BJP" },
-    p6: { name: "Indian National Congress", party: "Congress" },
-    p7: { name: "Viduthalai Chiruthaigal Katchi", party: "VCK" },
-    p8: { name: "Pattali Makkal Katchi", party: "PMK" },
-    p9: { name: "Desiya Murpokku Dravida Kazhagam", party: "DMDK" },
-    p10: { name: "Communist Party of India", party: "CPI" },
-    p11: { name: "Amma Makkal Munnettra Kazagam", party: "AMMK" },
-    p12: { name: "Tamizhaga Vaazhvurimai Katchi", party: "TVK" },
-    p13: { name: "Communist Party of India (Marxist)", party: "CPI(M)" },
+   candidates: {
+    p1: {
+      name: "All India Anna Dravida Munnetra Kazhagam",
+      party: "AIADMK",
+      description:
+        "The All India Anna Dravida Munnetra Kazhagam (AIADMK) was founded by revolutionary leader M.G. Ramachandran. After him, the revolutionary leader J. Jayalalithaa took over the leadership and guided the party. Based on Annaism, the party adopted policies of social justice and welfare, implementing development programs for women, the poor, and marginalized communities. It has been a major political party in Tamil Nadu, winning seven legislative assembly elections. For over 50 years, it has worked for the progress and welfare of the Tamil people.",
+      tagline: "Makkalai Kaappom, Thamizagathai Meetpom",
+      promises: [
+        "Social justice and equality",
+        "Welfare schemes for the poor",
+        "Nutritious Meal Scheme",
+        "Special schemes for women",
+        "Amma Canteens, Mini Clinics, Gold for Thali",
+        "Waiver of agricultural loans",
+      ],
+    },
+    p2: {
+      name: "Tamizhaga Vettri Kazhagam",
+      party: "TVK",
+      description:
+        "It entered the Tamil Nadu political arena with the aim of creating a new era in governance. Built on the visionary ideas of great leaders like Ambedkar, V. O. Chidambaram Pillai, K. Kamaraj, Periyar, and Anjalai Ammal, its primary goal is to deliver corruption-free, transparent governance. Independent of the current political structure, it seeks to establish a true alternative politics for the people, focusing on social justice, equality, and the holistic development of the people of Tamil Nadu, making it a progressive and innovative political party.",
+      tagline: "Pirappokkum Ellaa Uyirkkum",
+      promises: [
+        "Corruption-free honest governance",
+        "Women's safety and empowerment",
+        "Employment opportunities for all",
+        "Transparency in government services",
+        "Quality education and healthcare for all",
+        "Farmers' welfare and rural development",
+      ],
+    },
+    p3: {
+      name: "Dravida Munnetra Kazhagam",
+      party: "DMK",
+      description:
+        "The Dravida Munnetra Kazhagam (DMK) was founded by the scholar Periyar E.V. Ramasamy’s disciple, C.N. Annadurai (Anna). The party led the anti-Hindi agitations and, with widespread public support, came to power in 1967. Following Anna’s principles and Kalaignar’s guidance of duty, dignity, and discipline, the DMK implemented policies promoting equality, abolition of caste, and women’s liberation. It has been a major political party in Tamil Nadu, winning six legislative assembly elections, and for 70 years, it has traveled with the ideals of Dravidian philosophy.",
+      tagline: "Kadamai, Kanniyam, Kattuppadu",
+      promises: [
+        "Protection of reservation rights",
+        "Women's rights scheme",
+        "Healthcare at the doorstep (Makkalai Thedi Maruthuvam)",
+        "Women's education, power, and safety",
+        "State autonomy and federalism",
+        "Livelihood improvement for farmers and workers",
+      ],
+    },
+    p4: {
+      name: "Naam Tamilar Katchi",
+      party: "NTK",
+      description:
+        "The Naam Tamilar Katchi (NTK) was founded in response to the impact of the ethnic genocide in Sri Lanka, aiming to spread Tamil nationalist ideas among the people. It entered electoral politics in 2016 as a party that independently pursues Tamil nationalist ideals. The party has actively led movements such as the Methane protest, Sterlite protest, fishermen’s rights protest, Jallikattu protest, and Hydrocarbon protest, standing with the people on the ground as a distinct Tamil nationalist political party.",
+      tagline: "Uzhavai Meetpoom, Ulagai Kaappom",
+      promises: [
+        "Self-reliant economy",
+        "Government jobs for all",
+        "Retrieval of Katchatheevu",
+        "Formation of Coastal Force (Neithal Padai)",
+        "Organic farming and food sovereignty",
+        "Official language status for Tamil",
+      ],
+    },
+    p5: {
+      name: "Bharatiya Janata Party",
+      party: "BJP",
+      description:
+        "This is a political party that prioritizes Bharatiya (Indian) culture and national sentiment, adopting Deen Dayal Upadhyaya’s philosophy of “Integral Humanism” and the goal of “One India, Prosperous India” as its guiding principles. Its policies focus on development (Vikas), national security, economic growth, social harmony, welfare of all sections of society, and corruption-free governance. In Tamil Nadu, the party works to strengthen nationalistic politics and, with the support of the people of Tamil Nadu, progresses on the path toward a developed and prosperous India.",
+      tagline: "Thamizagam Thalai Nimira Tamizhanin Payanam",
+      promises: [
+        "National security and economic development",
+        "Social harmony and spiritual tourism in Tamil Nadu",
+        "Protection of Indian culture",
+        "Building a self-reliant nation",
+        "Complete eradication of terrorism",
+        "Coastal security and fishermen welfare schemes",
+      ],
+    },
+    p6: {
+      name: "Indian National Congress",
+      party: "Congress",
+      description:
+        "This is a national party that played a leading role in India’s struggle for independence. Guided by leaders like Mahatma Gandhi and Jawaharlal Nehru, it embraced policies of democracy, socialism, social justice, and equality. By implementing welfare schemes for all sections of society and promoting industrial development, it worked to build India into a strong nation. Today, it continues as a national party striving to uphold secular democratic values and the dignity of the Constitution, with the goal of strengthening India.",
+      tagline: "Vaakku Thiruttukku Ethiraaga Ondrianthu Nirppom",
+      promises: [
+        "Right to Education Act",
+        "Green Revolution",
+        "Economic equality",
+        "Protecting a diverse India",
+        "Livelihood improvement for the poor",
+        "Protecting fundamental rights for all citizens",
+      ],
+    },
+    p7: {
+      name: "Viduthalai Chiruthaigal Katchi",
+      party: "VCK",
+      description:
+        "This is a revolutionary political party that has emerged as a major force advocating for the political and social rights of the original Dravidians and oppressed communities. Adopting the ideas of Dr. B.R. Ambedkar, Ayothidasa Panditar, Mahatma Jyotiba Phule, and Periyar as its guiding principles, the party prioritizes abolition of caste and untouchability. It continues to fight against social injustice tirelessly, working for the improvement of livelihoods and dignified lives of marginalized sections of society, and has made a profound impact as a transformative political force.",
+      tagline: "Saathi Ozhippe Makkal Viduthalai",
+      promises: [
+        "Caste abolition and social equality",
+        "Special laws for SC/ST and minorities",
+        "Protection of human rights",
+        "Ensuring reservation in public and private sectors",
+        "Education and land rights for all",
+        "Women's safety and empowerment",
+      ],
+    },
+    p8: {
+      name: "Pattali Makkal Katchi",
+      party: "PMK",
+      description:
+        "Entered the field to fight for political representation and social rights of Vanniyars and Most Backward Classes. Prioritizing social justice, caste equality, health, and agricultural development, it strives to abolish caste-based discrimination and create an equal society.",
+      tagline: "Anaivarukkum Valarchi, Anaivarukkum Urimai",
+      promises: [
+        "Implementation of total prohibition",
+        "Environmental protection and water body restoration",
+        "Employment and skill development training",
+        "Protection of Tamil art, culture, and language",
+        "Creating social harmony",
+        "Marketing for agricultural produce",
+      ],
+    },
+    p9: {
+      name: "Desiya Murpokku Dravida Kazhagam",
+      party: "DMDK",
+      description:
+        "This is a political party that prioritizes corruption-free governance, honest politics, and public welfare, aiming to pave a new political path for the progress of the state and the protection of Tamil people’s rights. By proposing programs addressing people’s basic needs, law and order, employment, and self-respect, it positions itself as an alternative force in Tamil Nadu politics and continues its journey with that mission.",
+      tagline:
+        "Tamizhan endru solladaa, thalai nimirnthu nilladaa, iyandrathai seivom, illaathavarkkae",
+      promises: [
+        "Financial aid for small and micro entrepreneurs",
+        "Protection of Tamil people's rights",
+        "Fulfillment of basic needs",
+        "Employment and maintenance of law and order",
+        "Poverty eradication and development of the poor",
+        "Farmers' welfare and agricultural growth",
+      ],
+    },
+    p10: {
+      name: "Communist Party of India",
+      party: "CPI",
+      description:
+        "This is a political party that bases itself on Marxism-Leninism and the principles of socialism, and has continuously fought in India for the rights of farmers, oppressed communities, and the working class, as well as for social justice, equality, and secularism. It contributed to India’s freedom struggle and social transformation, and has been one of the pioneering movements establishing leftist ideology in Indian politics. It continues to operate as a political party in both Tamil Nadu and across India.",
+      tagline: "Workers of the world, unite!",
+      promises: [
+        "Opposing privatization",
+        "Anti-imperialism",
+        "Control of price rise",
+        "Protection of democratic rights",
+        "Trade union rights",
+        "Voice against social injustice",
+      ],
+    },
+    p11: {
+      name: "Amma Makkal Munnettra Kazagam",
+      party: "AMMK",
+      description:
+        "This is a political party formed with the aim of reviving and implementing the welfare-oriented political vision of revolutionary leader Amma J. Jayalalithaa, along with the core principles of the Dravidian movement. It operates with key objectives such as protecting the rights of the people of Tamil Nadu and ensuring corruption-free governance. The party revives welfare schemes successfully implemented during Amma’s administration for the poor, marginalized, and middle-class, strengthens people-centered politics, and continues to serve as the voice of the true supporters of the AIADMK.",
+      tagline: "Thamizagam Thalai Nimirattum, Tamizhar Vaazhvu Malarattum",
+      promises: [
+        "Improving livelihood of farmers and workers",
+        "Maintenance of law and order",
+        "Establishing economic equality",
+        "Revival of public welfare schemes",
+        "Empowerment of women and youth",
+        "New mechanisms for public grievance redressal",
+      ],
+    },
+    p12: {
+      name: "Tamizhaga Vaazhvurimai Katchi",
+      party: "TVK",
+      description:
+        "This is a political party that prioritizes the uniqueness of the Tamil people, their language, land, water, and right to livelihood, leading movements to restore Tamil Nadu’s rights. Acting as a voice for Tamils amid Dravidian movements and national parties, it continues to operate in Tamil Nadu politics as a fighting force dedicated to securing the state’s welfare and rights.",
+      tagline: "Urimai Meetchiye, Inaththin Eazhuchi",
+      promises: [
+        "Protection of river water rights",
+        "Protection of fishermen's livelihood",
+        "Protection of Tamil land rights",
+        "Protection of natural resources",
+        "Legal priority for Tamils in Tamil Nadu jobs",
+        "Retrieval of Katchatheevu and maritime rights",
+      ],
+    },
+    p13: {
+      name: "Communist Party of India (Marxist)",
+      party: "CPI(M)",
+      description:
+        "The Marxist Communist Party, formed as a breakaway from the Communist Party of India, follows Marxist-Leninist ideology and has continuously fought in India against capitalist exploitation and the interference of authoritarian powers, while championing the welfare and rights of the poor and marginalized. It strives to establish social justice and equality, and works toward a socialist society free from oppression, making it a strong leftist political party operating with its distinct identity in both Tamil Nadu and across India.",
+      tagline:
+        "Anaivarukkum Samathuvathum Neethiyayum Oruthi Seivatharkkanaa Ore Paathai",
+      promises: [
+        "State rights and federalism",
+        "Equal opportunity for all",
+        "Strengthening trade unions",
+        "Working class rights",
+        "Legal fight for social equality",
+        "Eradication of caste, religious, and gender discrimination",
+      ],
+    },
   },
   messages: {
     tapToSelect: "Tap to select",

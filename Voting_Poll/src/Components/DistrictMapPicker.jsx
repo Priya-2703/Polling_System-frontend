@@ -124,7 +124,7 @@ function MapScene({ onDistrictSelect, selectedDistrict }) {
         });
     }, []);
 
-    if (!geoData) return <Html center><div className="text-cyan-400 font-heading tracking-wider uppercase text-center font-bold animate-pulse">Loading 3D Map...</div></Html>;
+    if (!geoData) return <Html center><div className="text-indigo-600 font-heading tracking-wider uppercase text-center font-bold animate-pulse">Loading 3D Map...</div></Html>;
 
     return (
         <group rotation={[-Math.PI / 2, 0, 0]}>
@@ -145,9 +145,9 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-300">
-            <div className="relative w-full h-[90dvh] max-w-5xl bg-[#111827] border border-white/10 rounded-2xl overflow-hidden flex flex-col shadow-2xl shadow-cyan-500/10">
+            <div className="relative w-full h-[90dvh] max-w-5xl bg-accet/40 border border-accet/10 overflow-hidden flex flex-col shadow-2xl shadow-indigo-500/10">
                 {/* Header */}
-                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-[#111827] z-10">
+                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-shade z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-1 h-8 bg-linear-to-b from-accet/60 to-accet/30 rounded-full"></div>
                         <div><h3 className="text-white font-heading font-bold text-[15px] md:text-lg tracking-wide">SELECT DISTRICT</h3><p className="text-[8px] md:text-[10px] text-white/50 uppercase tracking-widest">Interactive 3D Map</p></div>
@@ -156,7 +156,7 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                 </div>
 
                 {/* 3D Canvas */}
-                <div className="flex-1 relative bg-linear-to-b from-gray-900 to-gray-800">
+                <div className="flex-1 relative bg-black ">
                     <Canvas camera={{ position: [0, 50, 0], fov: 45 }} dpr={[1, 2]}>
                         <ambientLight intensity={0.6} />
                         <directionalLight position={[10, 20, 10]} intensity={1.2}  />
@@ -189,24 +189,24 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                     </Canvas>
                     
                     {/* Instructions */}
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/5 pointer-events-none min-w-50">
-                        <p className="text-[8px] md:text-[9px] text-cyan-200/80 text-center font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 pointer-events-none min-w-50">
+                        <p className="text-[8px] md:text-[9px] text-indigo-300/80 text-center font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
                     </div>
 
                     {/* Selected Info */}
                     {selected && (
-                        <div className="absolute bottom-2 left-2 md:bottom-6 md:left-6 bg-black backdrop-blur-xl border border-white/10 p-3 md:p-5 rounded-xl shadow-2xl md:min-w-[200px] animate-in slide-in-from-bottom-5 z-999">
-                            <span className="text-[8px] md:text-[9px] text-cyan-400 font-heading font-bold uppercase tracking-widest block mb-1 z-999">Selected Region</span>
+                        <div className="absolute bottom-2 left-2 md:bottom-6 md:left-6 bg-shade backdrop-blur-xl border border-white/20 rounded p-3 md:p-4 shadow-2xl md:min-w-50 animate-in slide-in-from-bottom-5 z-999">
+                            <span className="text-[8px] md:text-[9px] text-indigo-600 font-heading font-bold uppercase tracking-widest block mb-1 z-999">Selected Region</span>
                             <h2 className="text-[15px] md:text-2xl font-black uppercase text-white leading-none z-999">{selected}</h2>
-                            <div className="h-0.5 md:h-1 w-12 bg-yellow-500 rounded-full mt-2 md:mt-3 z-999"></div>
+                            <div className="h-0.5 md:h-1 w-12 bg-yellow-500 rounded-full mt-2 md:mt-2 z-999"></div>
                         </div>
                     )}
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-white/10 bg-[#111827] z-10 flex justify-between md:justify-end items-center gap-3">
-                    <button onClick={onClose} className="px-5 py-1.5 md:py-2.5 rounded-lg text-[10px] md:text-xs font-bold font-heading text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider">Cancel</button>
-                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-4 md:px-8 py-2 md:py-2.5 rounded-lg font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/70 to-accet/30 font-heading text-white hover:shadow-cyan-500/30 hover:scale-[1.02]" : "bg-white/10 text-white/40 cursor-not-allowed"}`}>
+                <div className="p-4 border-t border-white/10 bg-shade z-10 flex justify-between md:justify-end items-center gap-3">
+                    <button onClick={onClose} className="px-5 py-2.5 md:py-3 text-[10px] md:text-xs font-bold font-heading text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider">Cancel</button>
+                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-3 md:px-6 py-2.5 md:py-3 font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/70 to-accet/30 font-heading text-white hover:shadow-indigo-800/30 hover:scale-[1.02]" : "bg-white/10 text-white/40 cursor-not-allowed"}`}>
                         <span>Confirm Selection</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </button>

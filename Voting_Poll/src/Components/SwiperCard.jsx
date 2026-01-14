@@ -207,7 +207,7 @@ const SwiperCard = ({
                       <img
                         src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768106397/ChatGPT_Image_Jan_10_2026_05_27_23_PM_xsdl5a.png"
                         alt="sengol"
-                        className="h-80"
+                        className="h-64"
                       />
                       {/* <div className="w-px h-full bg-linear-to-b from-transparent via-white/10 to-transparent relative">
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-accet rotate-45" />
