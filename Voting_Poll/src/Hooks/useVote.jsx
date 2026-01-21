@@ -13,12 +13,6 @@ const useVote = () => {
     setError(null);
     setIsSuccess(false);
 
-    // Get tracker_id from localStorage
-    const trackerId = localStorage.getItem("tracker_id");
-
-    console.log("trackid", trackerId)
-    console.log("Party id", partyId)
-
     if (!trackerId) {
       console.log("Tracker ID காணவில்லை. மீண்டும் முதலிலிருந்து தொடங்கவும்.");
       setIsLoading(false);
@@ -30,7 +24,6 @@ const useVote = () => {
       setIsLoading(false);
       return { success: false, error: "Party ID தேவை" };
     }
-
 
     // Call API
     const result = await castVoteApi(trackerId, partyId);

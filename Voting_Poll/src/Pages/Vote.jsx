@@ -257,7 +257,7 @@ const Vote = () => {
           <div className="flex justify-center items-start z-20 px-4">
             <div className="relative">
               <div className="text-center">
-                <h1 className="text-[18px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-11 text-transparent bg-linear-to-r from-accet via-accet/80 to-indigo-500 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+                <h1 className="text-[18px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-11 text-transparent bg-linear-to-r from-accet via-accet/80 to-accet/50 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
                   {t("vote.title")}
                 </h1>
               </div>
@@ -278,9 +278,9 @@ const Vote = () => {
             <button
               onClick={handleVote}
               disabled={!selectedCandidate || isLoading || isSuccess}
-              className={`relative w-[95%] md:w-80 py-3 lg:py-4 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[14px] font-heading overflow-hidden transition-all duration-500 ${
+              className={`relative w-[75%] md:w-80 py-3 lg:py-4 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[14px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate && !isLoading && !isSuccess
-                  ? "bg-linear-to-r from-accet via-indigo-500 to-accet/50 text-black hover:shadow-[0_0_30px_#4C43DD] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet via-cyan-400 to-accet/50 text-black hover:shadow-[0_0_30px_#00F3FF] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10"
               }`}
             >

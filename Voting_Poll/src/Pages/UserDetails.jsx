@@ -20,6 +20,9 @@ import click from "../assets/click2.wav";
 import scifi from "../assets/scifi.wav";
 import { registerVoter, getCasteList } from "../utils/service/api";
 import gsap from "gsap";
+import axios from "axios";
+import PrivacyPolicyPopup from "./PrivacyPolicyPopup";
+import TermsAndConditionsPopup from "./TermsAndConditionsPopup";
 
 // --- STEP INDICATOR ---
 const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
@@ -28,7 +31,7 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
       <div className="hidden lg:flex items-center justify-between relative px-4">
         <div className="absolute top-5 left-8 right-8 h-0.5 bg-white/10">
           <div
-            className="h-full bg-gradient-to-r from-accet to-indigo-500 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-accet to-cyan-600 transition-all duration-500"
             style={{
               width: `${((currentStep - 1) / (totalSteps - 1)) * 100}%`,
             }}
@@ -45,10 +48,10 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                   isCompleted
-                    ? "bg-linear-to-br from-accet to-indigo-500 text-gray-900 shadow-lg shadow-accet/30"
+                    ? "bg-linear-to-br from-accet to-cyan-600 text-gray-900 shadow-lg shadow-accet/30"
                     : isActive
-                    ? "bg-accet border-2 border-accet text-accet"
-                    : "bg-shade border border-white/20 text-white/60"
+                      ? "bg-accet border-2 border-accet text-accet"
+                      : "bg-shade border border-white/20 text-white/60"
                 }`}
               >
                 {isCompleted ? <MdCheck className="text-lg" /> : step.icon}
@@ -58,8 +61,8 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
                   isActive
                     ? "text-accet"
                     : isCompleted
-                    ? "text-white/70"
-                    : "text-white/30"
+                      ? "text-white/70"
+                      : "text-white/30"
                 }`}
               >
                 {step.label}
@@ -101,7 +104,7 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
 // --- SECTION TITLE ---
 const SectionTitle = ({ icon, title, subtitle }) => (
   <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6">
-    <div className="md:w-10 md:h-10 w-8 h-8 rounded-full bg-gradient-to-br from-accet to-indigo-400 flex items-center justify-center shrink-0">
+    <div className="md:w-10 md:h-10 w-8 h-8 rounded-full bg-linear-to-br from-accet to-cyan-800 flex items-center justify-center shrink-0">
       {icon}
     </div>
     <div className="flex flex-col">
@@ -154,11 +157,11 @@ const SearchableSelect = ({
   });
 
   const filteredOptions = normalizedOptions.filter((option) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+    option.label.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const hasExactMatch = normalizedOptions.some(
-    (option) => option.label.toLowerCase() === searchTerm.toLowerCase()
+    (option) => option.label.toLowerCase() === searchTerm.toLowerCase(),
   );
 
   const showOtherOption = searchTerm.length >= 2 && !hasExactMatch;
@@ -168,7 +171,7 @@ const SearchableSelect = ({
     const found = normalizedOptions.find(
       (opt) =>
         opt.value.toLowerCase() === value?.toLowerCase() ||
-        opt.label.toLowerCase() === value?.toLowerCase()
+        opt.label.toLowerCase() === value?.toLowerCase(),
     );
     return found?.label || value || "";
   };
@@ -212,8 +215,8 @@ const SearchableSelect = ({
           isOpen
             ? "border-accet"
             : isCustomMode
-            ? "border-indigo-500"
-            : "border-white/20"
+              ? "border-cyan-600"
+              : "border-white/20"
         } md:px-4 py-2.5 md:py-3 px-3 transition-colors cursor-text`}
         onClick={() => inputRef.current?.focus()}
       >
@@ -289,7 +292,7 @@ const SearchableSelect = ({
               {showOtherOption && (
                 <button
                   onClick={() => handleSelect(searchTerm, true)}
-                  className="w-full text-left px-4 py-2 text-[11px] font-body text-white hover:bg-indigo-500/10 bg-indigo-500/5"
+                  className="w-full text-left px-4 py-2 text-[11px] font-body text-white hover:bg-cyan-600/10 bg-cyan-600/5"
                 >
                   Others - "{searchTerm}"
                 </button>
@@ -417,31 +420,24 @@ const ClickIndicator = ({ onClick, isAnimating }) => (
 // ✅ PAN CARD VALIDATION HELPER
 // ========================================
 const validatePAN = (pan) => {
-  // PAN Format: AAAAA9999A (5 letters + 4 numbers + 1 letter)
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
   return panRegex.test(pan);
 };
 
 const formatPANInput = (value) => {
-  // Remove all non-alphanumeric characters
   let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
-
-  // Apply format constraints
   let formatted = "";
 
   for (let i = 0; i < cleaned.length && i < 10; i++) {
     if (i < 5) {
-      // First 5 characters must be letters
       if (/[A-Z]/.test(cleaned[i])) {
         formatted += cleaned[i];
       }
     } else if (i >= 5 && i < 9) {
-      // Next 4 characters must be numbers
       if (/[0-9]/.test(cleaned[i])) {
         formatted += cleaned[i];
       }
     } else if (i === 9) {
-      // Last character must be a letter
       if (/[A-Z]/.test(cleaned[i])) {
         formatted += cleaned[i];
       }
@@ -455,9 +451,33 @@ const formatPANInput = (value) => {
 // ✅ DRIVING LICENSE VALIDATION HELPER
 // ========================================
 const formatDLInput = (value) => {
-  // Format: TN00 0000 0000000 or similar state codes
   let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
   return cleaned.slice(0, 16);
+};
+
+// ========================================
+// ✅ AADHAR CARD VALIDATION HELPER
+// ========================================
+const validateAadhar = (aadhar) => {
+  const aadharRegex = /^[0-9]{12}$/;
+  return aadharRegex.test(aadhar);
+};
+
+const formatAadharInput = (value) => {
+  let cleaned = value.replace(/\D/g, "");
+  return cleaned.slice(0, 12);
+};
+
+const formatAadharDisplay = (value) => {
+  let cleaned = value.replace(/\D/g, "").slice(0, 12);
+  let formatted = "";
+  for (let i = 0; i < cleaned.length; i++) {
+    if (i > 0 && i % 4 === 0) {
+      formatted += " ";
+    }
+    formatted += cleaned[i];
+  }
+  return formatted;
 };
 
 // ========================================
@@ -520,7 +540,8 @@ const DateInput = ({ value, onChange, placeholder }) => {
     }
   };
 
-  const isComplete = day.length === 2 && month.length === 2 && year.length === 4;
+  const isComplete =
+    day.length === 2 && month.length === 2 && year.length === 4;
   const isValidDate = () => {
     if (!isComplete) return false;
     const d = parseInt(day);
@@ -571,7 +592,6 @@ const DateInput = ({ value, onChange, placeholder }) => {
           />
         </div>
 
-        {/* Validation indicator */}
         {isComplete && (
           <div className="ml-auto">
             {isValidDate() ? (
@@ -583,7 +603,6 @@ const DateInput = ({ value, onChange, placeholder }) => {
         )}
       </div>
 
-      {/* Progress bar */}
       <div className="mt-2 flex items-center gap-2">
         <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
           <div
@@ -591,7 +610,9 @@ const DateInput = ({ value, onChange, placeholder }) => {
               isComplete && isValidDate() ? "bg-green-500" : "bg-accet"
             }`}
             style={{
-              width: `${((day.length + month.length + year.length) / 8) * 100}%`,
+              width: `${
+                ((day.length + month.length + year.length) / 8) * 100
+              }%`,
             }}
           />
         </div>
@@ -634,13 +655,18 @@ const UserDetails = () => {
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [trackerId, setTrackerId] = useState(null);
+  const [constituencyList, setConstituencyList] = useState([]);
+  const [loadingConstituency, setLoadingConstituency] = useState(false);
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
 
-  // ✅ Updated formData with dob field
+  // ✅ FIXED: Added constituency to formData
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
     age: "",
     district: "",
+    constituency: "", // ✅ ADDED - இது missing இருந்துச்சு
     religion: "",
     motherTongue: "",
     phone: "",
@@ -648,7 +674,7 @@ const UserDetails = () => {
     community: "",
     idType: "",
     idNumber: "",
-    dob: "", 
+    dob: "",
   });
 
   useEffect(() => {
@@ -667,6 +693,36 @@ const UserDetails = () => {
       window.removeEventListener("orientationchange", handleOrientationChange);
     };
   }, []);
+
+  // ✅ FIXED: Reset constituency when district changes
+  useEffect(() => {
+    if (formData.district) {
+      setLoadingConstituency(true);
+      // Reset constituency when district changes
+      setFormData(prev => ({ ...prev, constituency: "" }));
+
+      axios
+        .get("http://localhost:5000/api/auth/utils/constituencies", {
+          params: {
+            district: formData.district,
+          },
+        })
+        .then((response) => {
+          setConstituencyList(response.data.constituencies || []);
+          console.log("District:", formData.district);
+          console.log("Constituencies:", response.data.constituencies);
+          setLoadingConstituency(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching constituencies:", error);
+          setLoadingConstituency(false);
+          setConstituencyList([]);
+        });
+    } else {
+      setConstituencyList([]);
+      setFormData(prev => ({ ...prev, constituency: "" }));
+    }
+  }, [formData.district]);
 
   // ✅ GSAP ANIMATION
   useEffect(() => {
@@ -693,7 +749,7 @@ const UserDetails = () => {
           duration: 1.2,
           ease: "power2.inOut",
         },
-        0
+        0,
       );
 
       tl.fromTo(
@@ -708,7 +764,7 @@ const UserDetails = () => {
           duration: 1,
           ease: "power2.out",
         },
-        0.4
+        0.4,
       );
 
       animationTlRef.current = tl;
@@ -754,6 +810,7 @@ const UserDetails = () => {
       label: t("sections.idVerification") || "Verify",
     },
   ];
+  
   const subtitle = [
     { label: "Establish your identity" },
     { label: "Map your background" },
@@ -801,8 +858,14 @@ const UserDetails = () => {
     { value: "obc", label: "OBC", full: "Other Backward" },
   ];
 
-  // ✅ UPDATED: ID Types with PAN Card instead of Aadhar
   const idTypes = [
+    {
+      value: "aadhar",
+      label: t("options.ids.aadhar") || "Aadhar Card",
+      placeholder: "XXXX XXXX XXXX",
+      maxLength: 12,
+      description: "12 Digit Unique ID",
+    },
     {
       value: "pan",
       label: t("options.ids.pan") || "PAN Card",
@@ -824,38 +887,44 @@ const UserDetails = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ UPDATED: Handle PAN input with proper formatting
   const handlePANChange = (value) => {
     const formatted = formatPANInput(value);
     handleChange("idNumber", formatted);
   };
 
-  // ✅ UPDATED: Handle DL input
+  const handleAadharChange = (value) => {
+    const formatted = formatAadharInput(value);
+    handleChange("idNumber", formatted);
+  };
+
   const handleDLChange = (value) => {
     const formatted = formatDLInput(value);
     handleChange("idNumber", formatted);
   };
 
-  // ✅ UPDATED: Step 4 validation
+  // ✅ FIXED: Step 2 validation now includes constituency
   const isStepValid = () => {
     switch (step) {
       case 1:
         return formData.name && formData.gender && formData.age;
       case 2:
-        return formData.district && formData.religion && formData.motherTongue;
+        // ✅ FIXED: Added constituency validation
+        return formData.district && formData.constituency && formData.religion && formData.motherTongue;
       case 3:
         return formData.community && formData.caste && formData.phone.length === 10;
       case 4:
         if (!formData.idType || !agreed) return false;
 
+        if (formData.idType === "aadhar") {
+          return validateAadhar(formData.idNumber);
+        }
+
         if (formData.idType === "pan") {
-          // PAN validation: 5 letters + 4 numbers + 1 letter
           return validatePAN(formData.idNumber);
         }
 
         if (formData.idType === "driving") {
-          // DL requires license number (min 10 chars) + valid DOB
-          const dlValid = formData.idNumber.length >= 10;
+          const dlValid = formData.idNumber.length >= 8;
           const dobParts = formData.dob.split("-");
           const dobValid =
             dobParts.length === 3 &&
@@ -871,7 +940,6 @@ const UserDetails = () => {
     }
   };
 
-  // ✅ Get validation status for real-time feedback
   const getPANValidationStatus = () => {
     const pan = formData.idNumber;
     if (!pan) return { valid: false, message: "", progress: 0 };
@@ -883,8 +951,6 @@ const UserDetails = () => {
     let progress = 0;
     let message = "";
 
-    // Check first 5 letters
-    const validLetters = /^[A-Z]{0,5}$/.test(lettersPart);
     if (lettersPart.length < 5) {
       message = `Enter ${5 - lettersPart.length} more letter(s)`;
       progress = (lettersPart.length / 10) * 100;
@@ -904,11 +970,27 @@ const UserDetails = () => {
       }
     }
 
-    return {
-      valid: validatePAN(pan),
-      message,
-      progress,
-    };
+    return { valid: validatePAN(pan), message, progress };
+  };
+
+  const getAadharValidationStatus = () => {
+    const aadhar = formData.idNumber;
+    if (!aadhar) return { valid: false, message: "", progress: 0 };
+
+    let progress = (aadhar.length / 12) * 100;
+    let message = "";
+
+    if (aadhar.length < 12) {
+      message = `Enter ${12 - aadhar.length} more digit(s)`;
+    } else if (aadhar.length === 12) {
+      if (validateAadhar(aadhar)) {
+        message = "Valid Aadhar Number";
+      } else {
+        message = "Invalid Aadhar format";
+      }
+    }
+
+    return { valid: validateAadhar(aadhar), message, progress };
   };
 
   const handleNext = () => {
@@ -925,6 +1007,7 @@ const UserDetails = () => {
     setStep((prev) => prev - 1);
   };
 
+  // ✅ FIXED: handleSubmit now includes ALL form fields
   const handleSubmit = async () => {
     if (!isStepValid()) return;
     setIsSubmitting(true);
@@ -932,31 +1015,45 @@ const UserDetails = () => {
     playClick();
 
     try {
+      // ✅ FIXED: All fields are now included in registrationData
       const registrationData = {
-        idType: formData.idType,
-        idNumber: formData.idNumber,
-        ...(formData.idType === "driving" && { dob: formData.dob }), // ✅ Include DOB for DL
+        // Step 1: Personal Details
+        name: formData.name,
         gender: formData.gender,
         age: formData.age,
+        
+        // Step 2: Location Details
         district: formData.district,
+        constituency: formData.constituency, // ✅ ADDED
         religion: formData.religion,
         motherTongue: formData.motherTongue,
+        
+        // Step 3: Contact & Community
+        phone: formData.phone, // ✅ ADDED
         community: formData.community,
         caste: formData.caste,
+        
+        // Step 4: ID Verification
+        idType: formData.idType,
+        idNumber: formData.idNumber,
+        ...(formData.idType === "driving" && { dob: formData.dob }),
       };
+
+      console.log("📤 Sending Registration Data:", registrationData);
 
       const result = await registerVoter(registrationData);
 
       if (result.success) {
         const id = result.data.tracker_id;
         setTrackerId(id);
-        localStorage.setItem("tracker_id", id);
+        // localStorage.setItem("tracker_id", id);
         setShowSuccess(true);
       } else {
         setError(result.error);
         setShowError(true);
       }
     } catch (err) {
+      console.error("Registration Error:", err);
       setError("An unexpected error occurred. Please try again.");
       setShowError(true);
     } finally {
@@ -978,7 +1075,10 @@ const UserDetails = () => {
     switch (step) {
       case 1:
         return (
-          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step1">
+          <div
+            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            key="step1"
+          >
             <SectionTitle
               icon={<HiMiniUser className="text-gray-900 text-sm" />}
               title={t("sections.personal")}
@@ -1013,7 +1113,7 @@ const UserDetails = () => {
                     onClick={() => handleChange("gender", gender.value)}
                     className={`py-2.5 px-2 md:p-4 border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.gender === gender.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/40 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
@@ -1037,7 +1137,7 @@ const UserDetails = () => {
                     onClick={() => handleChange("age", age.value)}
                     className={`py-2.5 md:py-3 px-2 border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.age === age.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
@@ -1061,7 +1161,10 @@ const UserDetails = () => {
 
       case 2:
         return (
-          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step2">
+          <div
+            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            key="step2"
+          >
             <SectionTitle
               icon={<MdLocationOn className="text-gray-900 text-sm" />}
               title={t("sections.location")}
@@ -1097,6 +1200,78 @@ const UserDetails = () => {
               </div>
             </div>
 
+            {/* Constituency */}
+            <div
+              className={`transition-all duration-500 ${
+                formData.district
+                  ? "opacity-100"
+                  : "opacity-50 pointer-events-none"
+              }`}
+            >
+              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
+                {t("labels.constituency") || "Constituency"}
+                {/* ✅ Visual indicator for required field */}
+                <span className="text-red-400 ml-1">*</span>
+              </label>
+
+              <div className="relative">
+                <select
+                  value={formData.constituency}
+                  onChange={(e) => handleChange("constituency", e.target.value)}
+                  disabled={!formData.district || loadingConstituency}
+                  className={`w-full appearance-none text-[12px] bg-shade border md:px-4 py-2.5 md:py-4 px-3 text-white outline-none cursor-pointer transition-all md:text-[14px]
+                    ${
+                      formData.constituency
+                        ? "border-accet/50"
+                        : "border-white/20 hover:border-white/30"
+                    }`}
+                >
+                  <option value="" className="bg-transparent text-white text-[12px] md:text-[14px]">
+                    {loadingConstituency
+                      ? "Loading Constituency..."
+                      : "Select Your Constituency"}
+                  </option>
+
+                  {constituencyList.map((thoguthi) => (
+                    <option
+                      key={thoguthi}
+                      value={thoguthi}
+                      className="bg-transparent text-white"
+                    >
+                      {thoguthi}
+                    </option>
+                  ))}
+                </select>
+
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                  {loadingConstituency ? (
+                    <span className="text-accet text-xs animate-spin">⏳</span>
+                  ) : (
+                    <svg
+                      className="w-4 h-4 text-accet"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M19 9l-7 7-7-7"
+                      ></path>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              
+              {/* ✅ Helper text */}
+              {formData.district && !formData.constituency && !loadingConstituency && (
+                <p className="text-[8px] text-yellow-400/70 mt-1 font-body">
+                  ⚠️ Please select your constituency to continue
+                </p>
+              )}
+            </div>
+
             {/* Religion */}
             <div>
               <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
@@ -1109,7 +1284,7 @@ const UserDetails = () => {
                     onClick={() => handleChange("religion", religion.value)}
                     className={`py-2.5 md:py-3 px-2 border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.religion === religion.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
@@ -1133,7 +1308,7 @@ const UserDetails = () => {
                     onClick={() => handleChange("motherTongue", lang.value)}
                     className={`py-2.5 md:py-3 px-2 border backdrop-blur-xl text-center transition-all duration-300 ${
                       formData.motherTongue === lang.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
@@ -1149,7 +1324,10 @@ const UserDetails = () => {
 
       case 3:
         return (
-          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step3">
+          <div
+            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            key="step3"
+          >
             <SectionTitle
               icon={<HiPhone className="text-gray-900 text-sm" />}
               title={t("sections.contact")}
@@ -1182,7 +1360,9 @@ const UserDetails = () => {
                     <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
                       <div
                         className={`h-full transition-all duration-300 ${
-                          formData.phone.length === 10 ? "bg-green-500" : "bg-accet"
+                          formData.phone.length === 10
+                            ? "bg-green-500"
+                            : "bg-accet"
                         }`}
                         style={{
                           width: `${(formData.phone.length / 10) * 100}%`,
@@ -1215,7 +1395,7 @@ const UserDetails = () => {
                     onClick={() => handleChange("community", community.value)}
                     className={`py-2.5 md:py-3 px-2 md:min-h-[70px] backdrop-blur-xl border text-center flex flex-col justify-center items-center transition-all duration-300 ${
                       formData.community === community.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 hover:border-white/30"
                     }`}
                   >
@@ -1246,12 +1426,15 @@ const UserDetails = () => {
           </div>
         );
 
-      // ✅ UPDATED STEP 4 - PAN Card & Driving License with DOB
       case 4:
         const panStatus = getPANValidationStatus();
+        const aadharStatus = getAadharValidationStatus();
 
         return (
-          <div className={`space-y-4 lg:space-y-6 ${animationClass}`} key="step4">
+          <div
+            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            key="step4"
+          >
             <SectionTitle
               icon={<MdVerifiedUser className="text-gray-900 text-sm" />}
               title={t("sections.idVerification")}
@@ -1263,34 +1446,104 @@ const UserDetails = () => {
               <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.idType")}
               </label>
-              <div className="grid grid-cols-2 gap-1.5 lg:gap-3">
+              <div className="grid grid-cols-3 gap-1.5 lg:gap-3">
                 {idTypes.map((id) => (
                   <button
                     key={id.value}
                     onClick={() => {
                       handleChange("idType", id.value);
-                      setFormData((prev) => ({ ...prev, idNumber: "", dob: "" }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        idNumber: "",
+                        dob: "",
+                      }));
                     }}
-                    className={`py-3 md:p-5 border backdrop-blur-xl text-center transition-all flex flex-col justify-center gap-1 items-center duration-300 ${
+                    className={`py-3 md:p-4 border backdrop-blur-xl text-center transition-all flex flex-col justify-center gap-1 items-center duration-300 ${
                       formData.idType === id.value
-                        ? "bg-gradient-to-br from-accet/20 to-indigo-500/20 border-accet text-white shadow-lg shadow-accet/20"
+                        ? "bg-gradient-to-br from-accet/20 to-cyan-600/20 border-accet text-white shadow-lg shadow-accet/20"
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[10px] lg:text-[12px] font-heading uppercase tracking-widest font-bold">
+                    <span className="text-[8px] lg:text-[11px] font-heading uppercase tracking-widest font-bold">
                       {id.label}
-                    </span>
-                    <span className="text-[7px] lg:text-[9px] text-white/50 font-body">
-                      {id.description}
                     </span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* ═══════════════════════════════════════════════
-                ✅ PAN CARD INPUT WITH VALIDATION
-            ═══════════════════════════════════════════════ */}
+            {/* AADHAR CARD INPUT */}
+            {formData.idType === "aadhar" && (
+              <div className="relative group animate-fadeIn">
+                <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                  Aadhar Card Number
+                </label>
+                <div
+                  className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
+                    aadharStatus.valid
+                      ? "border-green-500/50"
+                      : formData.idNumber
+                        ? "border-accet/50"
+                        : "border-white/20 group-hover:border-accet/30"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="tel"
+                      value={formatAadharDisplay(formData.idNumber)}
+                      onChange={(e) => handleAadharChange(e.target.value)}
+                      placeholder="XXXX XXXX XXXX"
+                      maxLength={14}
+                      className="w-full bg-transparent text-white font-mono text-[14px] md:text-[18px] outline-none placeholder:text-white/30 tracking-[0.3em]"
+                    />
+                    {formData.idNumber && (
+                      <div className="shrink-0">
+                        {aadharStatus.valid ? (
+                          <MdCheck className="text-green-500 text-md md:text-xl" />
+                        ) : (
+                          <span className="text-white/40 text-[8px] md:text-[10px]">
+                            {formData.idNumber.length}/12
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {formData.idNumber && (
+                    <div className="mt-2 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full transition-all duration-300 ${
+                              aadharStatus.valid ? "bg-green-500" : "bg-accet"
+                            }`}
+                            style={{ width: `${aadharStatus.progress}%` }}
+                          />
+                        </div>
+                      </div>
+                      <p
+                        className={`text-[6px] md:text-[10px] font-body ${
+                          aadharStatus.valid
+                            ? "text-green-400"
+                            : "text-white/50"
+                        }`}
+                      >
+                        {aadharStatus.message}
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-3 bg-blue-500/10 border border-blue-500/30 p-2 rounded">
+                  <p className="text-[7px] md:text-[9px] text-blue-400 font-body">
+                    💡 Your 12-digit Aadhar number can be found on your Aadhar
+                    card or e-Aadhar
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* PAN CARD INPUT */}
             {formData.idType === "pan" && (
               <div className="relative group animate-fadeIn">
                 <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
@@ -1301,8 +1554,8 @@ const UserDetails = () => {
                     panStatus.valid
                       ? "border-green-500/50"
                       : formData.idNumber
-                      ? "border-accet/50"
-                      : "border-white/20 group-hover:border-accet/30"
+                        ? "border-accet/50"
+                        : "border-white/20 group-hover:border-accet/30"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1312,14 +1565,14 @@ const UserDetails = () => {
                       onChange={(e) => handlePANChange(e.target.value)}
                       placeholder="ABCDE1234F"
                       maxLength={10}
-                      className="w-full bg-transparent text-white font-mono text-[12px] md:text-[16px] outline-none placeholder:text-white/30 tracking-[0.3em] uppercase"
+                      className="w-full bg-transparent text-white font-mono text-[14px] md:text-[18px] outline-none placeholder:text-white/30 tracking-[0.3em] uppercase"
                     />
                     {formData.idNumber && (
                       <div className="shrink-0">
                         {panStatus.valid ? (
-                          <MdCheck className="text-green-500 text-xl" />
+                          <MdCheck className="text-green-500 text-md md:text-xl" />
                         ) : (
-                          <span className="text-white/40 text-sm">
+                          <span className="text-white/40 text-[8px] md:text-[10px]">
                             {formData.idNumber.length}/10
                           </span>
                         )}
@@ -1327,11 +1580,10 @@ const UserDetails = () => {
                     )}
                   </div>
 
-                  {/* Progress & Hint */}
                   {formData.idNumber && (
                     <div className="mt-2 space-y-1">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-300 ${
                               panStatus.valid ? "bg-green-500" : "bg-accet"
@@ -1341,7 +1593,7 @@ const UserDetails = () => {
                         </div>
                       </div>
                       <p
-                        className={`text-[8px] md:text-[10px] font-body ${
+                        className={`text-[6px] md:text-[10px] font-body ${
                           panStatus.valid ? "text-green-400" : "text-white/50"
                         }`}
                       >
@@ -1350,24 +1602,19 @@ const UserDetails = () => {
                     </div>
                   )}
                 </div>
-
-                
               </div>
             )}
 
-            {/* ═══════════════════════════════════════════════
-                ✅ DRIVING LICENSE INPUT WITH DOB
-            ═══════════════════════════════════════════════ */}
+            {/* DRIVING LICENSE INPUT */}
             {formData.idType === "driving" && (
               <div className="space-y-4 animate-fadeIn">
-                {/* License Number */}
                 <div className="relative group">
                   <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
                     Driving License Number
                   </label>
                   <div
                     className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
-                      formData.idNumber.length >= 10
+                      formData.idNumber.length >= 8
                         ? "border-green-500/50"
                         : "border-white/20 group-hover:border-accet/30"
                     }`}
@@ -1384,9 +1631,9 @@ const UserDetails = () => {
                       {formData.idNumber && (
                         <div className="shrink-0">
                           {formData.idNumber.length >= 8 ? (
-                            <MdCheck className="text-green-500 text-xl" />
+                            <MdCheck className="text-green-500 text-md md:text-xl" />
                           ) : (
-                            <span className="text-white/40 text-sm">
+                            <span className="text-white/40 text-[8px] md:text-[10px]">
                               {formData.idNumber.length}/16
                             </span>
                           )}
@@ -1399,12 +1646,14 @@ const UserDetails = () => {
                         <div className="flex-1 h-0.5 bg-white/10 rounded-full overflow-hidden">
                           <div
                             className={`h-full transition-all duration-300 ${
-                              formData.idNumber.length >= 10
+                              formData.idNumber.length >= 8
                                 ? "bg-green-500"
                                 : "bg-accet"
                             }`}
                             style={{
-                              width: `${(formData.idNumber.length / 16) * 100}%`,
+                              width: `${
+                                (formData.idNumber.length / 16) * 100
+                              }%`,
                             }}
                           />
                         </div>
@@ -1412,9 +1661,9 @@ const UserDetails = () => {
                     )}
                   </div>
 
-                  {/* Format hint */}
                   <p className="text-[8px] text-white/40 mt-1 px-1 font-body">
-                    Format: State Code + RTO Code + Year + Number (e.g., TN0020230000000)
+                    Format: State Code + RTO Code + Year + Number (e.g.,
+                    TN0020230000000)
                   </p>
                 </div>
 
@@ -1471,7 +1720,9 @@ const UserDetails = () => {
                 setAgreed(!agreed);
               }}
               className={`flex items-start gap-2 md:gap-3 p-2 md:p-4 border cursor-pointer transition-all ${
-                agreed ? "bg-accet/10 border-accet/50" : "bg-shade border-white/20"
+                agreed
+                  ? "bg-accet/10 border-accet/50"
+                  : "bg-shade border-white/20"
               }`}
             >
               <div
@@ -1483,11 +1734,23 @@ const UserDetails = () => {
               </div>
               <p className="text-[8px] lg:text-[11px] text-white/60 font-body leading-relaxed">
                 {t("user_messages.agreement")}{" "}
-                <span className="text-accet underline">
+                <span
+                  className="text-accet underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPrivacyOpen(true);
+                  }}
+                >
                   {t("user_messages.privacyPolicy")}
                 </span>{" "}
                 and{" "}
-                <span className="text-accet underline">
+                <span
+                  className="text-accet underline"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsTermsOpen(true);
+                  }}
+                >
                   {t("user_messages.terms")}
                 </span>
                 .
@@ -1505,7 +1768,7 @@ const UserDetails = () => {
   // ✅ RENDER
   // ========================================
   return (
-    <div className="bg-black">
+    <div className="bg-transparent">
       {/* ✅ MAIN CONTAINER */}
       <div
         ref={mainContainerRef}
@@ -1517,7 +1780,9 @@ const UserDetails = () => {
         {/* FORM LAYER */}
         <div
           ref={formLayerRef}
-          className={`absolute inset-0 z-10 ${isRevealed ? "" : "pointer-events-none"}`}
+          className={`absolute inset-0 z-10 ${
+            isRevealed ? "" : "pointer-events-none"
+          }`}
           style={{
             height: fixedHeight ? `${fixedHeight}px` : "100vh",
             transformOrigin: "center center",
@@ -1532,7 +1797,7 @@ const UserDetails = () => {
                 {/* Header */}
                 <div className="flex justify-center items-center mb-4 md:mb-6">
                   <div className="text-center">
-                    <h1 className="text-xl lg:text-3xl font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-gradient-to-r from-accet to-indigo-400 bg-clip-text">
+                    <h1 className="text-xl lg:text-3xl font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-gradient-to-r from-accet to-cyan-600 bg-clip-text">
                       {t("header.title")}
                     </h1>
                     <p className="text-[8px] lg:text-[13px] md:mt-1 font-medium text-white/40 font-body">
@@ -1573,11 +1838,12 @@ const UserDetails = () => {
                           disabled={!isStepValid()}
                           className={`flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 font-heading text-[10px] lg:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
                             isStepValid()
-                              ? "bg-gradient-to-r from-accet/80 to-accet text-white hover:shadow-lg hover:shadow-accet/30"
+                              ? "bg-gradient-to-r from-accet/80 to-accet text-black hover:shadow-lg hover:shadow-accet/30"
                               : "bg-white/5 text-white/30 cursor-not-allowed"
                           }`}
                         >
-                          {t("vote_messages.next") || "Continue"} <HiArrowRight />
+                          {t("vote_messages.next") || "Continue"}{" "}
+                          <HiArrowRight />
                         </button>
                       ) : (
                         <button
@@ -1597,7 +1863,9 @@ const UserDetails = () => {
                           ) : (
                             <>
                               <MdVerifiedUser className="text-[12px] md:text-base" />
-                              {t("vote_messages.finish") || "Proceed to Vote"}
+                              <p>
+                                {t("vote_messages.finish") || "Proceed to Vote"}
+                              </p>
                             </>
                           )}
                         </button>
@@ -1608,13 +1876,13 @@ const UserDetails = () => {
                   {/* Quick Links */}
                   <div className="text-[7px] lg:text-[10px] tracking-widest text-white/40 flex justify-between items-center mt-2 md:mt-3 px-2 font-heading">
                     <button
-                      onClick={() => navigate("/privacy")}
+                      onClick={() => setIsPrivacyOpen(true)}
                       className="hover:text-white transition-colors"
                     >
                       {t("user_messages.privacyPolicy")}
                     </button>
                     <button
-                      onClick={() => navigate("/terms")}
+                      onClick={() => setIsTermsOpen(true)}
                       className="hover:text-white transition-colors"
                     >
                       {t("user_messages.terms")}
@@ -1641,12 +1909,21 @@ const UserDetails = () => {
           <img
             src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768047744/ChatGPT_Image_Jan_10_2026_05_39_30_PM_uilkls.png"
             alt="Hero Background"
-            className="w-full object-fit"
+            className="w-full object-fit block lg:hidden"
+            style={{ height: fixedHeight ? `${fixedHeight}px` : "100vh" }}
+          />
+          <img
+            src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768886799/ChatGPT_Image_Jan_20_2026_10_00_21_AM_fg6cma.png"
+            alt="Hero Background"
+            className="w-full object-contain hidden lg:block"
             style={{ height: fixedHeight ? `${fixedHeight}px` : "100vh" }}
           />
           <div className="absolute inset-0 bg-linear-to-b from-black/40 via-black/30 to-black/60" />
           {!isRevealed && (
-            <ClickIndicator onClick={handleContinueClick} isAnimating={isAnimating} />
+            <ClickIndicator
+              onClick={handleContinueClick}
+              isAnimating={isAnimating}
+            />
           )}
         </div>
       </div>
@@ -1663,9 +1940,24 @@ const UserDetails = () => {
         />
       )}
 
-      {showError && <ErrorModal message={error} onClose={() => setShowError(false)} />}
+      <PrivacyPolicyPopup
+        isOpen={isPrivacyOpen}
+        onClose={() => setIsPrivacyOpen(false)}
+      />
+
+      <TermsAndConditionsPopup
+        isOpen={isTermsOpen}
+        onClose={() => setIsTermsOpen(false)}
+      />
+
+      {showError && (
+        <ErrorModal message={error} onClose={() => setShowError(false)} />
+      )}
       {showSuccess && (
-        <SuccessModal trackerId={trackerId} onContinue={handleSuccessContinue} />
+        <SuccessModal
+          trackerId={trackerId}
+          onContinue={handleSuccessContinue}
+        />
       )}
 
       {/* ✅ ANIMATIONS */}

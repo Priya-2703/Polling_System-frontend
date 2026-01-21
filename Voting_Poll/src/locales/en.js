@@ -6,10 +6,11 @@ const en = {
     },
     statusBadge: "Digital Polling System • Online",
     hero: {
-      title1: "DECENTRALIZED",
-      title2: "CONSENSUS",
+      title1: "DIGITAL",
+      title2: "TAMIL NADU",
+      title3: "ELECTION 2026",
       description:
-        "Participate in the governance of the 22nd century. Secure, immutable, and instant polling powered by quantum-resistant ledgers. Your voice, encrypted forever.",
+        "Welcome to the first fully decentralized, holographic voting interface. Experience governance at the speed of light. Secured by quantum cryptography.",
     },
     features: {
       secure: "Secure",
@@ -21,6 +22,7 @@ const en = {
       description:
         "Take just 2 minutes... Plant the seeds for 5 years of change! Click the button below to leave your feedback now.",
       startButton: "Start",
+      statusButton: "Check Status",
       votingText: "Voting",
     },
     footer: {
@@ -55,6 +57,7 @@ const en = {
     gender: "Gender",
     ageGroup: "Age Group",
     district: "District",
+    constituency: "Constituency",
     religion: "Religion",
     motherTongue: "Mother Tongue",
     phoneNumber: "Phone Number",
@@ -100,6 +103,7 @@ const en = {
       st: "Scheduled Tribe",
     },
     ids: {
+      aadhar: "Aadhar Card",
       pan: "PAN Card",
       driving: "Driving License",
     },
@@ -115,7 +119,7 @@ const en = {
     completeFields: "Complete All Fields",
     proceed: "Proceed to Vote",
   },
-   candidates: {
+  candidates: {
     p1: {
       name: "All India Anna Dravida Munnetra Kazhagam",
       party: "AIADMK",
@@ -123,12 +127,12 @@ const en = {
         "The All India Anna Dravida Munnetra Kazhagam (AIADMK) was founded by revolutionary leader M.G. Ramachandran. After him, the revolutionary leader J. Jayalalithaa took over the leadership and guided the party. Based on Annaism, the party adopted policies of social justice and welfare, implementing development programs for women, the poor, and marginalized communities. It has been a major political party in Tamil Nadu, winning seven legislative assembly elections. For over 50 years, it has worked for the progress and welfare of the Tamil people.",
       tagline: "Makkalai Kaappom, Thamizagathai Meetpom",
       promises: [
-        "Social justice and equality",
-        "Welfare schemes for the poor",
-        "Nutritious Meal Scheme",
+        "Kulavilakku Scheme – A monthly financial assistance of ₹2000 will be provided to the head of the family",
+        "Free Bus Travel Scheme – Free bus travel for both men and women",
+        "Amma Housing Scheme",
         "Special schemes for women",
         "Amma Canteens, Mini Clinics, Gold for Thali",
-        "Waiver of agricultural loans",
+        "Amma Two-Wheeler Distribution Scheme",
       ],
     },
     p2: {
@@ -153,12 +157,12 @@ const en = {
         "The Dravida Munnetra Kazhagam (DMK) was founded by the scholar Periyar E.V. Ramasamy’s disciple, C.N. Annadurai (Anna). The party led the anti-Hindi agitations and, with widespread public support, came to power in 1967. Following Anna’s principles and Kalaignar’s guidance of duty, dignity, and discipline, the DMK implemented policies promoting equality, abolition of caste, and women’s liberation. It has been a major political party in Tamil Nadu, winning six legislative assembly elections, and for 70 years, it has traveled with the ideals of Dravidian philosophy.",
       tagline: "Kadamai, Kanniyam, Kattuppadu",
       promises: [
-        "Protection of reservation rights",
-        "Women's rights scheme",
-        "Healthcare at the doorstep (Makkalai Thedi Maruthuvam)",
-        "Women's education, power, and safety",
-        "State autonomy and federalism",
-        "Livelihood improvement for farmers and workers",
+        "Vidiyal Payanam Scheme (Free early-morning travel scheme for women)",
+        "Women’s Rights Allowance (Monthly financial assistance for women)",
+        "Abolition of the NEET Examination",
+        "Chief Minister’s Breakfast Scheme",
+        "Reduction of petrol price by ₹5 and diesel price by ₹4",
+        "Urging the Union Government to declare Thirukkural as a National Book",
       ],
     },
     p4: {
@@ -168,12 +172,12 @@ const en = {
         "The Naam Tamilar Katchi (NTK) was founded in response to the impact of the ethnic genocide in Sri Lanka, aiming to spread Tamil nationalist ideas among the people. It entered electoral politics in 2016 as a party that independently pursues Tamil nationalist ideals. The party has actively led movements such as the Methane protest, Sterlite protest, fishermen’s rights protest, Jallikattu protest, and Hydrocarbon protest, standing with the people on the ground as a distinct Tamil nationalist political party.",
       tagline: "Uzhavai Meetpoom, Ulagai Kaappom",
       promises: [
-        "Self-reliant economy",
-        "Government jobs for all",
+        "Government jobs for everyone",
         "Retrieval of Katchatheevu",
+        "Strengthening a self-reliant economy",
         "Formation of Coastal Force (Neithal Padai)",
-        "Organic farming and food sovereignty",
-        "Official language status for Tamil",
+        "Protection of natural and mineral resources",
+        "Making Tamil the official language as well as the language of administration and worship",
       ],
     },
     p5: {
@@ -183,12 +187,12 @@ const en = {
         "This is a political party that prioritizes Bharatiya (Indian) culture and national sentiment, adopting Deen Dayal Upadhyaya’s philosophy of “Integral Humanism” and the goal of “One India, Prosperous India” as its guiding principles. Its policies focus on development (Vikas), national security, economic growth, social harmony, welfare of all sections of society, and corruption-free governance. In Tamil Nadu, the party works to strengthen nationalistic politics and, with the support of the people of Tamil Nadu, progresses on the path toward a developed and prosperous India.",
       tagline: "Thamizagam Thalai Nimira Tamizhanin Payanam",
       promises: [
-        "National security and economic development",
-        "Social harmony and spiritual tourism in Tamil Nadu",
-        "Protection of Indian culture",
-        "Building a self-reliant nation",
-        "Complete eradication of terrorism",
-        "Coastal security and fishermen welfare schemes",
+        "Creation of 50 lakh new job opportunities in Tamil Nadu",
+        "Recovery of 12 lakh acres of Panchami lands",
+        "Annual financial assistance of ₹6000 for fishermen",
+        "Free tablets for 8th and 9th standard students",
+        "Free supply of purified drinking water to all households through pipelines",
+        "Ban on sand mining in riverbeds for five years",
       ],
     },
     p6: {
@@ -198,12 +202,12 @@ const en = {
         "This is a national party that played a leading role in India’s struggle for independence. Guided by leaders like Mahatma Gandhi and Jawaharlal Nehru, it embraced policies of democracy, socialism, social justice, and equality. By implementing welfare schemes for all sections of society and promoting industrial development, it worked to build India into a strong nation. Today, it continues as a national party striving to uphold secular democratic values and the dignity of the Constitution, with the goal of strengthening India.",
       tagline: "Vaakku Thiruttukku Ethiraaga Ondrianthu Nirppom",
       promises: [
-        "Right to Education Act",
-        "Green Revolution",
-        "Economic equality",
-        "Protecting a diverse India",
-        "Livelihood improvement for the poor",
-        "Protecting fundamental rights for all citizens",
+        "Measures to provide tax exemption for new entrepreneurs for up to five years",
+        "50% subsidy on bank loans for micro and small entrepreneurs",
+        "A special law to prevent honour killings in Tamil Nadu",
+        "Efforts will be made to include fishermen in the Scheduled Tribes list",
+        "Abolition of the NEET examination",
+        "Increase in pension amounts for senior citizens",
       ],
     },
     p7: {
@@ -213,12 +217,12 @@ const en = {
         "This is a revolutionary political party that has emerged as a major force advocating for the political and social rights of the original Dravidians and oppressed communities. Adopting the ideas of Dr. B.R. Ambedkar, Ayothidasa Panditar, Mahatma Jyotiba Phule, and Periyar as its guiding principles, the party prioritizes abolition of caste and untouchability. It continues to fight against social injustice tirelessly, working for the improvement of livelihoods and dignified lives of marginalized sections of society, and has made a profound impact as a transformative political force.",
       tagline: "Saathi Ozhippe Makkal Viduthalai",
       promises: [
-        "Caste abolition and social equality",
-        "Special laws for SC/ST and minorities",
-        "Protection of human rights",
-        "Ensuring reservation in public and private sectors",
-        "Education and land rights for all",
-        "Women's safety and empowerment",
+        "Total Prohibition of Alcohol",
+        "50% Reservation Law for Women",
+        "Free provision of Education, Healthcare, and Public Health services only",
+        "Prevent the corporatization of agriculture, trade, and industrial sectors",
+        "Changes in foreign policy in support of Eelam Tamils",
+        "Protection of the welfare of marginalized communities, including Scheduled Tribes, minorities, and persons with disabilities",
       ],
     },
     p8: {
@@ -228,12 +232,12 @@ const en = {
         "Entered the field to fight for political representation and social rights of Vanniyars and Most Backward Classes. Prioritizing social justice, caste equality, health, and agricultural development, it strives to abolish caste-based discrimination and create an equal society.",
       tagline: "Anaivarukkum Valarchi, Anaivarukkum Urimai",
       promises: [
-        "Implementation of total prohibition",
-        "Environmental protection and water body restoration",
-        "Employment and skill development training",
-        "Protection of Tamil art, culture, and language",
-        "Creating social harmony",
-        "Marketing for agricultural produce",
+        "Caste-wise Census",
+        "Free Healthcare for All and Free Health Insurance Scheme",
+        "15% Reservation for Vanniyars",
+        "All government jobs will be provided only to residents of Tamil Nadu",
+        "A monthly pension of ₹2000 will be provided to all senior citizens above 60 years of age",
+        "Financial assistance will be provided to students: ₹500 per month for 10th standard students , ₹1000 per month for 11th and 12th standard students",
       ],
     },
     p9: {
@@ -274,12 +278,12 @@ const en = {
         "This is a political party formed with the aim of reviving and implementing the welfare-oriented political vision of revolutionary leader Amma J. Jayalalithaa, along with the core principles of the Dravidian movement. It operates with key objectives such as protecting the rights of the people of Tamil Nadu and ensuring corruption-free governance. The party revives welfare schemes successfully implemented during Amma’s administration for the poor, marginalized, and middle-class, strengthens people-centered politics, and continues to serve as the voice of the true supporters of the AIADMK.",
       tagline: "Thamizagam Thalai Nimirattum, Tamizhar Vaazhvu Malarattum",
       promises: [
-        "Improving livelihood of farmers and workers",
-        "Maintenance of law and order",
-        "Establishing economic equality",
-        "Revival of public welfare schemes",
-        "Empowerment of women and youth",
-        "New mechanisms for public grievance redressal",
+        "The welfare fund for advocates will be increased from ₹7 lakh to ₹10 lakh",
+        "Monthly incentive assistance will be increased for all young advocates for five years. Incentives will be provided to all young advocates who studied in colleges within Tamil Nadu",
+        "Families with persons with disabilities living in poverty will be officially declared as Below Poverty Line (BPL) families",
+        "Ensuring that government welfare schemes are provided to persons with disabilities without any conditions",
+        "Introduction of a special insurance scheme exclusively for persons with disabilities, with the government paying the insurance premium",
+        "Tax concessions for the purchase of two-wheelers and four-wheelers for the personal use of persons with disabilities",
       ],
     },
     p12: {
@@ -438,14 +442,15 @@ const en = {
     backHome: "Home",
     copySuccess: "Copied!",
   },
-   terms: {
+  terms: {
     nav: {
       back: "Back",
     },
     hero: {
       title1: "Terms &",
       title2: "Conditions",
-      lastUpdated: "Last Updated: January 2025 • Applicable to Tamil Nadu Assembly Election 2026 Survey",
+      lastUpdated:
+        "Last Updated: January 2025 • Applicable to Tamil Nadu Assembly Election 2026 Survey",
     },
     sections: {
       introduction: {
