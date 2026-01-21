@@ -6,9 +6,10 @@
   --font-num: "Orbitron", sans-serif ; /* "Geologica", sans-serif , "Orbitron", sans-serif */
   --font-body: "Exo 2", sans-serif ; /* "Geologica", sans-serif , "Exo 2", sans-serif */
   --font-tamil: "Anek Tamil", sans-serif ; 
-  --color-accet: #4C43DD;   
+  --color-accet: #00F3FF;   
+  --color-halo: #E0FBFC;   
   --color-shade: #07070B;   
-  --color-indigo: #6366f1;   
+  --color-indigo: #00F3FF;   
   /* end color green-02D1D1 , blue shade -8770f8 border color :080808  pink :7A1F3E */
 }
 
@@ -91,10 +92,14 @@
 }
 
 body {
-  background-color: black;
+  background-color: #050510;
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+}
+
+canvas {
+  display: block;
 }
 
 .custom-checkbox {

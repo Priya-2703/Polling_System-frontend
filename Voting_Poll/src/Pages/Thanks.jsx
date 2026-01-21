@@ -380,7 +380,7 @@ const Thanks = () => {
             >
               <Icon
                 icon="lucide:calendar-check"
-                className="text-indigo-400"
+                className="text-accet"
                 style={{
                   fontSize: `clamp(10px, ${dimensions.vh * 0.018}px, 14px)`,
                 }}
@@ -428,7 +428,7 @@ const Thanks = () => {
             }}
           />
           <div
-            className="absolute rounded-full border border-indigo-500/15"
+            className="absolute rounded-full border border-accet/15"
             style={{ inset: `${currentWheelSize * 0.05}px` }}
           />
 
@@ -511,7 +511,7 @@ const Thanks = () => {
                           className="absolute rounded-xl"
                           style={{
                             inset: "-5px",
-                            background: "rgba(99, 102, 241, 0.6)",
+                            background: "rgba(0, 243, 255, 0.6)",
                             filter: "blur(15px)",
                           }}
                           animate={{ opacity: [0.4, 0.8, 0.4] }}
@@ -522,7 +522,7 @@ const Thanks = () => {
                       <div
                         className={`relative overflow-hidden rounded-lg transition-all duration-500 ${
                           !isSpinning && isSelected
-                            ? "ring-2 ring-accet shadow-[0_0_20px_rgba(0,212,170,0.1)]"
+                            ? "ring-2 ring-accet shadow-[0_0_20px_rgba(0, 243, 255,0.1)]"
                             : "ring-1 ring-white/20"
                         }`}
                         style={{
@@ -575,7 +575,7 @@ const Thanks = () => {
               width: `${currentHubSize}px`,
               height: `${currentHubSize}px`,
               boxShadow:
-                "0 0 40px rgba(0, 212, 170, 0.4), inset 0 0 20px rgba(0, 212, 170, 0.1)",
+                "0 0 40px rgba(0, 243, 255, 0.4), inset 0 0 20px rgba(0, 243, 255, 0.1)",
             }}
           >
             {isSpinning ? (
@@ -597,7 +597,7 @@ const Thanks = () => {
               >
                 <Icon
                   icon="lucide:vote"
-                  className="text-accet drop-shadow-[0_0_10px_rgba(0,212,170,0.8)]"
+                  className="text-accet drop-shadow-[0_0_10px_rgba(0, 243, 255,0.8)]"
                   style={{
                     fontSize: `${currentHubSize * 0.4}px`,
                   }}
@@ -622,7 +622,7 @@ const Thanks = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div
-            className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md shadow-[0_0_50px_rgba(99,102,241,0.6)]"
+            className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md shadow-[0_0_50px_rgba(0, 243, 255,0.6)]"
             style={{
               padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
                 dimensions.vh * 0.025,

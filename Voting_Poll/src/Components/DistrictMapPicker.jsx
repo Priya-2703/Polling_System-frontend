@@ -12,15 +12,15 @@ const SCALE = 4.0;
 
 // --- COLORS CONFIG ---
 const DISTRICT_CONFIG = {
-    "Chennai": { color: "#A52A2A" }, "Thiruvallur": { color: "#0818A8" }, "Chengalpattu": { color: "#023020" },
-    "Kancheepuram": { color: "#834333" }, "Ranipet": { color: "#D2042D" }, "Vellore": { color: "#EF476F" },
+    "Chennai": { color: "#A52A2A" }, "Tiruvallur": { color: "#0818A8" }, "Chengalpattu": { color: "#023020" },
+    "Kanchipuram": { color: "#834333" }, "Ranipet": { color: "#D2042D" }, "Vellore": { color: "#EF476F" },
     "Tirupathur": { color: "#630330" }, "Krishnagiri": { color: "#C04000" }, "Dharmapuri": { color: "#301934" },
     "Tiruvannamalai": { color: "#073B4C" }, "Viluppuram": { color: "#EC5800" }, "Kallakurichi": { color: "#5A189A" },
     "Salem": { color: "#454B1B" }, "Erode": { color: "#023020" }, "Nilgiris": { color: "#9F2B68" },
     "Coimbatore": { color: "#CC5500" }, "Tiruppur": { color: "#355E3B" }, "Namakkal": { color: "#8338EC" },
     "Karur": { color: "#8B0000" }, "Perambalur": { color: "#FB5607" }, "Ariyalur": { color: "#FF006E" },
     "Cuddalore": { color: "#38B000" }, "Mayiladuthurai": { color: "#CCFF33" }, "Nagapattinam": { color: "#0047AB" },
-    "Thiruvarur": { color: "#008000" }, "Thanjavur": { color: "#301934" }, "Pudukkottai": { color: "#008000" },
+    "Tiruvarur": { color: "#008000" }, "Thanjavur": { color: "#301934" }, "Pudukkottai": { color: "#008000" },
     "Tiruchirappalli": { color: "#0047AB" }, "Dindigul": { color: "#CD7F32" }, "Theni": { color: "#00008B" },
     "Madurai": { color: "#880808" }, "Sivaganga": { color: "#BC4749" }, "Virudhunagar": { color: "#023020" },
     "Ramanathapuram": { color: "#811331" }, "Tenkasi": { color: "#3D405B" }, "Thoothukudi": { color: "#CC5500" },
@@ -124,7 +124,7 @@ function MapScene({ onDistrictSelect, selectedDistrict }) {
         });
     }, []);
 
-    if (!geoData) return <Html center><div className="text-indigo-600 font-heading tracking-wider uppercase text-center font-bold animate-pulse">Loading 3D Map...</div></Html>;
+    if (!geoData) return <Html center><div className="text-cyan-600 font-heading tracking-wider uppercase text-center font-bold animate-pulse">Loading 3D Map...</div></Html>;
 
     return (
         <group rotation={[-Math.PI / 2, 0, 0]}>
@@ -145,14 +145,14 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-in fade-in zoom-in duration-300">
-            <div className="relative w-full h-[90dvh] max-w-5xl bg-accet/40 border border-accet/10 overflow-hidden flex flex-col shadow-2xl shadow-indigo-500/10">
+            <div className="relative w-full h-[90dvh] max-w-5xl bg-accet/40 rounded-lg border border-accet/10 overflow-hidden flex flex-col shadow-2xl shadow-cyan-500/10">
                 {/* Header */}
-                <div className="p-4 border-b border-white/10 flex justify-between items-center bg-shade z-10">
+                <div className="p-4 border-b border-white/10 flex justify-between items-center z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-1 h-8 bg-linear-to-b from-accet/60 to-accet/30 rounded-full"></div>
                         <div><h3 className="text-white font-heading font-bold text-[15px] md:text-lg tracking-wide">SELECT DISTRICT</h3><p className="text-[8px] md:text-[10px] text-white/50 uppercase tracking-widest">Interactive 3D Map</p></div>
                     </div>
-                    <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 hover:bg-red-500/20 text-white/50 hover:text-red-400 flex items-center justify-center transition-all">✕</button>
+                    <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/10 hover:bg-red-800/40 text-white/80 hover:text-red-500 flex items-center justify-center transition-all">✕</button>
                 </div>
 
                 {/* 3D Canvas */}
@@ -190,15 +190,15 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                     
                     {/* Instructions */}
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 pointer-events-none min-w-50">
-                        <p className="text-[8px] md:text-[9px] text-indigo-300/80 text-center font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
+                        <p className="text-[8px] md:text-[9px] text-accet/80 text-center font-mono tracking-wider">DRAG TO MOVE • CLICK TO SELECT</p>
                     </div>
 
                     {/* Selected Info */}
                     {selected && (
                         <div className="absolute bottom-2 left-2 md:bottom-6 md:left-6 bg-shade backdrop-blur-xl border border-white/20 rounded p-3 md:p-4 shadow-2xl md:min-w-50 animate-in slide-in-from-bottom-5 z-999">
-                            <span className="text-[8px] md:text-[9px] text-indigo-600 font-heading font-bold uppercase tracking-widest block mb-1 z-999">Selected Region</span>
+                            <span className="text-[8px] md:text-[9px] text-cyan-600 font-heading font-bold uppercase tracking-widest block mb-1 z-999">Selected Region</span>
                             <h2 className="text-[15px] md:text-2xl font-black uppercase text-white leading-none z-999">{selected}</h2>
-                            <div className="h-0.5 md:h-1 w-12 bg-yellow-500 rounded-full mt-2 md:mt-2 z-999"></div>
+                            <div className="h-0.5 md:h-1 w-12 bg-cyan-500 rounded-full mt-2 md:mt-2 z-999"></div>
                         </div>
                     )}
                 </div>
@@ -206,7 +206,7 @@ export default function DistrictMapPicker({ currentDistrict, onConfirm, onClose 
                 {/* Footer */}
                 <div className="p-4 border-t border-white/10 bg-shade z-10 flex justify-between md:justify-end items-center gap-3">
                     <button onClick={onClose} className="px-5 py-2.5 md:py-3 text-[10px] md:text-xs font-bold font-heading text-white/50 hover:text-white hover:bg-white/5 transition-all uppercase tracking-wider">Cancel</button>
-                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-3 md:px-6 py-2.5 md:py-3 font-bold text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/70 to-accet/30 font-heading text-white hover:shadow-indigo-800/30 hover:scale-[1.02]" : "bg-white/10 text-white/40 cursor-not-allowed"}`}>
+                    <button onClick={() => { if(selected) onConfirm(selected); }} disabled={!selected} className={`px-3 md:px-6 py-2.5 md:py-3 font-bold rounded-lg text-[10px] md:text-xs uppercase tracking-wider shadow-lg transition-all flex items-center gap-2 ${selected ? "bg-linear-to-r from-accet/70 to-accet/30 font-heading text-white hover:shadow-accet/30 hover:scale-[1.02]" : "bg-white/10 font-heading text-white/40 cursor-not-allowed"}`}>
                         <span>Confirm Selection</span>
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </button>

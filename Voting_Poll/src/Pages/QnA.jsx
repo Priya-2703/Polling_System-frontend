@@ -455,7 +455,7 @@ const QnA = () => {
 
               <div className="h-1 bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-linear-to-r from-accet via-[#8770f8] to-accet/50 rounded-full transition-all duration-500 ease-out"
+                  className="h-full bg-linear-to-r from-accet via-cyan-300 to-accet/50 rounded-full transition-all duration-500 ease-out"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -700,7 +700,7 @@ const QnA = () => {
                 isAnimating || isCompleting
                   ? "bg-accet/50 text-black/50 cursor-not-allowed"
                   : selectedOption
-                  ? "bg-linear-to-r from-accet to-indigo-500/30 text-white hover:shadow-[0_0_30px_rgba(95,98,233,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet to-accet/30 text-black hover:shadow-[0_0_30px_rgba(95,98,233,0.2)] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-accet/50 to-accet/50 text-black/70"
               }`}
             >

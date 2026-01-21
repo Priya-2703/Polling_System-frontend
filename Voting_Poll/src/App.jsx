@@ -11,10 +11,12 @@ import { useTranslation } from "react-i18next";
 import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
 import Thanks from "./Pages/Thanks";
-import PrivacyPolicy from "./Pages/PrivacyPolicy";
-import TermsAndConditions from "./Pages/TermsAndConditions";
+import PrivacyPolicy from "./Pages/PrivacyPolicyPopup";
+import TermsAndConditions from "./Pages/TermsAndConditionsPopup";
 import FormPage from "./Pages/FormPage";
 import ScrollToTop from "./Components/ScrollToTop";
+import VoteStatus from "./Pages/VoteStatus";
+import ThreeBackground from "./Components/ThreeBackground";
 
 
 const getRedirectPath = (status) => {
@@ -87,8 +89,8 @@ function App() {
 
   return (
     <>
-      <DigitalGlobeBackground />
-      <div className="scanline" />
+      <ThreeBackground />
+      {/* <div className="scanline" /> */}
 
       <BrowserRouter>
       <ScrollToTop behavior="smooth" />
@@ -97,7 +99,7 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsAndConditions />} />
           <Route path="/user" element={<FormPage />} />
-
+          <Route path="/status" element={<VoteStatus />} />
           <Route path="/form" element={
             localStorage.getItem("voter_status") ? <Navigate to={getRedirectPath(localStorage.getItem("voter_status"))} replace /> : <UserData />
           } />

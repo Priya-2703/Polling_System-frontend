@@ -87,16 +87,18 @@ body {
 }
 
 .glass-panel {
-  background: rgba(15, 15, 20, 0.4);
+  /* background: #050510; */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .glass-panel:hover {
-  border-color: rgba(99, 102, 241, 0.3);
-  box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+  border-color: rgba(0, 243, 255, 0.3);
+  box-shadow: 0 0 40px rgba(0, 243, 255, 0.15);
+  transition: all 0.3s ease-in;
 }
 
 .text-glow {

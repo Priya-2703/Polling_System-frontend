@@ -137,7 +137,7 @@ const Candidate = () => {
               disabled={!selectedCandidate || isVoting}
               className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[16px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate
-                  ? "bg-linear-to-r from-accet via-indigo-500 to-accet/50 text-black hover:shadow-[0_0_40px_#4C43DD] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet via-cyan-500 to-accet/50 text-black hover:shadow-[0_0_40px_#4C43DD] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10"
               }`}
             >
