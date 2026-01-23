@@ -1,74 +1,64 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate, Form } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./Context/AuthContext";
+
+// Pages
 import Home from "./Pages/Home";
 import UserData from "./Pages/UserDetails";
 import Vote from "./Pages/Vote";
 import QnA from "./Pages/QnA";
-import LanguageDialog from "./Components/LanguageDialog";
-import "./i18n/i18n";
-import { useTranslation } from "react-i18next";
-import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import Candidate from "./Pages/Canditdate";
 import Thanks from "./Pages/Thanks";
 import PrivacyPolicy from "./Pages/PrivacyPolicyPopup";
 import TermsAndConditions from "./Pages/TermsAndConditionsPopup";
 import FormPage from "./Pages/FormPage";
-import ScrollToTop from "./Components/ScrollToTop";
 import VoteStatus from "./Pages/VoteStatus";
+
+// Components
+import LanguageDialog from "./Components/LanguageDialog";
+import ScrollToTop from "./Components/ScrollToTop";
+import DigitalGlobeBackground from "./Components/DigitalGlobeBackground";
 import ThreeBackground from "./Components/ThreeBackground";
 
+// i18n
+import "./i18n/i18n";
+import { useTranslation } from "react-i18next";
 
-const getRedirectPath = (status) => {
-  switch (status) {
-    case "registered": return "/vote";
-    case "voted": return "/survey";
-    case "survey_completed": return "/candidate";
-    case "candidate_selected": return "/thanks";
-    default: return "/form";
-  }
-};
+// ✅ NEW: Protected Route Component (Backend based)
+const ProtectedRoute = ({ children, allowedStep }) => {
+  const { currentStep, stepRoutes, loading } = useAuth();
 
+  if (loading) return null; // Loading screen App level la handle aagum
 
-const StepGuard = ({ children, requiredStatus }) => {
-  const currentStatus = localStorage.getItem("voter_status");
-
-  if (!currentStatus && requiredStatus !== "new") {
-    return <Navigate to="/form" replace />;
-  }
-
-  if (currentStatus !== requiredStatus) {
-    if (currentStatus === "registered") return <Navigate to="/vote" replace />;
-    if (currentStatus === "voted") return <Navigate to="/survey" replace />;
-    if (currentStatus === "survey_completed") return <Navigate to="/candidate" replace />;
-    if (currentStatus === "candidate_selected") return <Navigate to="/thanks" replace />;
-    
-    return <Navigate to="/form" replace />;
+  // Step match aagala na, correct route ku redirect
+  if (currentStep !== allowedStep) {
+    const correctPath = stepRoutes[currentStep] || "/form";
+    return <Navigate to={correctPath} replace />;
   }
 
   return children;
 };
 
-function App() {
+// ✅ Main App Routes (Separate component - AuthProvider kulla irukanum)
+const AppRoutes = () => {
+  const { loading } = useAuth();
   const { i18n } = useTranslation();
   const [languageSelected, setLanguageSelected] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [langLoading, setLangLoading] = useState(true);
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("language");
     if (savedLanguage) {
       i18n.changeLanguage(savedLanguage);
-      if (savedLanguage === "ta") {
-        document.body.classList.add("tamil-mode");
-      } else {
-        document.body.classList.remove("tamil-mode");
-      }
+      document.body.classList.toggle("tamil-mode", savedLanguage === "ta");
       setLanguageSelected(true);
     }
-    setLoading(false);
+    setLangLoading(false);
   }, [i18n]);
 
-  if (loading) {
+  // Loading States
+  if (langLoading || loading) {
     return (
       <div className="h-dvh w-full bg-black flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-accet border-t-transparent rounded-full animate-spin"></div>
@@ -76,6 +66,7 @@ function App() {
     );
   }
 
+  // Language Selection
   if (!languageSelected) {
     return (
       <>
@@ -90,48 +81,77 @@ function App() {
   return (
     <>
       <ThreeBackground />
-      {/* <div className="scanline" /> */}
-
-      <BrowserRouter>
       <ScrollToTop behavior="smooth" />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsAndConditions />} />
-          <Route path="/user" element={<FormPage />} />
-          <Route path="/status" element={<VoteStatus />} />
-          <Route path="/form" element={
-            localStorage.getItem("voter_status") ? <Navigate to={getRedirectPath(localStorage.getItem("voter_status"))} replace /> : <UserData />
-          } />
 
-          <Route path="/vote" element={
-            <StepGuard requiredStatus="registered">
+      <Routes>
+        {/* Public Routes - No Protection */}
+        <Route path="/" element={<Home />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
+        <Route path="/user" element={<FormPage />} />
+        <Route path="/status" element={<VoteStatus />} />
+
+        {/* Protected Routes - Backend Status Based */}
+        <Route
+          path="/form"
+          element={
+            <ProtectedRoute allowedStep="REGISTER">
+              <UserData />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/vote"
+          element={
+            <ProtectedRoute allowedStep="VOTE">
               <Vote />
-            </StepGuard>
-          } />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path="/survey" element={
-            <StepGuard requiredStatus="voted">
+        <Route
+          path="/survey"
+          element={
+            <ProtectedRoute allowedStep="SURVEY">
               <QnA />
-            </StepGuard>
-          } />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path="/candidate" element={
-            <StepGuard requiredStatus="survey_completed">
+        <Route
+          path="/candidate"
+          element={
+            <ProtectedRoute allowedStep="CM_VOTE">
               <Candidate />
-            </StepGuard>
-          } />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path="/thanks" element={
-            <StepGuard requiredStatus="candidate_selected">
+        <Route
+          path="/thanks"
+          element={
+            <ProtectedRoute allowedStep="THANKS">
               <Thanks />
-            </StepGuard>
-          } />
+            </ProtectedRoute>
+          }
+        />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </BrowserRouter>
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </>
+  );
+};
+
+// ✅ Main App Component
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

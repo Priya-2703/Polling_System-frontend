@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../Context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import DigitalGlobeBackground from "../Components/DigitalGlobeBackground";
 import scifi from "../assets/scifi.wav";
 import click from "../assets/click2.wav";
 import useSound from "use-sound";
+import { submitSurvey } from "../utils/service/api";
 
 const QnA = () => {
   const { t } = useTranslation();
+  const { voteId, checkUserStatus } = useAuth();
   const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(scifi, { volume: 0.3 });
   const location = useLocation();
@@ -18,7 +21,8 @@ const QnA = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showError, setShowError] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
-  const [otherText, setOtherText] = useState(""); 
+  const [otherText, setOtherText] = useState("");
+  const [apiError, setApiError] = useState(null); // 👈 New state for API errors
 
   const questions = [
     {
@@ -77,78 +81,11 @@ const QnA = () => {
         { id: "d", text: t("qna.q4.options.d") },
         { id: "e", text: t("qna.q4.options.e") },
         { id: "f", text: t("qna.q4.options.f") },
-        { id: "g", text: t("qna.q4.options.g")},
+        { id: "g", text: t("qna.q4.options.g") },
         { id: "h", text: t("qna.q4.options.h"), isOther: true },
       ],
     },
-    {
-      id: 5,
-      question: t("qna.q5.question"),
-      type: "image",
-      hasOther: false,
-      options: [
-        {
-          id: "a",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/dmk-logo-png_seeklogo-411320.png",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/vck.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/Indian_National_Congress_hand_logo.png",
-          ],
-        },
-        {
-          id: "b",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.png",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/bjp-logo-png.png",
-          ],
-        },
-        {
-          id: "c",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.png",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.jpg",
-          ],
-        },
-        {
-          id: "d",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/pmk.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/Indian_National_Congress_hand_logo.png",
-          ],
-        },
-        {
-          id: "e",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.png",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/pmk.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/1118412_desiya_murpokku_dravida_kazhagam_logo.jpg",
-          ],
-        },
-        {
-          id: "f",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/pmk.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/1118412_desiya_murpokku_dravida_kazhagam_logo.jpg",
-          ],
-        },
-        {
-          id: "g",
-          images: [
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/images.jpg",
-            "https://ik.imagekit.io/saransk03/Voting%20Poll/Parties/Indian_National_Congress_hand_logo.png",
-          ],
-        },
-        {
-          id: "h",
-          text: "No alliance",
-          images: [],
-        },
-      ],
-    },
   ];
-
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
   const question = questions[currentQuestion];
@@ -157,17 +94,42 @@ const QnA = () => {
   // Check if current selected option is "Other"
   const isOtherSelected = () => {
     if (!selectedOption) return false;
-    const currentOption = question.options.find(opt => opt.id === selectedOption);
+    const currentOption = question.options.find(
+      (opt) => opt.id === selectedOption
+    );
     return currentOption?.isOther === true;
+  };
+
+  // 👈 Format survey data for API submission
+ const formatSurveyData = (answersToFormat) => {
+    const formattedData = {};
+
+    Object.keys(answersToFormat).forEach((questionId) => {
+      const answer = answersToFormat[questionId];
+      
+      if (answer.type === "other") {
+        // Backend Type B: Object with value AND text
+        formattedData[questionId] = {
+           value: "other", // Ipo Step 1 nala idhu kidaikum (e.g., 'j')
+           text: answer.text    // User type panna text
+        };
+      } else {
+        // Backend Type A: Direct String
+        formattedData[questionId] = answer.value; // e.g., 'a'
+      }
+    });
+
+    return formattedData;
   };
 
   const handleOptionSelect = (optionId) => {
     if (isAnimating || isCompleting) return;
     setSelectedOption(optionId);
     setShowError(false);
-    
+    setApiError(null); // 👈 Clear API error when selecting
+
     // If not "Other" option, clear the other text
-    const selectedOpt = question.options.find(opt => opt.id === optionId);
+    const selectedOpt = question.options.find((opt) => opt.id === optionId);
     if (!selectedOpt?.isOther) {
       setOtherText("");
     }
@@ -176,10 +138,13 @@ const QnA = () => {
   const handleOtherTextChange = (e) => {
     setOtherText(e.target.value);
     setShowError(false);
+    setApiError(null);
   };
 
-  const handleNext = () => {
-    playClick()
+  // 👈 Updated handleNext with API integration
+  const handleNext = async () => {
+    playClick();
+    
     if (!selectedOption) {
       setShowError(true);
       return;
@@ -192,8 +157,8 @@ const QnA = () => {
 
     if (isAnimating || isCompleting) return;
 
-    const answerValue = isOtherSelected() 
-      ? { type: "other", text: otherText.trim() }
+    const answerValue = isOtherSelected()
+      ? { type: "other", value: selectedOption, text: otherText.trim() }
       : { type: "option", value: selectedOption };
 
     const updatedAnswers = {
@@ -202,27 +167,55 @@ const QnA = () => {
     };
     setAnswers(updatedAnswers);
 
+    // const voterId = localStorage.getItem("vote_id");
+
+    // 👈 If last question, submit to backend
     if (isLastQuestion) {
-      localStorage.setItem("voter_status", "survey_completed");
-      navigate("/candidate", {
-        replace: true,
-      });
+      setIsCompleting(true);
+      setApiError(null);
+
+      try {
+        // Format survey data for API
+        const surveyData = formatSurveyData(updatedAnswers);
+        
+        console.log("Submitting survey data:", surveyData); // Debug log
+        console.log("Submitting voter id:", voteId); // Debug log
+
+        const result = await submitSurvey(voteId, surveyData);
+
+        if (result.success) {
+          // localStorage.setItem("voter_status", "survey_completed");
+          // navigate("/candidate", { replace: true });
+          await checkUserStatus();
+        } else {
+          // Handle API error
+          setApiError(result.error || "Failed to submit survey. Please try again.");
+          console.error("Survey submission failed:", result.error);
+        }
+      } catch (error) {
+        console.error("Error submitting survey:", error);
+        setApiError("Something went wrong. Please try again.");
+      } finally {
+        setIsCompleting(false);
+      }
       return;
     }
 
+    // Not last question - go to next
     setIsAnimating(true);
 
     setTimeout(() => {
       setCurrentQuestion((prev) => prev + 1);
-      
+
       // Restore previous answer if exists
       const nextQuestionId = questions[currentQuestion + 1]?.id;
-      const previousAnswer = answers[nextQuestionId];
-      
+      const previousAnswer = updatedAnswers[nextQuestionId];
+
       if (previousAnswer) {
         if (previousAnswer.type === "other") {
-          // Find the "other" option
-          const otherOption = questions[currentQuestion + 1]?.options.find(opt => opt.isOther);
+          const otherOption = questions[currentQuestion + 1]?.options.find(
+            (opt) => opt.isOther
+          );
           setSelectedOption(otherOption?.id || null);
           setOtherText(previousAnswer.text || "");
         } else {
@@ -233,27 +226,32 @@ const QnA = () => {
         setSelectedOption(null);
         setOtherText("");
       }
-      
+
       setIsAnimating(false);
       setShowError(false);
+      setApiError(null);
     }, 300);
   };
 
   const handlePrevious = () => {
-    playClick()
+    playClick();
     if (currentQuestion > 0 && !isAnimating && !isCompleting) {
       setIsAnimating(true);
       setShowError(false);
+      setApiError(null);
+      
       setTimeout(() => {
         setCurrentQuestion((prev) => prev - 1);
-        
+
         // Restore previous answer
         const prevQuestionId = questions[currentQuestion - 1]?.id;
         const previousAnswer = answers[prevQuestionId];
-        
+
         if (previousAnswer) {
           if (previousAnswer.type === "other") {
-            const otherOption = questions[currentQuestion - 1]?.options.find(opt => opt.isOther);
+            const otherOption = questions[currentQuestion - 1]?.options.find(
+              (opt) => opt.isOther
+            );
             setSelectedOption(otherOption?.id || null);
             setOtherText(previousAnswer.text || "");
           } else {
@@ -264,12 +262,17 @@ const QnA = () => {
           setSelectedOption(null);
           setOtherText("");
         }
-        
+
         setIsAnimating(false);
       }, 300);
     }
   };
 
+  // 👈 Retry function for API errors
+  const handleRetry = () => {
+    setApiError(null);
+    handleNext();
+  };
 
   const renderAllianceImages = (images, isSelected) => {
     return (
@@ -307,7 +310,6 @@ const QnA = () => {
     );
   };
 
-  // 👈 Render "Other" option with input field
   const renderOtherOption = (option, isSelected) => {
     return (
       <div className="w-full">
@@ -349,12 +351,11 @@ const QnA = () => {
             )}
           </div>
         </div>
-        
-        {/* 👈 Input field - only show when "Other" is selected */}
+
         {isSelected && (
-          <div 
+          <div
             className="mt-3 animate-fadeIn"
-            onClick={(e) => e.stopPropagation()} // Prevent button click
+            onClick={(e) => e.stopPropagation()}
           >
             <input
               type="text"
@@ -370,8 +371,18 @@ const QnA = () => {
             />
             {showError && !otherText.trim() && (
               <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01" />
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4m0 4h.01"
+                  />
                 </svg>
                 {t("qna.otherRequired") || "Please enter your answer"}
               </p>
@@ -383,30 +394,13 @@ const QnA = () => {
   };
 
   return (
-    <div className="min-h-dvh bg-black relative">
-      <DigitalGlobeBackground />
-      <div className="scanline" />
-      <div className="vignette" />
+    <div className="min-h-dvh relative">
 
       {/* Main Content */}
       <div className="h-full w-full relative z-10 flex flex-col">
         <div className="flex-1 flex flex-col py-4 px-4 min-h-0">
-          {/* Header with Candidate Info */}
+          {/* Header with Progress */}
           <div className="shrink-0 mb-4 mt-3">
-            {/* <div className="flex items-center justify-center gap-2 mb-4">
-              <img
-                src={selectedCandidate.party_logo}
-                alt={selectedCandidate.party}
-                className="w-8 h-8 lg:w-14 lg:h-14 rounded-full border border-accet/40 object-cover"
-              />
-              <div className="bg-accet/10 border border-accet/30 rounded-full px-3 py-1">
-                <span className="text-accet text-[10px] lg:text-[14px] font-heading font-medium">
-                  {t("vote_messages.votingFor")} {"  "}
-                  <span className="font-bold">{selectedCandidate.name}</span>
-                </span>
-              </div>
-            </div> */}
-
             {/* Progress Section */}
             <div className="relative max-w-md lg:max-w-[50%] mx-auto mt-4 lg:mt-8">
               <div className="flex justify-between items-center mb-2 px-1">
@@ -484,6 +478,36 @@ const QnA = () => {
                 </p>
               </div>
 
+              {/* 👈 API Error Message */}
+              {apiError && (
+                <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg animate-shake">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-red-400 text-sm font-medium flex items-center gap-2">
+                      <svg
+                        className="w-5 h-5 shrink-0"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      {apiError}
+                    </p>
+                    <button
+                      onClick={handleRetry}
+                      className="px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 rounded text-red-400 text-xs font-medium transition-all"
+                    >
+                      {t("common.retry") || "Retry"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {showError && !isOtherSelected() && (
                 <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 text-center animate-shake">
                   <p className="text-red-400 text-sm font-medium flex items-center justify-center gap-2">
@@ -500,7 +524,8 @@ const QnA = () => {
                         d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    {t("vote_messages.selectError") || "Please select an option to continue"}
+                    {t("vote_messages.selectError") ||
+                      "Please select an option to continue"}
                   </p>
                 </div>
               )}
@@ -521,8 +546,9 @@ const QnA = () => {
                     <button
                       key={`${option.id}-${index}`}
                       onClick={() => {
-                        Click()
-                        handleOptionSelect(option.id)}}
+                        Click();
+                        handleOptionSelect(option.id);
+                      }}
                       disabled={isAnimating || isCompleting}
                       className={`group relative overflow-hidden transition-all duration-300 transform ${
                         isSelected
@@ -536,16 +562,15 @@ const QnA = () => {
                         question.type === "image"
                           ? "px-3 py-4 sm:px-4 sm:py-5"
                           : "px-4 py-3 sm:p-4"
-                      } ${isAnimating || isCompleting ? "pointer-events-none" : ""} ${
-                        isOther && isSelected ? "sm:col-span-2" : "" // Other option spans full width when selected
-                      }`}
+                      } ${
+                        isAnimating || isCompleting ? "pointer-events-none" : ""
+                      } ${isOther && isSelected ? "sm:col-span-2" : ""}`}
                     >
                       {isSelected && (
                         <div className="absolute inset-0 bg-linear-to-r from-accet/10 via-transparent to-accet/10 animate-pulse" />
                       )}
 
                       <div className="relative flex items-center justify-between gap-3">
-                        {/* 👈 Check if it's "Other" option */}
                         {isOther ? (
                           renderOtherOption(option, isSelected)
                         ) : question.type === "image" && hasImages ? (
@@ -690,7 +715,9 @@ const QnA = () => {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              <span className="hidden sm:inline">{t("vote_messages.back")}</span>
+              <span className="hidden sm:inline">
+                {t("vote_messages.back")}
+              </span>
             </button>
 
             <button
@@ -705,7 +732,9 @@ const QnA = () => {
               }`}
             >
               <span>
-                {isLastQuestion
+                {isCompleting
+                  ? t("vote_messages.submitting") || "Submitting..."
+                  : isLastQuestion
                   ? t("vote_messages.finish")
                   : t("vote_messages.next")}
               </span>

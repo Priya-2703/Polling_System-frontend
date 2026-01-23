@@ -143,9 +143,9 @@ const Vote = () => {
       year: "2005",
       promises:  t("candidates.p9.promises", { returnObjects: true }),
       tagline_en:
-        " Tamizhan endru solladaa, thalai nimirnthu nilladaa, iyandrathai seivom, illaathavarkkae",
+        "Iyandrathai seivom, Illaathavarkkae!",
       tagline_ta:
-        "தமிழன் என்று சொல்லடா, தலை நிமிர்ந்து நில்லடா, இயன்றதை செய்வோம், இல்லாதவர்க்கே!",
+        "இயன்றதை செய்வோம், இல்லாதவர்க்கே!",
       party: t("candidates.p9.party"),
       party_logo:
         "https://votersverdict.com/party_img/1118412_desiya_murpokku_dravida_kazhagam_logo.webp",
@@ -206,9 +206,9 @@ const Vote = () => {
       year: "1964",
       promises:  t("candidates.p13.promises", { returnObjects: true }),
       tagline_en:
-        " Anaivarukkum Samathuvathum Neethiyayum Oruthi Seivatharkkanaa Ore Paathai",
+        "Samathuva samoogamey ilakku",
       tagline_ta:
-        "அனைவருக்கும் சமத்துவத்தும் நீதியும் ஒருச்சென்று செய்வதற்கான ஒரே பாதை",
+        "சமத்துவ சமூகமே இலக்கு",
       party: t("candidates.p13.party"),
       party_logo:
         "https://www.globalsecurity.org/military/world/india/images/cpi-m.gif",
@@ -322,7 +322,7 @@ const Vote = () => {
                         d="M5 13l4 4L19 7"
                       />
                     </svg>
-                    <span>வாக்கு பதிவானது!</span>
+                    <span>{t("vote.success")}</span>
                   </>
                 ) : (
                   <>

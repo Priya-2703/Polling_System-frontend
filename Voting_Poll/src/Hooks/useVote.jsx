@@ -1,7 +1,9 @@
 import { useState, useCallback } from "react";
+import { useAuth } from "../Context/AuthContext";
 import { castVote as castVoteApi } from "../utils/service/api";
 
 const useVote = () => {
+  const { checkUserStatus, setVoteId, currentStep } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -13,37 +15,32 @@ const useVote = () => {
     setError(null);
     setIsSuccess(false);
 
-    if (!trackerId) {
-      console.log("Tracker ID காணவில்லை. மீண்டும் முதலிலிருந்து தொடங்கவும்.");
-      setIsLoading(false);
-      return { success: false, error: "Tracker ID காணவில்லை" };
-    }
-
     if (!partyId) {
-      console.log("Party ID தேவை.");
       setIsLoading(false);
       return { success: false, error: "Party ID தேவை" };
     }
 
     // Call API
-    const result = await castVoteApi(trackerId, partyId);
+    const result = await castVoteApi(partyId);
 
     if (result.success) {
       setVoteData(result.data);
       setIsSuccess(true);
 
       // Save to localStorage
-      localStorage.setItem("voter_status", "voted");
+      // localStorage.setItem("voter_status", "voted");
       if (result.data.vote_id) {
-        localStorage.setItem("vote_id", result.data.vote_id);
+        // localStorage.setItem("vote_id", result.data.vote_id);
+        setVoteId(result.data.vote_id);
       }
+      await checkUserStatus();
     } else {
       setError(result.error);
     }
 
     setIsLoading(false);
     return result;
-  }, []);
+  }, [checkUserStatus, setVoteId]);
 
   // Reset Function
   const reset = useCallback(() => {
@@ -55,7 +52,8 @@ const useVote = () => {
 
   // Check if already voted
   const hasVoted = useCallback(() => {
-    return localStorage.getItem("voter_status") === "voted";
+    // return localStorage.getItem("voter_status") === "voted";
+     return currentStep !== "REGISTER" && currentStep !== "VOTE";
   }, []);
 
   return {

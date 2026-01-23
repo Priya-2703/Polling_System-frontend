@@ -4,15 +4,19 @@ import SwiperCard from "../Components/SwiperCard";
 import useSound from "use-sound";
 import scifi from "../assets/scifi.wav";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../Context/AuthContext";
 import DigitalGlobeBackground from "../Components/DigitalGlobeBackground";
+import { submitCMVote } from "../utils/service/api";
 
 const Candidate = () => {
   const { t } = useTranslation();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
+  const {voteId, checkUserStatus } = useAuth();
 
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   const [isVoting, setIsVoting] = useState(false);
+  const [error, setError] = useState(null);
 
   const candidates = [
     {
@@ -83,43 +87,80 @@ const Candidate = () => {
     },
   ];
 
-  const handleVote = () => {
+  // const handleVote = () => {
+  //   if (!selectedCandidate) return;
+
+  //   setIsVoting(true);
+  //   playClick();
+
+  //     // localStorage.setItem("voter_status", "candidate_selected");
+
+  //   setTimeout(() => {
+  //     navigate("/thanks", {
+  //       state: {
+  //         candidate: selectedCandidate,
+  //       },
+  //        replace: true,
+  //     });
+  //   }, 500);
+  // };
+
+  const handleVote = async () => {
     if (!selectedCandidate) return;
 
     setIsVoting(true);
+    setError(null);
     playClick();
 
-      localStorage.setItem("voter_status", "candidate_selected");
+    try {
+      // ✅ Call Backend API
+      const result = await submitCMVote(voteId, selectedCandidate.id);
 
-    setTimeout(() => {
-      navigate("/thanks", {
-        state: {
-          candidate: selectedCandidate,
-        },
-         replace: true,
-      });
-    }, 500);
+
+
+      if (result.success) {
+        // ❌ OLD - REMOVE:
+        // localStorage.setItem("voter_status", "candidate_selected");
+        console.log("cand id", selectedCandidate.id)
+
+        // ✅ NEW: Refresh status - Auto redirect to Thanks
+        await checkUserStatus();
+
+        // Note: checkUserStatus auto redirect pannum, navigate thevai illa
+        // But if you want to pass state to Thanks page:
+        // navigate("/thanks", { state: { candidate: selectedCandidate }, replace: true });
+      } else {
+        setError(result.error || "Failed to submit vote. Please try again.");
+      }
+    } catch (err) {
+      console.error("CM Vote Error:", err);
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setIsVoting(false);
+    }
   };
 
   return (
-    <div className="h-dvh bg-black relative overflow-hidden">
-      <DigitalGlobeBackground />
-      <div className="scanline" />
-      <div className="vignette" />
-
+    <div className="h-dvh relative overflow-hidden">
       {/* Main Container */}
-      <div className="container mx-auto relative z-10">
+      <div className="w-full mx-auto relative z-10">
         <div className="w-full mx-auto h-dvh relative flex flex-col justify-between py-4">
           {/* Enhanced Header */}
           <div className="flex justify-center items-start z-20 px-4 mt-2">
             <div className="relative">
-              <div className="text-center">
-                <h1 className="text-[14px] lg:text-[18px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-11 text-transparent bg-linear-to-r from-accet to-accet/80 via-indigo bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+              <div className="text-center lg:max-w-4xl">
+                <h1 className="text-[14px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-8 text-transparent bg-linear-to-r from-accet to-accet/80 via-indigo bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
                   {t("vote.question")}
                 </h1>
               </div>
             </div>
           </div>
+
+          {error && (
+            <div className="mx-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+              <p className="text-red-400 text-sm text-center">{error}</p>
+            </div>
+          )}
 
           {/* Main Content */}
           <div className="w-full mx-auto flex flex-col justify-center items-center">
@@ -137,7 +178,7 @@ const Candidate = () => {
               disabled={!selectedCandidate || isVoting}
               className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[16px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate
-                  ? "bg-linear-to-r from-accet via-cyan-500 to-accet/50 text-black hover:shadow-[0_0_40px_#4C43DD] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet via-cyan-500 to-accet/50 text-black hover:shadow-[0_0_20px_#00F3FF] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10"
               }`}
             >

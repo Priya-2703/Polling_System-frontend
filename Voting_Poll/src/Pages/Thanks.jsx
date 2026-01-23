@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react"; // 👈 Added useRef
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useSound from "use-sound";
@@ -6,9 +6,12 @@ import scifi from "../assets/scifi.wav";
 import { Icon } from "@iconify/react";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
+import { useAuth } from "../Context/AuthContext";
+import { getMyChoice } from "../utils/service/api";
 
 const Thanks = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { voteId } = useAuth();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
   const location = useLocation();
@@ -17,12 +20,51 @@ const Thanks = () => {
   const [isSpinning, setIsSpinning] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
-  // ========== VIEWPORT-BASED SIZING ==========
+  // Backend Data State
+  const [backendData, setBackendData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  // 👈 NEW: Refs for animation (to access latest values inside animation loop)
+  const loadingRef = useRef(true);
+  const angleRef = useRef(0);
+  const selectedIndexRef = useRef(0);
+
+  // Viewport Dimensions
   const [dimensions, setDimensions] = useState({
     vw: typeof window !== "undefined" ? window.innerWidth : 1024,
     vh: typeof window !== "undefined" ? window.innerHeight : 768,
   });
 
+  // ========== 1. FETCH DATA FROM BACKEND ==========
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!voteId) {
+        setLoading(false);
+        loadingRef.current = false;
+        return;
+      }
+
+      try {
+        const lang = i18n.language || "en";
+        const result = await getMyChoice(voteId, lang);
+
+        if (result.status === "success") {
+          setBackendData(result);
+          console.log("Thanks:", result);
+        }
+      } catch (err) {
+        console.error("Failed to load choice", err);
+      } finally {
+        // 👈 IMPORTANT: Update both State AND Ref
+        setLoading(false);
+        loadingRef.current = false;
+      }
+    };
+
+    fetchData();
+  }, [voteId, i18n.language]);
+
+  // ========== VIEWPORT RESIZE HANDLER ==========
   useEffect(() => {
     const updateDimensions = () => {
       setDimensions({
@@ -30,15 +72,10 @@ const Thanks = () => {
         vh: window.innerHeight,
       });
     };
-
-    // Update on resize and zoom
     window.addEventListener("resize", updateDimensions);
-
-    // Also update on zoom changes (detected via visualViewport if available)
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", updateDimensions);
     }
-
     return () => {
       window.removeEventListener("resize", updateDimensions);
       if (window.visualViewport) {
@@ -47,14 +84,7 @@ const Thanks = () => {
     };
   }, []);
 
-  // Get selected candidate from navigation state
-  const selectedCandidate = location.state?.candidate || {
-    id: 1,
-    name: "NO one",
-    leader_img:
-      "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767350158/d971ca4cf51445e099353789a35beef7_g5ill3.jpg",
-  };
-
+  // ========== ALL CANDIDATES ==========
   const allCandidates = useMemo(
     () => [
       {
@@ -127,27 +157,40 @@ const Thanks = () => {
     [t]
   );
 
+  const totalCandidates = allCandidates.length;
+  const anglePerCandidate = 360 / totalCandidates;
+
+  // ========== 2. SELECT CANDIDATE (Backend > Location > Default) ==========
+  const selectedCandidate = useMemo(() => {
+    if (backendData?.candidate) {
+      const found = allCandidates.find(
+        (c) => c.id === backendData.candidate.id
+      );
+      return found || backendData.candidate;
+    }
+    return (
+      location.state?.candidate || {
+        id: 1,
+        name: "NO one",
+        leader_img:
+          "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767350158/d971ca4cf51445e099353789a35beef7_g5ill3.jpg",
+      }
+    );
+  }, [backendData, allCandidates, location.state]);
+
   const selectedIndex = allCandidates.findIndex(
     (c) => c.id === selectedCandidate.id
   );
-  const totalCandidates = allCandidates.length;
 
-  const targetAngle = useMemo(() => {
-    const anglePerCandidate = 360 / totalCandidates;
-    const selectedInitialAngle = selectedIndex * anglePerCandidate;
-    const rotationNeeded = -selectedInitialAngle;
-    return 720 + rotationNeeded;
-  }, [selectedIndex, totalCandidates]);
+  // 👈 Update ref whenever selectedIndex changes
+  useEffect(() => {
+    selectedIndexRef.current = selectedIndex;
+  }, [selectedIndex]);
 
-  const anglePerCandidate = 360 / totalCandidates;
-
+  // ========== 3. TRACKER ID FROM BACKEND ==========
   const uniqueId = useMemo(
-    () =>
-      `VTX-${Date.now().toString(36).toUpperCase()}-${Math.random()
-        .toString(36)
-        .substring(2, 6)
-        .toUpperCase()}`,
-    []
+    () => backendData?.tracker_id || "LOADING...",
+    [backendData]
   );
 
   const resultDate = "March 03, 2026";
@@ -160,19 +203,90 @@ const Thanks = () => {
     },
   ];
 
-  useEffect(() => {
-    const spinDuration = 1500;
-    const startTime = Date.now();
+  // ========== 4. NEW ANIMATION LOGIC (Spin While Loading -> Smooth Stop) ==========
+ // ========== 4. NEW ANIMATION LOGIC (Spin While Loading -> Smooth Stop) ==========
+useEffect(() => {
+  let animationFrameId;
+  let startTime = null;
+  let startDecelAngle = 0;
+  let finalTargetAngle = 0;
+  let isLanding = false;
 
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / spinDuration, 1);
+  const animate = (timestamp) => {
+    // ===== PHASE 1: LOADING (Infinite Fast Spin) =====
+    if (loadingRef.current) {
+      angleRef.current += 8;
+      setRotationAngle(angleRef.current);
+      animationFrameId = requestAnimationFrame(animate);
+    }
+    // ===== PHASE 2: DATA RECEIVED - Calculate Landing =====
+    else if (!isLanding) {
+      isLanding = true;
+      startTime = timestamp;
+      startDecelAngle = angleRef.current;
+
+      // 👇 FIXED CALCULATION
+      const targetIdx = selectedIndexRef.current;
+      
+      // Each candidate is at this angle on the wheel
+      // Index 0 = 0°, Index 1 = 32.7°, etc.
+      const candidateAngleOnWheel = targetIdx * anglePerCandidate;
+      
+      // To bring candidate to TOP (12 o'clock = -90° in our coordinate system)
+      // We need to rotate the wheel so that candidateAngleOnWheel aligns with top
+      // 
+      // Candidates are placed at: angleDegrees = index * anglePerCandidate - 90
+      // So Index 0 is already at -90° (top)
+      // Index 1 is at -90 + 32.7 = -57.3° (slightly right of top)
+      //
+      // To bring any candidate to top, wheel needs to rotate by:
+      // -candidateAngleOnWheel (to counter their offset from index 0)
+      
+      // Current wheel rotation (normalized to 0-360)
+      const currentMod = ((startDecelAngle % 360) + 360) % 360;
+      
+      // Target rotation: negative of candidate's angle (to bring them to top)
+      // But we want to rotate FORWARD (positive direction), so:
+      const targetMod = (360 - candidateAngleOnWheel) % 360;
+      
+      // Calculate shortest forward distance
+      let distanceToTarget = targetMod - currentMod;
+      if (distanceToTarget < 0) {
+        distanceToTarget += 360;
+      }
+      
+      // Add extra spins for dramatic effect (minimum 2 full rotations)
+      const extraSpins = 720;
+      
+      finalTargetAngle = startDecelAngle + extraSpins + distanceToTarget;
+
+      console.log("Debug:", {
+        targetIdx,
+        candidateAngleOnWheel,
+        currentMod,
+        targetMod,
+        distanceToTarget,
+        finalTargetAngle
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    }
+    // ===== PHASE 3: DECELERATION (Smooth Stop) =====
+    else {
+      const elapsed = timestamp - startTime;
+      const duration = 2500;
+      const progress = Math.min(elapsed / duration, 1);
+
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentAngle = easeOut * targetAngle;
+
+      const currentAngle =
+        startDecelAngle + (finalTargetAngle - startDecelAngle) * easeOut;
+
       setRotationAngle(currentAngle);
+      angleRef.current = currentAngle;
 
       if (progress < 1) {
-        requestAnimationFrame(animate);
+        animationFrameId = requestAnimationFrame(animate);
       } else {
         setIsSpinning(false);
         setShowContent(true);
@@ -184,28 +298,26 @@ const Thanks = () => {
           colors: ["#00d4aa", "#6366f1", "#06b6d4", "#8b5cf6"],
         });
       }
-    };
+    }
+  };
 
-    requestAnimationFrame(animate);
-  }, [targetAngle, playClick]);
+  animationFrameId = requestAnimationFrame(animate);
 
+  return () => cancelAnimationFrame(animationFrameId);
+}, [anglePerCandidate]); // 👈 Added anglePerCandidate to dependencies
+
+  // ========== HELPER FUNCTIONS ==========
   const copyUniqueId = () => {
     navigator.clipboard.writeText(uniqueId);
     playClick();
   };
 
-  // ========== VIEWPORT-RELATIVE WHEEL CONFIGURATION ==========
-  // This calculates sizes based on actual viewport, so zoom doesn't affect layout
-
   const isMobile = dimensions.vw < 768;
 
-  // Calculate wheel size as percentage of viewport height
-  // This ensures wheel always fits regardless of zoom level
   const wheelConfig = useMemo(() => {
     const { vh, vw } = dimensions;
 
     if (isMobile) {
-      // Mobile: wheel is 60% of viewport height
       const wheelSize = Math.min(vh * 0.6, vw * 0.95);
       return {
         wheelSize: wheelSize,
@@ -216,8 +328,7 @@ const Thanks = () => {
         bottomOffset: wheelSize * 0.48,
       };
     } else {
-      // Desktop: wheel is 70% of viewport height, capped at reasonable max
-      const wheelSize = Math.min(vh * 0.75, 600); // Max 600px
+      const wheelSize = Math.min(vh * 0.75, 600);
       return {
         wheelSize: wheelSize,
         wheelRadius: wheelSize * 0.49,
@@ -238,10 +349,11 @@ const Thanks = () => {
     bottomOffset,
   } = wheelConfig;
 
+  // ========== 👈 NO LOADING SCREEN - Wheel spins directly ==========
+
   return (
     <div className="w-full md:w-[90%] mx-auto h-dvh relative overflow-hidden flex flex-col">
       {/* ========== TOP CONTENT SECTION ========== */}
-      {/* Using flex-shrink-0 to prevent content from shrinking */}
       <div className="relative z-10 flex flex-col items-center px-4 pt-[4vh] md:pt-[2vh] shrink-0">
         <motion.div
           initial={{ opacity: 0, y: -30 }}
@@ -297,7 +409,7 @@ const Thanks = () => {
             </motion.div>
           </div>
 
-          {/* Thank You Title - Using clamp for responsive font size */}
+          {/* Thank You Title */}
           <h1
             className="font-heading uppercase font-bold text-white mb-1"
             style={{
@@ -367,7 +479,7 @@ const Thanks = () => {
             </div>
           </motion.div>
 
-          {/* Result Date & Sponsors */}
+          {/* Result Date */}
           <div className="flex flex-wrap items-center justify-center gap-3 md:gap-5">
             <div
               className="flex items-center gap-1.5 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full"
@@ -407,7 +519,6 @@ const Thanks = () => {
       </div>
 
       {/* ========== 2D CIRCLE WHEEL SECTION ========== */}
-      {/* Takes remaining space with flex-1 */}
       <div className="absolute bottom-0 left-0 right-0 h-[65%] md:h-[60%] overflow-hidden">
         {/* Wheel Container */}
         <div
@@ -432,7 +543,7 @@ const Thanks = () => {
             style={{ inset: `${currentWheelSize * 0.05}px` }}
           />
 
-          {/* ✅ ROTATING WHEEL - Contains all candidates */}
+          {/* ✅ ROTATING WHEEL */}
           <motion.div
             className="absolute inset-0"
             animate={{ rotate: rotationAngle }}
@@ -522,7 +633,7 @@ const Thanks = () => {
                       <div
                         className={`relative overflow-hidden rounded-lg transition-all duration-500 ${
                           !isSpinning && isSelected
-                            ? "ring-2 ring-accet shadow-[0_0_20px_rgba(0, 243, 255,0.1)]"
+                            ? "ring-2 ring-accet shadow-[0_0_20px_rgba(0,243,255,0.1)]"
                             : "ring-1 ring-white/20"
                         }`}
                         style={{
@@ -532,12 +643,15 @@ const Thanks = () => {
                             "linear-gradient(145deg, #1a1a2e, #0a0a12)",
                         }}
                       >
+                        {/* 👈 Image with blur during spinning */}
                         <img
                           src={candidate.leader_img}
                           alt={candidate.name}
-                          className={`w-full h-full object-cover object-top transition-all duration-600 ${
-                            !isSpinning && !isSelected
-                              ? "grayscale brightness-[0.2] scale-100"
+                          className={`w-full h-full object-cover object-top transition-all duration-500 ${
+                            isSpinning
+                              ? "blur-[2px] brightness-50" // 👈 Blur during spin
+                              : !isSelected
+                              ? "grayscale brightness-[0.2]"
                               : "grayscale-0 brightness-100"
                           }`}
                         />
@@ -597,7 +711,7 @@ const Thanks = () => {
               >
                 <Icon
                   icon="lucide:vote"
-                  className="text-accet drop-shadow-[0_0_10px_rgba(0, 243, 255,0.8)]"
+                  className="text-accet drop-shadow-[0_0_10px_rgba(0,243,255,0.8)]"
                   style={{
                     fontSize: `${currentHubSize * 0.4}px`,
                   }}
@@ -622,7 +736,7 @@ const Thanks = () => {
           transition={{ duration: 0.5, delay: 0.3 }}
         >
           <div
-            className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md shadow-[0_0_50px_rgba(0, 243, 255,0.6)]"
+            className="text-center bg-black/95 backdrop-blur-xl border border-accet rounded-md shadow-[0_0_50px_rgba(0,243,255,0.6)]"
             style={{
               padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
                 dimensions.vh * 0.025,
@@ -634,7 +748,7 @@ const Thanks = () => {
               className="text-accet font-light md:font-medium uppercase tracking-widest md:tracking-[0.2em] font-heading md:mb-1"
               style={{
                 fontSize: isMobile
-                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 6px)` // Mobile: smaller
+                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 6px)`
                   : `clamp(8px, ${dimensions.vh * 0.022}px, 8px)`,
               }}
             >
@@ -644,7 +758,7 @@ const Thanks = () => {
               className="text-white font-heading font-bold uppercase tracking-wider"
               style={{
                 fontSize: isMobile
-                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 10px)` // Mobile: smaller
+                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 10px)`
                   : `clamp(8px, ${dimensions.vh * 0.022}px, 16px)`,
               }}
             >
@@ -663,7 +777,7 @@ const Thanks = () => {
           <button
             onClick={() => {
               playClick();
-              navigate("https://lunai.in/");
+              window.location.href = "https://lunai.in/";
             }}
             className="flex items-center gap-1.5 text-neutral-400 hover:text-accet transition-colors group"
           >

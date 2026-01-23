@@ -10,6 +10,7 @@ export const registerVoter = async (voterData) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify(voterData),
     });
 
@@ -62,15 +63,15 @@ export const getCasteList = async () => {
 
 
 // Cast Vote API Call
-export const castVote = async (trackerId, partyId) => {
+export const castVote = async (partyId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/vote/cast`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({
-        tracker_id: trackerId,
         party_id: partyId,
       }),
     });
@@ -138,7 +139,7 @@ export const submitSurvey = async (voteId, surveyData) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      // credentials: 'include', // If your backend uses cookies for vote_id/session, uncomment this
+      credentials: 'include', // If your backend uses cookies for vote_id/session, uncomment this
       body: JSON.stringify({
         vote_id: voteId,       // Step 2-ல இருந்து வந்த vote_id
         survey_data: surveyData, // q1: "a", q2: "b" format-ல
@@ -167,5 +168,96 @@ export const submitSurvey = async (voteId, surveyData) => {
       success: false,
       error: error.message,
     };
+  }
+};
+
+// CM Vote API
+export const submitCMVote = async (voteId, candidateId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/cm/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        vote_id: voteId,
+        cm_id: candidateId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'CM Vote failed');
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// Resume Session API
+export const resumeSession = async (trackerId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/resume`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // Cookie set aaga mukkiyam
+      body: JSON.stringify({
+        tracker_id: trackerId,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Resume failed');
+    }
+
+    return {
+      success: true,
+      data: data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+// Thanks API
+export const getMyChoice = async (voteId, lang = 'en') => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/cm/my-choice`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', // 👈 Cookies anuppa ithu MUST
+      body: JSON.stringify({
+        vote_id: voteId,
+        lang: lang
+      })
+    });
+
+    const data = await response.json();
+
+    // HTTP Error Check (fetch won't throw for 4xx/5xx)
+    if (!response.ok) {
+      console.error("API Error:", data.error);
+      return { error: data.error || "Something went wrong" };
+    }
+
+    console.log("My Choice Response:", data);
+    return data;
+
+  } catch (error) {
+    console.error("Network/Fetch Error:", error);
+    return { error: "Network error. Please try again." };
   }
 };
