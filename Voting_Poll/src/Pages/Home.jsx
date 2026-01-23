@@ -8,12 +8,15 @@ import { Icon } from "@iconify/react";
 import { GoLaw } from "react-icons/go";
 import { MdNoEncryption } from "react-icons/md";
 import GlitchText from "../Components/GlitchText";
+import ResumeModal from "../Components/Model/ResumeModal";
+import SponsorSection from "../Components/SponsorSection";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
   const [showLangDialog, setShowLangDialog] = useState(false);
+  const [showResumeModal, setShowResumeModal] = useState(false);
   // const videoRef = useRef(null);
 
   const sponser = [
@@ -54,15 +57,15 @@ const Home = () => {
       <nav className="fixed top-0 w-full bg-linear-to-b from-black via-black/90 to-transparent z-40">
         <div className="w-[90%] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
           {/* Logo */}
-            <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
-              <div className="relative">
-                <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#4C43DD] transition-all duration-500" />
-                <div className="absolute -inset-1.5 border border-accet/30 group-hover:scale-125 transition-transform duration-500" />
-              </div>
-              <span className="font-heading text-[10px] md:text-sm tracking-widest text-white font-semibold group-hover:text-accet transition-colors duration-300 uppercase">
-                {t("home.nav.brand")}
-              </span>
+          <div className="flex items-center gap-3 md:gap-4 group cursor-pointer">
+            <div className="relative">
+              <div className="w-1.5 h-1.5 md:w-3 md:h-3 bg-accet group-hover:shadow-[0_0_20px_#4C43DD] transition-all duration-500" />
+              <div className="absolute -inset-1.5 border border-accet/30 group-hover:scale-125 transition-transform duration-500" />
             </div>
+            <span className="font-heading text-[10px] md:text-sm tracking-widest text-white font-semibold group-hover:text-accet transition-colors duration-300 uppercase">
+              {t("home.nav.brand")}
+            </span>
+          </div>
 
           {/* Right Side Controls */}
           <div className="flex items-center">
@@ -205,6 +208,9 @@ const Home = () => {
         </div>
       </div>
 
+      <SponsorSection />
+
+
       {/* video */}
       <div className="w-full mx-auto bg-black/0 h-full lg:h-[90dvh] mb-20 lg:mb-32 pt-10">
         <div className="w-[90%] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -313,7 +319,7 @@ const Home = () => {
       </div>
 
       {/* start button section */}
-      <div className="max-w-7xl mx-auto px-6 py-5 md:py-10">
+      <div className="max-w-7xl mx-auto px-6 py-5 md:py-8">
         <div className="glass-panel bg-black/5 p-6 md:p-16 rounded-lg border-t border-accet/30 text-center relative overflow-hidden">
           {/* Decorative background elements */}
           <div className="absolute inset-0 z-0 opacity-80">
@@ -358,6 +364,12 @@ const Home = () => {
                 <Icon icon="solar:verified-check-linear" width={16} />
               </button>
             </div>
+            <button
+              onClick={() => setShowResumeModal(true)}
+              className="px-6 py-3  hover:text-accet rounded-lg text-white md:mt-4 text-[10px] md:text-[13px] cursor-pointer font-body tracking-wider transition-all duration-300"
+            >
+              Already Registered? Resume Here
+            </button>
           </div>
         </div>
       </div>
@@ -386,6 +398,12 @@ const Home = () => {
           onClose={handleClose}
         />
       )}
+
+      {/* resume model */}
+      <ResumeModal
+        isOpen={showResumeModal}
+        onClose={() => setShowResumeModal(false)}
+      />
     </>
   );
 };

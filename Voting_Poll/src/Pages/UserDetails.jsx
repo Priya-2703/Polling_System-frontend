@@ -7,11 +7,11 @@ import {
 } from "react-icons/hi2";
 import {
   MdLocationOn,
-  MdFingerprint,
   MdVerifiedUser,
   MdCheck,
   MdCalendarToday,
 } from "react-icons/md";
+import { useAuth } from "../Context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import DistrictMapPicker from "../Components/DistrictMapPicker";
 import { useTranslation } from "react-i18next";
@@ -23,11 +23,18 @@ import gsap from "gsap";
 import axios from "axios";
 import PrivacyPolicyPopup from "./PrivacyPolicyPopup";
 import TermsAndConditionsPopup from "./TermsAndConditionsPopup";
+import {
+  ErrorModal,
+  SuccessModal,
+  ErrorToast,
+  ERROR_TYPES,
+  detectErrorType,
+} from "../Components/Model";
 
-// --- STEP INDICATOR ---
+// --- STEP INDICATOR
 const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
   return (
-    <div className="w-full mb-6">
+    <div className="w-[70%] mx-auto mb-6">
       <div className="hidden lg:flex items-center justify-between relative px-4">
         <div className="absolute top-5 left-8 right-8 h-0.5 bg-white/10">
           <div
@@ -101,7 +108,7 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
   );
 };
 
-// --- SECTION TITLE ---
+// --- SECTION TITLE
 const SectionTitle = ({ icon, title, subtitle }) => (
   <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-6">
     <div className="md:w-10 md:h-10 w-8 h-8 rounded-full bg-linear-to-br from-accet to-cyan-800 flex items-center justify-center shrink-0">
@@ -121,7 +128,7 @@ const SectionTitle = ({ icon, title, subtitle }) => (
   </div>
 );
 
-// --- SEARCHABLE SELECT ---
+// --- SEARCHABLE SELECT
 const SearchableSelect = ({
   value,
   onChange,
@@ -310,57 +317,7 @@ const SearchableSelect = ({
   );
 };
 
-// --- MODALS ---
-const ErrorModal = ({ message, onClose }) => (
-  <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-    <div className="bg-shade border border-red-500/30 rounded-xl p-6 max-w-md w-full">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center">
-          <span className="text-red-500 text-xl">✕</span>
-        </div>
-        <h3 className="text-white font-heading font-bold uppercase tracking-wide">
-          Registration Failed
-        </h3>
-      </div>
-      <p className="text-white/70 text-sm mb-6">{message}</p>
-      <button
-        onClick={onClose}
-        className="w-full py-3 bg-red-500/20 border border-red-500/50 text-red-400 font-heading uppercase tracking-widest text-sm"
-      >
-        Try Again
-      </button>
-    </div>
-  </div>
-);
-
-const SuccessModal = ({ trackerId, onContinue }) => (
-  <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-    <div className="bg-shade border border-green-500/30 rounded-xl p-6 max-w-md w-full text-center">
-      <div className="w-16 h-16 rounded-full bg-green-500/20 flex items-center justify-center mx-auto mb-4">
-        <MdCheck className="text-green-500 text-3xl" />
-      </div>
-      <h3 className="text-white font-heading font-bold text-xl uppercase tracking-wide mb-2">
-        Registration Successful!
-      </h3>
-      <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6">
-        <p className="text-[10px] text-green-400 uppercase tracking-widest mb-1">
-          Your Tracker ID
-        </p>
-        <p className="text-white font-mono text-lg font-bold tracking-wider">
-          {trackerId}
-        </p>
-      </div>
-      <button
-        onClick={onContinue}
-        className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-heading uppercase tracking-widest text-sm"
-      >
-        Proceed to Vote
-      </button>
-    </div>
-  </div>
-);
-
-// --- ✅ CLICK INDICATOR ---
+// --- CLICK INDICATOR
 const ClickIndicator = ({ onClick, isAnimating }) => (
   <div className="absolute bottom-16 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-30">
     <button
@@ -417,7 +374,7 @@ const ClickIndicator = ({ onClick, isAnimating }) => (
 );
 
 // ========================================
-// ✅ PAN CARD VALIDATION HELPER
+// ✅ VALIDATION HELPERS
 // ========================================
 const validatePAN = (pan) => {
   const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
@@ -447,17 +404,11 @@ const formatPANInput = (value) => {
   return formatted;
 };
 
-// ========================================
-// ✅ DRIVING LICENSE VALIDATION HELPER
-// ========================================
 const formatDLInput = (value) => {
   let cleaned = value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
   return cleaned.slice(0, 16);
 };
 
-// ========================================
-// ✅ AADHAR CARD VALIDATION HELPER
-// ========================================
 const validateAadhar = (aadhar) => {
   const aadharRegex = /^[0-9]{12}$/;
   return aadharRegex.test(aadhar);
@@ -480,9 +431,6 @@ const formatAadharDisplay = (value) => {
   return formatted;
 };
 
-// ========================================
-// ✅ DATE INPUT COMPONENT FOR DOB
-// ========================================
 const DateInput = ({ value, onChange, placeholder }) => {
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
@@ -621,12 +569,10 @@ const DateInput = ({ value, onChange, placeholder }) => {
   );
 };
 
-// ========================================
-// ✅ MAIN COMPONENT
-// ========================================
 const UserDetails = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { checkUserStatus } = useAuth();
   const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(scifi, { volume: 0.3 });
 
@@ -651,22 +597,28 @@ const UserDetails = () => {
   // API States
   const [casteList, setCasteList] = useState([]);
   const [casteLoading, setCasteLoading] = useState(false);
-  const [error, setError] = useState(null);
+
+  // ✅ ENHANCED ERROR STATES
   const [showError, setShowError] = useState(false);
+  const [errorType, setErrorType] = useState(null);
+  const [error, setError] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [trackerId, setTrackerId] = useState(null);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("error");
+
   const [constituencyList, setConstituencyList] = useState([]);
   const [loadingConstituency, setLoadingConstituency] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
 
-  // ✅ FIXED: Added constituency to formData
   const [formData, setFormData] = useState({
     name: "",
     gender: "",
     age: "",
     district: "",
-    constituency: "", // ✅ ADDED - இது missing இருந்துச்சு
+    constituency: "",
     religion: "",
     motherTongue: "",
     phone: "",
@@ -694,12 +646,10 @@ const UserDetails = () => {
     };
   }, []);
 
-  // ✅ FIXED: Reset constituency when district changes
   useEffect(() => {
     if (formData.district) {
       setLoadingConstituency(true);
-      // Reset constituency when district changes
-      setFormData(prev => ({ ...prev, constituency: "" }));
+      setFormData((prev) => ({ ...prev, constituency: "" }));
 
       axios
         .get("http://localhost:5000/api/auth/utils/constituencies", {
@@ -709,22 +659,25 @@ const UserDetails = () => {
         })
         .then((response) => {
           setConstituencyList(response.data.constituencies || []);
-          console.log("District:", formData.district);
-          console.log("Constituencies:", response.data.constituencies);
           setLoadingConstituency(false);
         })
         .catch((error) => {
           console.error("Error fetching constituencies:", error);
           setLoadingConstituency(false);
           setConstituencyList([]);
+
+          // Show toast for minor errors
+          setToastMessage("Unable to load constituencies. Please try again.");
+          setToastType("warning");
+          setShowToast(true);
         });
     } else {
       setConstituencyList([]);
-      setFormData(prev => ({ ...prev, constituency: "" }));
+      setFormData((prev) => ({ ...prev, constituency: "" }));
     }
   }, [formData.district]);
 
-  // ✅ GSAP ANIMATION
+  // ✅ GSAP ANIMATION (Keep your existing code)
   useEffect(() => {
     if (!fixedHeight) return;
 
@@ -791,7 +744,6 @@ const UserDetails = () => {
     fetchCasteList();
   }, []);
 
-  // Data Options
   const steps = [
     {
       icon: <HiMiniUser className="text-gray-900 text-sm" />,
@@ -810,7 +762,7 @@ const UserDetails = () => {
       label: t("sections.idVerification") || "Verify",
     },
   ];
-  
+
   const subtitle = [
     { label: "Establish your identity" },
     { label: "Map your background" },
@@ -835,7 +787,10 @@ const UserDetails = () => {
 
   const religions = [
     { value: "hindu", label: t("options.religions.hindu") || "Hindu" },
-    { value: "christian", label: t("options.religions.christian") || "Christian" },
+    {
+      value: "christian",
+      label: t("options.religions.christian") || "Christian",
+    },
     { value: "muslim", label: t("options.religions.muslim") || "Muslim" },
     { value: "others", label: t("options.religions.others") || "Others" },
   ];
@@ -843,18 +798,41 @@ const UserDetails = () => {
   const motherTongues = [
     { value: "tamil", label: t("options.languages.tamil") || "Tamil" },
     { value: "telugu", label: t("options.languages.telugu") || "Telugu" },
-    { value: "malayalam", label: t("options.languages.malayalam") || "Malayalam" },
+    {
+      value: "malayalam",
+      label: t("options.languages.malayalam") || "Malayalam",
+    },
     { value: "kannada", label: t("options.languages.kannada") || "Kannada" },
     { value: "hindi", label: t("options.languages.hindi") || "Hindi" },
     { value: "others", label: t("options.languages.others") || "Others" },
   ];
 
   const communities = [
-    { value: "bc", label: "BC", full: t("options.communities.bc") || "Backward Class" },
-    { value: "mbc", label: "MBC", full: t("options.communities.mbc") || "Most Backward" },
-    { value: "fc", label: "FC", full: t("options.communities.fc") || "Forward Class" },
-    { value: "sc", label: "SC", full: t("options.communities.sc") || "Scheduled Caste" },
-    { value: "st", label: "ST", full: t("options.communities.st") || "Scheduled Tribe" },
+    {
+      value: "bc",
+      label: "BC",
+      full: t("options.communities.bc") || "Backward Class",
+    },
+    {
+      value: "mbc",
+      label: "MBC",
+      full: t("options.communities.mbc") || "Most Backward",
+    },
+    {
+      value: "fc",
+      label: "FC",
+      full: t("options.communities.fc") || "Forward Class",
+    },
+    {
+      value: "sc",
+      label: "SC",
+      full: t("options.communities.sc") || "Scheduled Caste",
+    },
+    {
+      value: "st",
+      label: "ST",
+      full: t("options.communities.st") || "Scheduled Tribe",
+    },
     { value: "obc", label: "OBC", full: "Other Backward" },
   ];
 
@@ -902,16 +880,21 @@ const UserDetails = () => {
     handleChange("idNumber", formatted);
   };
 
-  // ✅ FIXED: Step 2 validation now includes constituency
   const isStepValid = () => {
     switch (step) {
       case 1:
         return formData.name && formData.gender && formData.age;
       case 2:
-        // ✅ FIXED: Added constituency validation
-        return formData.district && formData.constituency && formData.religion && formData.motherTongue;
+        return (
+          formData.district &&
+          formData.constituency &&
+          formData.religion &&
+          formData.motherTongue
+        );
       case 3:
-        return formData.community && formData.caste && formData.phone.length === 10;
+        return (
+          formData.community && formData.caste && formData.phone.length === 10
+        );
       case 4:
         if (!formData.idType || !agreed) return false;
 
@@ -1007,35 +990,27 @@ const UserDetails = () => {
     setStep((prev) => prev - 1);
   };
 
-  // ✅ FIXED: handleSubmit now includes ALL form fields
   const handleSubmit = async () => {
     if (!isStepValid()) return;
     setIsSubmitting(true);
     setError(null);
+    setErrorType(null);
     playClick();
 
     try {
-      // ✅ FIXED: All fields are now included in registrationData
       const registrationData = {
-        // Step 1: Personal Details
-        name: formData.name,
+        name: formData.name.trim(), // ✅ ADD .trim()
         gender: formData.gender,
         age: formData.age,
-        
-        // Step 2: Location Details
         district: formData.district,
-        constituency: formData.constituency, // ✅ ADDED
+        constituency: formData.constituency,
         religion: formData.religion,
         motherTongue: formData.motherTongue,
-        
-        // Step 3: Contact & Community
-        phone: formData.phone, // ✅ ADDED
+        phone: formData.phone,
         community: formData.community,
         caste: formData.caste,
-        
-        // Step 4: ID Verification
         idType: formData.idType,
-        idNumber: formData.idNumber,
+        idNumber: formData.idNumber.replace(/\s/g, ""), // ✅ Remove spaces
         ...(formData.idType === "driving" && { dob: formData.dob }),
       };
 
@@ -1044,30 +1019,79 @@ const UserDetails = () => {
       const result = await registerVoter(registrationData);
 
       if (result.success) {
-        const id = result.data.tracker_id;
-        setTrackerId(id);
-        // localStorage.setItem("tracker_id", id);
-        setShowSuccess(true);
+        // ✅ ADD null check
+        const id = result.data?.tracker_id || result.data?.trackerId;
+        if (id) {
+          setTrackerId(id);
+          setShowSuccess(true);
+        } else {
+          throw new Error("Tracker ID not received");
+        }
       } else {
+        const statusCode = result.statusCode || 0;
+        const detectedErrorType = detectErrorType(result.error, statusCode);
+
+        console.log("❌ Error detected:", {
+          originalError: result.error,
+          statusCode: statusCode,
+          detectedType: detectedErrorType,
+        });
+
         setError(result.error);
+        setErrorType(detectedErrorType);
         setShowError(true);
       }
     } catch (err) {
       console.error("Registration Error:", err);
-      setError("An unexpected error occurred. Please try again.");
+
+      let detectedType = ERROR_TYPES.UNKNOWN;
+      let errorMessage = "An unexpected error occurred. Please try again.";
+
+      if (err.response) {
+        const statusCode = err.response.status;
+        const serverMessage =
+          err.response.data?.message || err.response.data?.error || "";
+
+        detectedType = detectErrorType(serverMessage, statusCode);
+        errorMessage = serverMessage || `Server error (${statusCode})`;
+      } else if (err.request) {
+        detectedType = ERROR_TYPES.NETWORK_ERROR;
+        errorMessage =
+          "Unable to connect to server. Please check your internet connection.";
+      } else {
+        detectedType = ERROR_TYPES.UNKNOWN;
+        errorMessage = err.message || "An unexpected error occurred.";
+      }
+
+      setError(errorMessage);
+      setErrorType(detectedType);
       setShowError(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleSuccessContinue = () => {
-    setShowSuccess(false);
-    localStorage.setItem("voter_status", "registered");
-    navigate("/vote", { replace: true });
+  const handleErrorClose = () => {
+    setShowError(false);
+    setError(null);
+    setErrorType(null);
   };
 
-  // Render Step Content
+  const handleGoToVote = async () => {
+    handleErrorClose();
+    // localStorage.setItem("voter_status", "registered");
+    // navigate("/vote", { replace: true });
+    await checkUserStatus();
+  };
+
+  const handleSuccessContinue = async () => {
+    setShowSuccess(false);
+    // localStorage.setItem("voter_status", "registered");
+    // navigate("/vote", { replace: true });
+    await checkUserStatus();
+  };
+
+  // Render Step Content (Keep your existing renderStepContent code)
   const renderStepContent = () => {
     const animationClass =
       direction === "next" ? "animate-slideInRight" : "animate-slideInLeft";
@@ -1210,7 +1234,6 @@ const UserDetails = () => {
             >
               <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
                 {t("labels.constituency") || "Constituency"}
-                {/* ✅ Visual indicator for required field */}
                 <span className="text-red-400 ml-1">*</span>
               </label>
 
@@ -1226,7 +1249,10 @@ const UserDetails = () => {
                         : "border-white/20 hover:border-white/30"
                     }`}
                 >
-                  <option value="" className="bg-transparent text-white text-[12px] md:text-[14px]">
+                  <option
+                    value=""
+                    className="bg-transparent text-white text-[12px] md:text-[14px]"
+                  >
                     {loadingConstituency
                       ? "Loading Constituency..."
                       : "Select Your Constituency"}
@@ -1263,13 +1289,14 @@ const UserDetails = () => {
                   )}
                 </div>
               </div>
-              
-              {/* ✅ Helper text */}
-              {formData.district && !formData.constituency && !loadingConstituency && (
-                <p className="text-[8px] text-yellow-400/70 mt-1 font-body">
-                  ⚠️ Please select your constituency to continue
-                </p>
-              )}
+
+              {formData.district &&
+                !formData.constituency &&
+                !loadingConstituency && (
+                  <p className="text-[8px] text-yellow-400/70 mt-1 font-body">
+                    ⚠️ Please select your constituency to continue
+                  </p>
+                )}
             </div>
 
             {/* Religion */}
@@ -1764,9 +1791,6 @@ const UserDetails = () => {
     }
   };
 
-  // ========================================
-  // ✅ RENDER
-  // ========================================
   return (
     <div className="bg-transparent">
       {/* ✅ MAIN CONTAINER */}
@@ -1927,7 +1951,6 @@ const UserDetails = () => {
           )}
         </div>
       </div>
-
       {/* Modals */}
       {showMap && (
         <DistrictMapPicker
@@ -1939,26 +1962,40 @@ const UserDetails = () => {
           }}
         />
       )}
-
       <PrivacyPolicyPopup
         isOpen={isPrivacyOpen}
         onClose={() => setIsPrivacyOpen(false)}
       />
-
       <TermsAndConditionsPopup
         isOpen={isTermsOpen}
         onClose={() => setIsTermsOpen(false)}
       />
 
-      {showError && (
-        <ErrorModal message={error} onClose={() => setShowError(false)} />
-      )}
-      {showSuccess && (
-        <SuccessModal
-          trackerId={trackerId}
-          onContinue={handleSuccessContinue}
-        />
-      )}
+      {/* Error Modal */}
+      <ErrorModal
+        isOpen={showError}
+        errorType={errorType || ERROR_TYPES.UNKNOWN}
+        originalMessage={error}
+        onClose={handleErrorClose}
+        onGoToVote={handleGoToVote}
+        language={i18n.language === "ta" ? "ta" : "en"}
+      />
+
+      {/* Success Modal */}
+      <SuccessModal
+        isOpen={showSuccess}
+        trackerId={trackerId}
+        onContinue={handleSuccessContinue}
+        language={i18n.language === "ta" ? "ta" : "en"}
+      />
+
+      {/* Toast */}
+      <ErrorToast
+        isOpen={showToast}
+        message={toastMessage}
+        type={toastType}
+        onClose={() => setShowToast(false)}
+      />
 
       {/* ✅ ANIMATIONS */}
       <style jsx>{`
@@ -1985,9 +2022,11 @@ const UserDetails = () => {
         @keyframes fadeIn {
           from {
             opacity: 0;
+            transform: scale(0.95);
           }
           to {
             opacity: 1;
+            transform: scale(1);
           }
         }
         .animate-slideInRight {
