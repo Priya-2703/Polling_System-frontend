@@ -1,89 +1,125 @@
-// src/components/LanguageDialog.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react"; // useRef theva illa
 import { useTranslation } from "react-i18next";
 import useSound from "use-sound";
 import scifi from "../assets/scifi.wav";
 
-const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
+import englishVoiceFile from "../assets/english_lunai.wav"; 
+// Please use .mp3 for tamil file to avoid delay
+import tamilVoiceFile from "../assets/tamil-1.mp3"; 
+
+// 👇 IMPORTANT: Global Variable (Component ku veliya irukkanum)
+// Ithu than 'Audio Player' maari. Inga enna irukko adhu than play aagum.
+let globalAudioInstance = null;
+
+const LanguageDialog = ({ onLanguageSelect, onClose }) => {
   const { i18n } = useTranslation();
   const [playClick] = useSound(scifi);
-    const [selectedLang, setSelectedLang] = useState(null);
+  
+  const [selectedLang, setSelectedLang] = useState(null);
+  
+  // Local state to hold the 'Next' audio (Pre-loading purpose)
+  const [nextAudio, setNextAudio] = useState(null);
 
-  // Step 1: Select Language
+  // Step 1: Select Language (Pre-load ONLY)
   const handleLanguageClick = (lang) => {
     playClick();
     setSelectedLang(lang);
+
+    // 1. Choose file
+    const fileToLoad = lang === 'en' ? englishVoiceFile : tamilVoiceFile;
+
+    // 2. Create new audio object
+    const audio = new Audio(fileToLoad);
+    audio.preload = "auto";
+    audio.load(); // Start loading in background
+
+    // 3. Save to state (Play pannatheenga, just hold panni vainga)
+    setNextAudio(audio);
   };
 
-  // Step 2: Confirm Selection
+  // Step 2: Confirm Selection (STOP Old & PLAY New)
   const handleConfirm = () => {
     playClick();
+
+    // 👇 MAGIC HAPPENS HERE
     
-    // Save to localStorage
-    localStorage.setItem("language", selectedLang);
-    
-    // Change i18n language
-    i18n.changeLanguage(selectedLang);
-    
-    // Add tamil-mode class if needed
-    if (selectedLang === "ta") {
-      document.body.classList.add("tamil-mode");
-    } else {
-      document.body.classList.remove("tamil-mode");
+    // A. Check if there is already a Global Audio playing (from previous dialog session)
+    if (globalAudioInstance) {
+        globalAudioInstance.pause();       // Palasai niruthu
+        globalAudioInstance.currentTime = 0; // Reset pannu
     }
 
-     if (selectedLang === "ta") {
+    // B. Play the new audio (if valid)
+    if (nextAudio) {
+        const playPromise = nextAudio.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => console.log("Audio Play Error:", error));
+        }
+        
+        // C. Set this new audio as the 'Global' audio
+        // Adutha vati neenga dialog open panna, ithai stop panna ithu uthavum.
+        globalAudioInstance = nextAudio;
+    }
+
+    // --- Regular Logic ---
+    localStorage.setItem("language", selectedLang);
+    i18n.changeLanguage(selectedLang);
+    
+    if (selectedLang === "ta") {
+      document.body.classList.add("tamil-mode");
       document.body.classList.add("ta-lang");
     } else {
+      document.body.classList.remove("tamil-mode");
       document.body.classList.remove("ta-lang");
     }
     
-    // Close dialog and go to home
     onLanguageSelect();
   };
 
-  // Go back to selection
   const handleBack = () => {
     playClick();
     setSelectedLang(null);
+    setNextAudio(null);
   };
 
-   const handleClose = () => {
+  const handleClose = () => {
     playClick();
+    // Close pannum pothu voice stop aaga koodathu nu sonninga,
+    // so inga stop logic theva illa.
+    
     setSelectedLang(null);
+    setNextAudio(null);
     if (onClose) {
-      onClose();  // Parent component-க்கு close event அனுப்பு
+      onClose(); 
     }
-};
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-xl z-100 flex items-center justify-center p-8 md:p-4">
-      
       {/* Background Effects */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-64 w-64 bg-accet/10 rounded-full blur-3xl" />
       <div className="absolute top-1/4 right-1/4 h-32 w-32 bg-blue-500/20 rounded-full blur-2xl" />
-      
-      <div className="relative bg-linear-to-br from-accet/10 to-accet/20 border border-accet/40 rounded-md p-6 md:p-8 max-w-sm w-full shadow-2xl shadow-accet/20 animate-scaleIn backdrop-blur-xl">
 
+      <div className="relative bg-linear-to-br from-accet/10 to-accet/20 border border-accet/40 rounded-md p-6 md:p-8 max-w-sm w-full shadow-2xl shadow-accet/20 animate-scaleIn backdrop-blur-xl">
         <button
-            onClick={handleClose}
-            className="absolute top-3 right-3 md:w-8 md:h-8 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-red-500/20 hover:text-red-400 transition-colors"
+          onClick={handleClose}
+          className="absolute top-3 right-3 md:w-8 md:h-8 w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-red-500/20 hover:text-red-400 transition-colors"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
         </button>
-        
+
         {/* ========== STEP 1: Language Selection ========== */}
         {!selectedLang && (
           <>
@@ -173,22 +209,31 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
         {/* ========== STEP 2: Confirmation Screen ========== */}
         {selectedLang && (
           <div className="animate-fadeIn">
-
             {/* Selected Language Display */}
             <div className="flex justify-center mb-3 md:mb-6 md:pt-4">
               <div className="md:w-24 md:h-24 w-16 h-16 rounded-full bg-gradient-to-br from-accet/40 to-accet/20 flex items-center justify-center border-2 border-accet/50 shadow-lg shadow-accet/20">
-                <img src={selectedLang === "en" ? "https://ik.imagekit.io/saransk03/Voting%20Poll/united-kingdom.png" : "https://ik.imagekit.io/saransk03/Voting%20Poll/india.png"} alt="img" className="w-8 md:w-12" />
+                <img
+                  src={
+                    selectedLang === "en"
+                      ? "https://ik.imagekit.io/saransk03/Voting%20Poll/united-kingdom.png"
+                      : "https://ik.imagekit.io/saransk03/Voting%20Poll/india.png"
+                  }
+                  alt="img"
+                  className="w-8 md:w-12"
+                />
               </div>
             </div>
 
             {/* Confirmation Text */}
             <div className="text-center mb-4 md:mb-8">
-              <h2 className={`text-[14px] md:text-2xl font-heading uppercase ${selectedLang === "en" ? "font-heading": "font-tamil"} tracking-wider font-black text-white`}>
+              <h2
+                className={`text-[14px] md:text-2xl font-heading uppercase ${selectedLang === "en" ? "font-heading" : "font-tamil"} tracking-wider font-black text-white`}
+              >
                 {selectedLang === "en" ? "English" : "தமிழ்"}
               </h2>
               <p className="text-gray-400 font-tamil text-[9px] md:text-xs md:mt-1">
-                {selectedLang === "en" 
-                  ? "You have selected English" 
+                {selectedLang === "en"
+                  ? "You have selected English"
                   : "நீங்கள் தமிழை தேர்ந்தெடுத்துள்ளீர்கள்"}
               </p>
             </div>
@@ -196,7 +241,7 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
             {/* Confirm Button */}
             <button
               onClick={handleConfirm}
-              className={`${selectedLang === "en" ? "font-heading": "font-tamil"} w-full bg-gradient-to-r from-accet/40 to-accet/50 text-white py-2 rounded tracking-wide font-heading font-bold text-[13px] md:text-[16px] transition-all duration-300 hover:shadow-lg hover:shadow-accet/30 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2`}
+              className={`${selectedLang === "en" ? "font-heading" : "font-tamil"} w-full bg-gradient-to-r from-accet/40 to-accet/50 text-white py-2 rounded tracking-wide font-heading font-bold text-[13px] md:text-[16px] transition-all duration-300 hover:shadow-lg hover:shadow-accet/30 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2`}
             >
               {selectedLang === "en" ? "Confirm & Continue" : "உறுதிப்படுத்து"}
               <svg
@@ -215,7 +260,9 @@ const LanguageDialog = ({ onLanguageSelect, onClose  }) => {
             </button>
 
             {/* Change Language Link */}
-            <p className={`text-center ${selectedLang === "en" ? "font-heading": "font-tamil"} uppercase font-black tracking-wide mt-1 md:mt-2`}>
+            <p
+              className={`text-center ${selectedLang === "en" ? "font-heading" : "font-tamil"} uppercase font-black tracking-wide mt-1 md:mt-2`}
+            >
               <button
                 onClick={handleBack}
                 className="text-gray-500 uppercase underline text-[8px] md:text-[10px] hover:text-accet transition-colors"

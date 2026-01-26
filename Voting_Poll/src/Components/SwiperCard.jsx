@@ -16,7 +16,7 @@ const SwiperCard = ({
   selectedCandidate,
   setSelectedCandidate,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [Click] = useSound(click, { volume: 0.2 });
   const [playClick] = useSound(beep, { volume: 0.3 });
   const prevRef = useRef(null);
@@ -62,7 +62,6 @@ const SwiperCard = ({
 
   const handleCloseSuggestionPopup = () => {
     setShowSuggestionPopup(false);
-    setSelectedPopupCandidate(null);
   };
 
   // ========== Card Click Handler ==========
@@ -188,7 +187,7 @@ const SwiperCard = ({
 
                       {/* Main Card */}
                       <div
-                        className={`relative w-70 md:w-70 lg:w-80 p-4 rounded-2xl backdrop-blur-xl transition-all duration-500 ${
+                        className={`relative w-70 md:w-80 p-4 rounded-2xl backdrop-blur-xl transition-all duration-500 ${
                           isSelected && isActive
                             ? "bg-gradient-to-b from-accet/20 via-black/80 to-black/90 border-2 border-accet shadow-[0_0_40px_rgba(95,98,233,0.2)]"
                             : "bg-shade border-2 border-accet/30 hover:border-accet/60"
@@ -291,7 +290,7 @@ const SwiperCard = ({
                               item.party ? "mb-0" : "mb-2"
                             }`}
                           >
-                            <h1 className="text-[16px] px-2 font-heading uppercase font-black tracking-wide text-transparent bg-gradient-to-r from-accet via-cyan-300 to-accet/80 bg-clip-text leading-5">
+                            <h1 className={`${i18n.language === "ta" ? "text-[13px]" : "text-[16px]"}  px-2 font-heading uppercase font-black tracking-wide text-transparent bg-linear-to-r from-accet via-cyan-300 to-accet/80 bg-clip-text leading-5`}>
                               {item.name}
                             </h1>
                             {item.party && (
@@ -314,15 +313,15 @@ const SwiperCard = ({
                               onClick={(e) => handleDescriptionClick(e, item)}
                               className="py-2.5 tracking-widest font-bold w-full bg-gradient-to-r from-accet/30 to-accet/70 font-heading uppercase text-[13px] mt-2 rounded-b-lg hover:from-accet/50 hover:to-accet/90 transition-all duration-300 hover:shadow-[0px_0px_40px_rgba(0,243,255,0.8)]"
                             >
-                              Description
+                              {t("vote.description")}
                             </button>
                           )}
                         </div>
 
                         {/* Tap to Select Hint */}
                         {isActive && !isSelected && (
-                          <div className="absolute -bottom-5 left-1/2 -translate-x-1/2">
-                            <p className="text-[10px] text-white/80 tracking-widest font-heading uppercase animate-pulse">
+                          <div className="w-full absolute -bottom-5 left-1/2 -translate-x-1/2 flex justify-center items-center">
+                            <p className={` text-[10px] text-white/80 tracking-widest font-heading uppercase animate-pulse`}>
                               {t("messages.tapToSelect")}
                             </p>
                           </div>

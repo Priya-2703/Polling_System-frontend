@@ -12,6 +12,11 @@ const en = {
       description:
         "Welcome to the first fully decentralized, holographic voting interface. Experience governance at the speed of light. Secured by quantum cryptography.",
     },
+    sponser: {
+      badge: "Powered by Innovation",
+      title: "Our Sponsors",
+      para: "Behind every response is the support of a partner who believes in this effort", 
+    },
     features: {
       secure: "Secure",
       unbiased: "UNBIASED",
@@ -22,8 +27,9 @@ const en = {
       description:
         "Take just 2 minutes... Plant the seeds for 5 years of change! Click the button below to leave your feedback now.",
       startButton: "Start",
-      statusButton: "Check Status",
+      statusButton: "View Vote",
       votingText: "Voting",
+      resume: "Already Registered? Resume Here",
     },
     footer: {
       copyright: "© 2025 LUNAI SYSTEMS",
@@ -37,6 +43,13 @@ const en = {
     age: "Age",
     district: "District",
     submit: "Submit",
+    enter: "Enter",
+    subtitle: {
+      lable1: "Establish your identity",
+      lable2: "Map your background",
+      lable3: "Contact & Community details",
+      lable4: "Final verification step",
+    }
   },
   result: {
     thankYou: "Thank You for Voting!",
@@ -70,6 +83,8 @@ const en = {
   placeholders: {
     fullName: "Enter your full name",
     district: "Click to select from 3D Map",
+    constLoading: "Loading Constituency...",
+    constituency: "Select Your Constituency",
     phone: "Enter 10-digit number",
     caste: "Example : 'Agamudaiyar'",
     aadhar: "Enter 12-digit Aadhar",
@@ -106,6 +121,15 @@ const en = {
       aadhar: "Aadhar Card",
       pan: "PAN Card",
       driving: "Driving License",
+      select: {
+        aadhar: "Aadhar Card Number",
+        pan: " PAN Card Number",
+        driving: " Driving License Number",
+        dob: "Date of Birth",
+        aadharMsg:
+          "Your 12-digit Aadhar number can be found on your Aadhar card or e-Aadhar",
+        driveMsg: "Enter your date of birth as per your driving license",
+      },
     },
   },
   user_messages: {
@@ -332,6 +356,27 @@ const en = {
     selectedSuffix: "selected - Click to confirm",
     instruction: "Swipe & tap on a candidate card to select",
     tapToSelect: "Tap to select",
+    description: "Description",
+    dis: {
+      about: "About Party",
+      promises: "Key Promises",
+      suggestion: "Suggestion About Party",
+      founder: "Founder",
+      founded: "Founded",
+    },
+    sug : {
+      title: "Share Your Thoughts", 
+      about: "About",
+      your: "Your Suggestion",
+      submit: "Submit",
+      limit: "Limit reached",
+      cancel: "Cancel",
+      submitting: "Submitting...",
+      note:"Your feedback is anonymous and helps improve our services.",
+      success: "Thank You!",
+      msg: "Your valuable suggestion has been submitted successfully.",
+      close: "Closing automatically...",
+    }
   },
   qna: {
     otherPlaceholder: "Please specify your answer...",
@@ -442,6 +487,8 @@ const en = {
     secured: "Secured",
     backHome: "Home",
     copySuccess: "Copied!",
+    newVote: "New Vote",
+    loggingOut: "Loading...",
   },
   terms: {
     nav: {
@@ -601,19 +648,20 @@ const en = {
   },
   resume: {
     title: "Resume Your Vote",
-    subtitle: "Enter your Tracker ID to continue where you left off",
+    subtitle: "Enter your Access ID to continue where you left off",
     successTitle: "Welcome Back!",
     redirecting: "Redirecting you to continue...",
     loadingSession: "Loading your session...",
-    trackerId: "Tracker ID",
+    trackerId: "Access ID",
     placeholder: "VT-XXXXXXXX",
     continue: "Continue",
     verifying: "Verifying...",
-    invalidId: "Please enter a valid Tracker ID",
-    notFound: "Tracker ID not found. Please check and try again.",
+    invalidId: "Please enter a valid Access ID",
+    notFound: "Access ID not found. Please check and try again.",
     expired: "Session expired. Please try again.",
     serverError: "Something went wrong. Please try again.",
-    helpText: "Your Tracker ID was shown after registration. Check your notes or screenshots.",
+    helpText:
+      "Your Access ID was shown after registration. Check your notes or screenshots.",
     newUser: "New user? Register here →",
     resumeButton: "Already Registered? Resume Here",
     sessionRestored: "Session restored successfully!",

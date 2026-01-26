@@ -29,10 +29,10 @@ const useVote = () => {
 
       // Save to localStorage
       // localStorage.setItem("voter_status", "voted");
-      if (result.data.vote_id) {
-        // localStorage.setItem("vote_id", result.data.vote_id);
-        setVoteId(result.data.vote_id);
-      }
+      // if (result.data.vote_id) {
+      //   // localStorage.setItem("vote_id", result.data.vote_id);
+      //   setVoteId(result.data.vote_id);
+      // }
       await checkUserStatus();
     } else {
       setError(result.error);
@@ -40,7 +40,7 @@ const useVote = () => {
 
     setIsLoading(false);
     return result;
-  }, [checkUserStatus, setVoteId]);
+  }, [checkUserStatus]);
 
   // Reset Function
   const reset = useCallback(() => {

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
-const API_BASE_URL = "http://localhost:5000";
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
@@ -12,7 +12,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [currentStep, setCurrentStep] = useState(null);
   const [trackerId, setTrackerId] = useState(null);
-  const [voteId, setVoteId] = useState(null);
+  // const [voteId, setVoteId] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Backend step -> Frontend route mapping
   const stepRoutes = {
@@ -69,6 +70,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const clearAuth = () => {
+    // setVoteId(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('voteId');
+    sessionStorage.removeItem('voteId');
+  };
+
+
   // Initial check on app load
   useEffect(() => {
     const currentPath = location.pathname;
@@ -85,10 +94,11 @@ export const AuthProvider = ({ children }) => {
     loading,
     currentStep,
     trackerId,
-    voteId,
-    setVoteId,
+    // voteId,
+    // setVoteId,
     checkUserStatus,
-    stepRoutes
+    stepRoutes,
+    clearAuth
   };
 
   return (

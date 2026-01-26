@@ -94,27 +94,27 @@ const SuccessModal = ({
         {/* Content */}
         <div className="relative z-10">
           {/* Success Icon */}
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center mx-auto mb-4 animate-bounce-gentle">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
-              <MdCheck className="text-white text-4xl" />
+          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-green-500/30 to-emerald-500/30 flex items-center justify-center mx-auto mb-2 md:mb-4 animate-bounce-gentle">
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center">
+              <MdCheck className="text-white text-3xl md:text-4xl" />
             </div>
           </div>
 
           {/* Title */}
-          <h3 className="text-white font-heading font-bold text-xl uppercase tracking-wide mb-2">
+          <h3 className="text-white font-heading font-bold text-lg md:text-xl uppercase tracking-wide mb-1 md:mb-2">
             {isTamil ? "பதிவு வெற்றிகரம்!" : "Registration Successful!"}
           </h3>
 
-          <p className="text-white/60 text-sm font-body mb-4">
+          <p className="text-white/60 text-[12px] md:text-sm font-body mb-4">
             {isTamil
               ? "உங்கள் பதிவு வெற்றிகரமாக முடிந்தது"
               : "Your registration has been completed successfully"}
           </p>
 
           {/* Tracker ID Card */}
-          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-6">
-            <p className="text-[10px] text-green-400 uppercase tracking-widest mb-2 font-heading">
-              {isTamil ? "உங்கள் ட்ராக்கர் ID" : "Your Tracker ID"}
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mb-3 lg:mb-6">
+            <p className="text-[12px] text-green-400 uppercase tracking-wide mb-2 font-heading">
+              {isTamil ? "உங்கள் அடையாள ID" : "Your Access ID"}
             </p>
             <div className="flex items-center justify-center gap-3">
               <p className="text-white font-mono text-xl lg:text-2xl font-bold tracking-wider">
@@ -140,7 +140,7 @@ const SuccessModal = ({
           </div>
 
           {/* Important Notice */}
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-6 text-left">
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-3 lg:mb-6 text-left">
             <p className="text-[10px] text-yellow-400 font-body">
               <span className="font-bold">
                 {isTamil ? "முக்கியம்:" : "Important:"}
@@ -155,7 +155,7 @@ const SuccessModal = ({
           <div className="space-y-3">
             <button
               onClick={handleContinue}
-              className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-heading uppercase tracking-widest text-sm rounded-lg hover:shadow-lg hover:shadow-green-500/30 transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white font-heading uppercase tracking-wide text-sm font-bold rounded-lg hover:shadow-lg hover:shadow-green-500/30 transition-all flex items-center justify-center gap-2"
             >
               <MdCheck className="text-lg" />
               {isTamil ? "வாக்களிக்க தொடரவும்" : "Proceed to Vote"}

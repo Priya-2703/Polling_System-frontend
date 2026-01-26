@@ -132,13 +132,13 @@ const ResumeModal = ({ isOpen, onClose }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/80 backdrop-blur-xl"
         onClick={() => !isLoading && !success && onClose()}
       />
 
       {/* Modal */}
       <div className="relative w-[85%] md:w-[95%] max-w-md mx-auto animate-modalIn">
-        <div className="bg-linear-to-b from-shade to-black border border-white/10 rounded-xl overflow-hidden shadow-2xl shadow-accet/10">
+        <div className="bg-linear-to-br from-accet/10 to-accet/20 border border-accet/50 rounded overflow-hidden shadow-2xl shadow-accet/40 animate-scaleIn backdrop-blur-xl">
           {/* Close Button */}
           {!isLoading && !success && (
             <button
@@ -371,7 +371,7 @@ const ResumeModal = ({ isOpen, onClose }) => {
             {/* Help Text */}
             {!success && (
               <div className="mt-3 pt-3 md:mt-5 md:pt-4 border-t border-white/5">
-                <p className="text-white/40 text-[8px] lg:text-[11px] text-center font-body leading-relaxed">
+                <p className="text-white/60 text-[8px] lg:text-[11px] text-center font-body leading-relaxed">
                   💡{" "}
                   {t("resume.helpText") ||
                     "Your Tracker ID was shown after registration. Check your notes or screenshots."}

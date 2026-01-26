@@ -7,11 +7,11 @@ import { useTranslation } from "react-i18next";
 import useVote from "../Hooks/useVote";
 
 const Vote = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
   const [selectedCandidate, setSelectedCandidate] = useState(null);
-  const [isVoting, setIsVoting] = useState(false);
+  // const [isVoting, setIsVoting] = useState(false);
   const { isLoading, error, isSuccess, castVote, hasVoted, reset } = useVote();
 
   const candidates = [
@@ -43,7 +43,7 @@ const Vote = () => {
       party_logo:
         "https://i.pinimg.com/736x/ef/e0/f8/efe0f8970f04bafbb8d5f416cda2fc2f.jpg",
       leader_img:
-        "https://i.pinimg.com/736x/cb/94/47/cb9447a9a518aa16563a2748f428e589.jpg",
+        "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1769237336/images_-_2026-01-24T092559.730_ivwddn.jpg",
     },
     {
       id: 3,
@@ -63,9 +63,9 @@ const Vote = () => {
     {
       id: 4,
       name: t("candidates.p4.name"),
-      founder: "S. P. Adithanar",
+      founder: "Seeman",
       discription: t("candidates.p4.description"),
-      year: "1958",
+      year: "2010",
       promises:  t("candidates.p4.promises", { returnObjects: true }),
       tagline_en: " Uzhavai Meetpoom, Ulagai Kaappom",
       tagline_ta: " உழவை மீட்டோம் உலகை காப்போம்",
@@ -257,7 +257,7 @@ const Vote = () => {
           <div className="flex justify-center items-start z-20 px-4">
             <div className="relative">
               <div className="text-center">
-                <h1 className="text-[18px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-11 text-transparent bg-linear-to-r from-accet via-accet/80 to-accet/50 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+                <h1 className={`text-[18px] md:text-[24px] font-heading uppercase font-black  ${i18n.language === "ta" ? 'leading-7' : 'leading-5.5 tracking-wider'}  md:leading-11 text-transparent bg-linear-to-r from-accet via-accet/80 to-accet/50 bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]`}>
                   {t("vote.title")}
                 </h1>
               </div>
@@ -278,7 +278,7 @@ const Vote = () => {
             <button
               onClick={handleVote}
               disabled={!selectedCandidate || isLoading || isSuccess}
-              className={`relative w-[75%] md:w-80 py-3 lg:py-4 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[14px] font-heading overflow-hidden transition-all duration-500 ${
+              className={`relative ${i18n.language === "ta" ? 'w-full' : 'w-[75%] tracking-widest'} md:w-80 py-3 md:py-4 rounded uppercase font-bold  text-[12px] md:text-[14px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate && !isLoading && !isSuccess
                   ? "bg-linear-to-r from-accet via-cyan-400 to-accet/50 text-black hover:shadow-[0_0_30px_#00F3FF] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10"
@@ -346,7 +346,7 @@ const Vote = () => {
             </button>
 
             <p
-              className={`text-center text-[8px] lg:text-[10px] mt-2 transition-all duration-300 ${
+              className={`text-center text-[8px] md:text-[10px] mt-2 transition-all duration-300 ${
                 selectedCandidate ? "text-accet/60" : "text-white/40"
               }`}
             >

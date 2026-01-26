@@ -114,7 +114,7 @@ const Candidate = () => {
 
     try {
       // ✅ Call Backend API
-      const result = await submitCMVote(voteId, selectedCandidate.id);
+      const result = await submitCMVote(selectedCandidate.id);
 
 
 
@@ -148,8 +148,8 @@ const Candidate = () => {
           {/* Enhanced Header */}
           <div className="flex justify-center items-start z-20 px-4 mt-2">
             <div className="relative">
-              <div className="text-center lg:max-w-4xl">
-                <h1 className="text-[14px] lg:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-8 text-transparent bg-linear-to-r from-accet to-accet/80 via-indigo bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
+              <div className="text-center md:max-w-4xl">
+                <h1 className="text-[14px] md:text-[24px] font-heading uppercase font-black tracking-wider leading-5.5 md:leading-8 text-transparent bg-linear-to-r from-accet to-accet/80 via-indigo bg-clip-text drop-shadow-[0_0_30px_rgba(95, 98, 233,0.2)]">
                   {t("vote.question")}
                 </h1>
               </div>
@@ -176,7 +176,7 @@ const Candidate = () => {
             <button
               onClick={handleVote}
               disabled={!selectedCandidate || isVoting}
-              className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] lg:text-[16px] font-heading overflow-hidden transition-all duration-500 ${
+              className={`relative w-[95%] sm:w-80 py-3 rounded uppercase font-bold tracking-widest text-[12px] md:text-[16px] font-heading overflow-hidden transition-all duration-500 ${
                 selectedCandidate
                   ? "bg-linear-to-r from-accet via-cyan-500 to-accet/50 text-black hover:shadow-[0_0_20px_#00F3FF] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-white/10 to-white/5 text-white/30 cursor-not-allowed border border-white/10"
@@ -230,7 +230,7 @@ const Candidate = () => {
 
             {/* Help Text */}
             <p
-              className={`text-center text-[8px] lg:text-[10px] mt-2 transition-all duration-300 ${
+              className={`text-center text-[8px] md:text-[10px] mt-2 transition-all duration-300 ${
                 selectedCandidate ? "text-accet/60" : "text-white/40"
               }`}
             >
