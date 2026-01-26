@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react"; // 👈 Added useRef
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useSound from "use-sound";
@@ -7,11 +7,12 @@ import { Icon } from "@iconify/react";
 import confetti from "canvas-confetti";
 import { motion } from "framer-motion";
 import { useAuth } from "../Context/AuthContext";
-import { getMyChoice } from "../utils/service/api";
+import { getMyChoice  } from "../utils/service/api";
 
 const Thanks = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL
   const { t, i18n } = useTranslation();
-  const { voteId } = useAuth();
+  const {clearAuth  } = useAuth();
   const [playClick] = useSound(scifi);
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,15 +20,16 @@ const Thanks = () => {
   const [rotationAngle, setRotationAngle] = useState(0);
   const [isSpinning, setIsSpinning] = useState(true);
   const [showContent, setShowContent] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Backend Data State
   const [backendData, setBackendData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 👈 NEW: Refs for animation (to access latest values inside animation loop)
-  const loadingRef = useRef(true);
+  // 👈 Refs for animation
+  const dataReadyRef = useRef(false); // 👈 NEW: Separate flag for data ready
   const angleRef = useRef(0);
-  const selectedIndexRef = useRef(0);
+  const selectedIndexRef = useRef(-1); // 👈 Initialize to -1 (invalid)
 
   // Viewport Dimensions
   const [dimensions, setDimensions] = useState({
@@ -35,58 +37,8 @@ const Thanks = () => {
     vh: typeof window !== "undefined" ? window.innerHeight : 768,
   });
 
-  // ========== 1. FETCH DATA FROM BACKEND ==========
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!voteId) {
-        setLoading(false);
-        loadingRef.current = false;
-        return;
-      }
-
-      try {
-        const lang = i18n.language || "en";
-        const result = await getMyChoice(voteId, lang);
-
-        if (result.status === "success") {
-          setBackendData(result);
-          console.log("Thanks:", result);
-        }
-      } catch (err) {
-        console.error("Failed to load choice", err);
-      } finally {
-        // 👈 IMPORTANT: Update both State AND Ref
-        setLoading(false);
-        loadingRef.current = false;
-      }
-    };
-
-    fetchData();
-  }, [voteId, i18n.language]);
-
-  // ========== VIEWPORT RESIZE HANDLER ==========
-  useEffect(() => {
-    const updateDimensions = () => {
-      setDimensions({
-        vw: window.innerWidth,
-        vh: window.innerHeight,
-      });
-    };
-    window.addEventListener("resize", updateDimensions);
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener("resize", updateDimensions);
-    }
-    return () => {
-      window.removeEventListener("resize", updateDimensions);
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener("resize", updateDimensions);
-      }
-    };
-  }, []);
-
   // ========== ALL CANDIDATES ==========
-  const allCandidates = useMemo(
-    () => [
+  const allCandidates = useMemo(() => [
       {
         id: 1,
         name: t("cm_candi.p1.name"),
@@ -154,17 +106,17 @@ const Thanks = () => {
           "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767350473/Nainar_Nagendran__BJP_Tamil_Nadu_swt7k2.jpg",
       },
     ],
-    [t]
+    [t],
   );
 
   const totalCandidates = allCandidates.length;
   const anglePerCandidate = 360 / totalCandidates;
 
-  // ========== 2. SELECT CANDIDATE (Backend > Location > Default) ==========
+  // ========== SELECT CANDIDATE ==========
   const selectedCandidate = useMemo(() => {
     if (backendData?.candidate) {
       const found = allCandidates.find(
-        (c) => c.id === backendData.candidate.id
+        (c) => c.id === backendData.candidate.id,
       );
       return found || backendData.candidate;
     }
@@ -179,18 +131,94 @@ const Thanks = () => {
   }, [backendData, allCandidates, location.state]);
 
   const selectedIndex = allCandidates.findIndex(
-    (c) => c.id === selectedCandidate.id
+    (c) => c.id === selectedCandidate.id,
   );
 
-  // 👈 Update ref whenever selectedIndex changes
+  // ========== 1. FETCH DATA FROM BACKEND ==========
   useEffect(() => {
-    selectedIndexRef.current = selectedIndex;
-  }, [selectedIndex]);
+    const fetchData = async () => {
+      // if (!voteId) {
+      //   setLoading(false);
+      //   dataReadyRef.current = true; // 👈 Use dataReadyRef
+      //   return;
+      // }
 
-  // ========== 3. TRACKER ID FROM BACKEND ==========
+      try {
+        const lang = i18n.language || "en";
+        const result = await getMyChoice(lang);
+
+        if (result.status === "success") {
+          setBackendData(result);
+          console.log("Thanks:", result);
+          // 👈 DON'T set loading/dataReady here - let the sync effect handle it
+        } else {
+          setLoading(false);
+          dataReadyRef.current = true;
+        }
+      } catch (err) {
+        console.error("Failed to load choice", err);
+        setLoading(false);
+        dataReadyRef.current = true;
+      }
+    };
+
+    fetchData();
+  }, [i18n.language]);
+
+  // ========== 2. SYNC REFS WHEN DATA IS READY (CRITICAL FIX) ==========
+  useEffect(() => {
+    // Only proceed when we have valid data AND a valid selected index
+    if (
+      backendData &&
+      selectedIndex >= 0 &&
+      selectedIndex < allCandidates.length
+    ) {
+      // 👈 STEP 1: Update the selected index ref FIRST
+      selectedIndexRef.current = selectedIndex;
+      console.log(
+        "✅ Step 1: selectedIndexRef set to:",
+        selectedIndex,
+        "for:",
+        selectedCandidate?.name,
+      );
+
+      // 👈 STEP 2: THEN signal that data is ready for animation
+      // Use requestAnimationFrame to ensure the ref update is complete
+      requestAnimationFrame(() => {
+        dataReadyRef.current = true;
+        setLoading(false);
+        console.log(
+          "✅ Step 2: Data ready, animation will now target index:",
+          selectedIndexRef.current,
+        );
+      });
+    }
+  }, [backendData, selectedIndex, selectedCandidate, allCandidates.length]);
+
+  // ========== VIEWPORT RESIZE HANDLER ==========
+  useEffect(() => {
+    const updateDimensions = () => {
+      setDimensions({
+        vw: window.innerWidth,
+        vh: window.innerHeight,
+      });
+    };
+    window.addEventListener("resize", updateDimensions);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateDimensions);
+    }
+    return () => {
+      window.removeEventListener("resize", updateDimensions);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", updateDimensions);
+      }
+    };
+  }, []);
+
+  // ========== TRACKER ID FROM BACKEND ==========
   const uniqueId = useMemo(
     () => backendData?.tracker_id || "LOADING...",
-    [backendData]
+    [backendData],
   );
 
   const resultDate = "March 03, 2026";
@@ -203,108 +231,116 @@ const Thanks = () => {
     },
   ];
 
-  // ========== 4. NEW ANIMATION LOGIC (Spin While Loading -> Smooth Stop) ==========
- // ========== 4. NEW ANIMATION LOGIC (Spin While Loading -> Smooth Stop) ==========
-useEffect(() => {
-  let animationFrameId;
-  let startTime = null;
-  let startDecelAngle = 0;
-  let finalTargetAngle = 0;
-  let isLanding = false;
+  // ========== 3. ANIMATION LOGIC (FIXED) ==========
+  useEffect(() => {
+    let animationFrameId;
+    let startTime = null;
+    let startDecelAngle = 0;
+    let finalTargetAngle = 0;
+    let isLanding = false;
 
-  const animate = (timestamp) => {
-    // ===== PHASE 1: LOADING (Infinite Fast Spin) =====
-    if (loadingRef.current) {
-      angleRef.current += 8;
-      setRotationAngle(angleRef.current);
-      animationFrameId = requestAnimationFrame(animate);
-    }
-    // ===== PHASE 2: DATA RECEIVED - Calculate Landing =====
-    else if (!isLanding) {
-      isLanding = true;
-      startTime = timestamp;
-      startDecelAngle = angleRef.current;
-
-      // 👇 FIXED CALCULATION
-      const targetIdx = selectedIndexRef.current;
-      
-      // Each candidate is at this angle on the wheel
-      // Index 0 = 0°, Index 1 = 32.7°, etc.
-      const candidateAngleOnWheel = targetIdx * anglePerCandidate;
-      
-      // To bring candidate to TOP (12 o'clock = -90° in our coordinate system)
-      // We need to rotate the wheel so that candidateAngleOnWheel aligns with top
-      // 
-      // Candidates are placed at: angleDegrees = index * anglePerCandidate - 90
-      // So Index 0 is already at -90° (top)
-      // Index 1 is at -90 + 32.7 = -57.3° (slightly right of top)
-      //
-      // To bring any candidate to top, wheel needs to rotate by:
-      // -candidateAngleOnWheel (to counter their offset from index 0)
-      
-      // Current wheel rotation (normalized to 0-360)
-      const currentMod = ((startDecelAngle % 360) + 360) % 360;
-      
-      // Target rotation: negative of candidate's angle (to bring them to top)
-      // But we want to rotate FORWARD (positive direction), so:
-      const targetMod = (360 - candidateAngleOnWheel) % 360;
-      
-      // Calculate shortest forward distance
-      let distanceToTarget = targetMod - currentMod;
-      if (distanceToTarget < 0) {
-        distanceToTarget += 360;
-      }
-      
-      // Add extra spins for dramatic effect (minimum 2 full rotations)
-      const extraSpins = 720;
-      
-      finalTargetAngle = startDecelAngle + extraSpins + distanceToTarget;
-
-      console.log("Debug:", {
-        targetIdx,
-        candidateAngleOnWheel,
-        currentMod,
-        targetMod,
-        distanceToTarget,
-        finalTargetAngle
-      });
-
-      animationFrameId = requestAnimationFrame(animate);
-    }
-    // ===== PHASE 3: DECELERATION (Smooth Stop) =====
-    else {
-      const elapsed = timestamp - startTime;
-      const duration = 2500;
-      const progress = Math.min(elapsed / duration, 1);
-
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-
-      const currentAngle =
-        startDecelAngle + (finalTargetAngle - startDecelAngle) * easeOut;
-
-      setRotationAngle(currentAngle);
-      angleRef.current = currentAngle;
-
-      if (progress < 1) {
+    const animate = (timestamp) => {
+      // ===== PHASE 1: LOADING (Infinite Fast Spin) =====
+      // 👈 Use dataReadyRef instead of loadingRef
+      if (!dataReadyRef.current) {
+        angleRef.current += 8;
+        setRotationAngle(angleRef.current);
         animationFrameId = requestAnimationFrame(animate);
-      } else {
-        setIsSpinning(false);
-        setShowContent(true);
-
-        confetti({
-          particleCount: 150,
-          spread: 70,
-          origin: { y: 0.5 },
-          colors: ["#00d4aa", "#6366f1", "#06b6d4", "#8b5cf6"],
-        });
       }
-    }
-  };
+      // ===== PHASE 2: DATA RECEIVED - Calculate Landing =====
+      else if (!isLanding) {
+        isLanding = true;
+        startTime = timestamp;
+        startDecelAngle = angleRef.current;
 
-  animationFrameId = requestAnimationFrame(animate);
+        // 👈 NOW selectedIndexRef.current is guaranteed to be correct
+        const targetIdx = selectedIndexRef.current;
 
-  return () => cancelAnimationFrame(animationFrameId);
-}, [anglePerCandidate]); // 👈 Added anglePerCandidate to dependencies
+        // 👈 Safety check
+        if (targetIdx < 0 || targetIdx >= totalCandidates) {
+          console.error("❌ Invalid targetIdx:", targetIdx);
+          setIsSpinning(false);
+          setShowContent(true);
+          return;
+        }
+
+        // 👈 FIXED CALCULATION: Position candidate at TOP (12 o'clock)
+        // Candidate at index N is initially at angle: (N * anglePerCandidate - 90) degrees
+        // For them to appear at TOP (-90 degrees), wheel rotation should be:
+        // -N * anglePerCandidate (or equivalently, 360 - N * anglePerCandidate)
+
+        const candidatePositionAngle = targetIdx * anglePerCandidate;
+        const currentMod = ((startDecelAngle % 360) + 360) % 360;
+
+        // Target wheel angle to put this candidate at TOP
+        const targetWheelAngle = (360 - candidatePositionAngle) % 360;
+
+        // Calculate how much more rotation is needed
+        let rotationNeeded = targetWheelAngle - currentMod;
+        if (rotationNeeded <= 0) {
+          rotationNeeded += 360;
+        }
+
+        // Add extra spins for visual effect
+        const extraSpins = 720; // 2 full rotations
+        finalTargetAngle = startDecelAngle + extraSpins + rotationNeeded;
+
+        console.log("🎯 Animation Target:", {
+          candidateName: allCandidates[targetIdx]?.name,
+          selectedIndex: targetIdx,
+          candidatePositionAngle: candidatePositionAngle.toFixed(2),
+          currentMod: currentMod.toFixed(2),
+          targetWheelAngle: targetWheelAngle.toFixed(2),
+          rotationNeeded: rotationNeeded.toFixed(2),
+          finalTargetAngle: finalTargetAngle.toFixed(2),
+          finalAngleMod360: (finalTargetAngle % 360).toFixed(2),
+        });
+
+        animationFrameId = requestAnimationFrame(animate);
+      }
+      // ===== PHASE 3: DECELERATION (Smooth Stop) =====
+      else {
+        const elapsed = timestamp - startTime;
+        const duration = 2500;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Ease out cubic
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+
+        const currentAngle =
+          startDecelAngle + (finalTargetAngle - startDecelAngle) * easeOut;
+
+        setRotationAngle(currentAngle);
+        angleRef.current = currentAngle;
+
+        if (progress < 1) {
+          animationFrameId = requestAnimationFrame(animate);
+        } else {
+          // Animation complete
+          setIsSpinning(false);
+          setShowContent(true);
+
+          console.log(
+            "🎉 Animation Complete! Final angle:",
+            currentAngle.toFixed(2),
+            "mod 360:",
+            (currentAngle % 360).toFixed(2),
+          );
+
+          confetti({
+            particleCount: 150,
+            spread: 70,
+            origin: { y: 0.5 },
+            colors: ["#00d4aa", "#6366f1", "#06b6d4", "#8b5cf6"],
+          });
+        }
+      }
+    };
+
+    animationFrameId = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [anglePerCandidate, totalCandidates, allCandidates]);
 
   // ========== HELPER FUNCTIONS ==========
   const copyUniqueId = () => {
@@ -325,7 +361,7 @@ useEffect(() => {
         imageWidth: wheelSize * 0.29,
         imageHeight: wheelSize * 0.33,
         hubSize: wheelSize * 0.12,
-        bottomOffset: wheelSize * 0.48,
+        bottomOffset: wheelSize * 0.38,
       };
     } else {
       const wheelSize = Math.min(vh * 0.75, 600);
@@ -349,10 +385,33 @@ useEffect(() => {
     bottomOffset,
   } = wheelConfig;
 
-  // ========== 👈 NO LOADING SCREEN - Wheel spins directly ==========
+  
+const handleNewVote = async () => {
+  playClick();
+  setIsLoggingOut(true);
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      console.log("✅ Logout successful");
+    }
+  } catch (error) {
+    console.error("❌ Logout error:", error);
+  } finally {
+    // Always clear auth and redirect
+    clearAuth();
+    setIsLoggingOut(false);
+    window.location.href = "/";
+  }
+};
+
 
   return (
-    <div className="w-full md:w-[90%] mx-auto h-dvh relative overflow-hidden flex flex-col">
+    <div className="w-full md:w-[90%] mx-auto h-dvh relative overflow-hidden flex flex-col mt-0 md:mt-16 lg:mt-0">
       {/* ========== TOP CONTENT SECTION ========== */}
       <div className="relative z-10 flex flex-col items-center px-4 pt-[4vh] md:pt-[2vh] shrink-0">
         <motion.div
@@ -454,7 +513,7 @@ useEffect(() => {
               style={{
                 padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
                   dimensions.vh * 0.02,
-                  12
+                  12,
                 )}px`,
               }}
             >
@@ -486,7 +545,7 @@ useEffect(() => {
               style={{
                 padding: `${Math.max(dimensions.vh * 0.008, 4)}px ${Math.max(
                   dimensions.vh * 0.02,
-                  12
+                  12,
                 )}px`,
               }}
             >
@@ -568,6 +627,7 @@ useEffect(() => {
 
             {/* ✅ CANDIDATES ON THE WHEEL */}
             {allCandidates.map((candidate, index) => {
+              // 👈 Position at -90 degrees (TOP) for index 0
               const angleDegrees = index * anglePerCandidate - 90;
               const angleRadians = (angleDegrees * Math.PI) / 180;
 
@@ -584,8 +644,8 @@ useEffect(() => {
               const cardTiltAngle = isSpinning
                 ? 0
                 : isSelected
-                ? 0
-                : normalizedEffectiveAngle * 0.9;
+                  ? 0
+                  : normalizedEffectiveAngle * 0.9;
 
               return (
                 <div
@@ -612,8 +672,8 @@ useEffect(() => {
                           !isSpinning && isSelected
                             ? 1.3
                             : !isSpinning
-                            ? 0.7
-                            : 0.5,
+                              ? 0.7
+                              : 0.5,
                       }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
                     >
@@ -643,16 +703,15 @@ useEffect(() => {
                             "linear-gradient(145deg, #1a1a2e, #0a0a12)",
                         }}
                       >
-                        {/* 👈 Image with blur during spinning */}
                         <img
                           src={candidate.leader_img}
                           alt={candidate.name}
                           className={`w-full h-full object-cover object-top transition-all duration-500 ${
                             isSpinning
-                              ? "blur-[2px] brightness-50" // 👈 Blur during spin
+                              ? "blur-[2px] brightness-50"
                               : !isSelected
-                              ? "grayscale brightness-[0.2]"
-                              : "grayscale-0 brightness-100"
+                                ? "grayscale brightness-[0.2]"
+                                : "grayscale-0 brightness-100"
                           }`}
                         />
 
@@ -725,7 +784,7 @@ useEffect(() => {
         <motion.div
           className="absolute left-1/2 -translate-x-1/2 z-40"
           style={{
-            bottom: `${Math.max(dimensions.vh * 0.03, 40)}px`,
+            bottom: `${Math.max(dimensions.vh * 0.03, 85)}px`,
           }}
           initial={{ opacity: 0, y: -20, scale: 0.9 }}
           animate={{
@@ -740,7 +799,7 @@ useEffect(() => {
             style={{
               padding: `${Math.max(dimensions.vh * 0.01, 6)}px ${Math.max(
                 dimensions.vh * 0.025,
-                16
+                16,
               )}px`,
             }}
           >
@@ -765,6 +824,64 @@ useEffect(() => {
               {selectedCandidate.name}
             </h3>
           </div>
+        </motion.div>
+
+        <motion.div
+          className="absolute left-1/2 -translate-x-1/2 z-40"
+          style={{
+            bottom: `${Math.max(dimensions.vh * 0.03, 40)}px`,
+          }}
+          initial={{ opacity: 0, y: -20, scale: 0.9 }}
+          animate={{
+            opacity: showContent ? 1 : 0,
+            y: showContent ? 0 : -20,
+            scale: showContent ? 1 : 0.9,
+          }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          <button 
+          onClick={handleNewVote}
+          disabled={isLoggingOut}
+          className={`text-center backdrop-blur-xl bg-accet rounded px-3 py-1
+            transition-all duration-300 hover:bg-accet/80 hover:scale-105
+            disabled:opacity-50 disabled:cursor-not-allowed
+            ${isLoggingOut ? 'animate-pulse' : ''}`}
+        >
+          {isLoggingOut ? (
+            <span className="flex items-center gap-2">
+              <Icon 
+                icon="lucide:loader-2" 
+                className="animate-spin text-black"
+                style={{
+                  fontSize: isMobile
+                    ? `clamp(6px, ${dimensions.vh * 0.013}px, 12px)`
+                    : `clamp(8px, ${dimensions.vh * 0.022}px, 16px)`,
+                }}
+              />
+              <span
+                className="text-black font-heading font-bold uppercase tracking-wider"
+                style={{
+                  fontSize: isMobile
+                    ? `clamp(6px, ${dimensions.vh * 0.013}px, 12px)`
+                    : `clamp(8px, ${dimensions.vh * 0.022}px, 16px)`,
+                }}
+              >
+                {t("thanks.loggingOut") || "Loading..."}
+              </span>
+            </span>
+          ) : (
+            <span
+              className="text-black font-heading font-bold uppercase tracking-wider"
+              style={{
+                fontSize: isMobile
+                  ? `clamp(6px, ${dimensions.vh * 0.013}px, 12px)`
+                  : `clamp(8px, ${dimensions.vh * 0.022}px, 16px)`,
+              }}
+            >
+              {t("thanks.newVote") || "New Vote"}
+            </span>
+          )}
+        </button>
         </motion.div>
 
         {/* Bottom Gradient */}

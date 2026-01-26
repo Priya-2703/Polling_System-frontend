@@ -10,6 +10,8 @@ import { MdNoEncryption } from "react-icons/md";
 import GlitchText from "../Components/GlitchText";
 import ResumeModal from "../Components/Model/ResumeModal";
 import SponsorSection from "../Components/SponsorSection";
+import HologramCylinder from "../Components/HologramCylinder";
+import OrbitNebula from "../Components/OrbitNebula";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
@@ -52,7 +54,7 @@ const Home = () => {
   const isMobile = window.innerWidth <= 460;
 
   return (
-    <>
+    <div className="w-full mx-auto relative">
       {/* Navigation */}
       <nav className="fixed top-0 w-full bg-linear-to-b from-black via-black/90 to-transparent z-40">
         <div className="w-[90%] mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
@@ -133,8 +135,8 @@ const Home = () => {
       </div>
 
       {/* Main Content */}
-      <div className="w-full mx-auto relative z-10 md:h-[80dvh] lg:min-h-dvh grid grid-cols-1 lg:grid-cols-2">
-        <div className="w-[85%] lg:w-full mx-auto  pt-24 pb-20 md:pb-20 flex flex-col justify-center items-center">
+      <div className="w-full mx-auto relative z-10  lg:min-h-dvh grid grid-cols-1 lg:grid-cols-2">
+        <div className="w-[90%] lg:w-full mx-auto  pt-24 pb-20 md:pb-20">
           <div className="flex flex-col justify-end items-start lg:pl-20">
             {/* Floating Status Badge */}
             <div className=" animate-float flex justify-center md:inline-flex items-center gap-2 md:gap-3 border border-accet/20 bg-accet/5 backdrop-blur-md rounded-full px-3 py-1 md:px-4 md:py-2 w-fit mb-4 lg:mb-8">
@@ -142,27 +144,27 @@ const Home = () => {
                 <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full animate-ping absolute" />
                 <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full relative" />
               </div>
-              <span className=" text-[7px] md:text-[10px]  uppercase tracking-widest text-accet font-heading">
+              <span className={`${currentLang === "en" ? "text-[7px] md:text-[10px]" : "text-[6px] md:text-[10px]"} uppercase tracking-widest text-accet font-heading`}>
                 {t("home.statusBadge")}
               </span>
             </div>
 
             {/* Hero Title */}
-            <h1 className="font-heading text-[32px] md:text-6xl lg:text-[70px] font-bold tracking-tight text-white leading-none">
+            <h1 className={`font-heading text-[32px] md:text-6xl lg:text-[70px] font-bold tracking-tight text-white ${currentLang === "en" ? "leading-none": "leading-10 lg:leading-20" }`}>
               <span className="block text-glowtext-start">
                 {" "}
                 {t("home.hero.title1")} <br />
                 <GlitchText text={t("home.hero.title2")} />
               </span>
             </h1>
-            <p className="font-heading text-[26px] lg:text-[45px] block text-start leading-8 lg:leading-13 font-semibold text-white mb-3 md:mb-6">
+            <p className={`font-heading text-[26px] lg:text-[45px] block text-start ${currentLang === "en" ? "leading-8 lg:leading-13" : "leading-8 lg:leading-18"}  font-semibold text-white mb-3 md:mb-6`}>
               {t("home.hero.title3")}
             </p>
 
             {/* Subtitle / Description */}
             <div className="relative mb-4 lg:mb-8">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-accet/50 via-accet/20 to-transparent rounded-full" />
-              <p className="text-neutral-400 max-w-xl  text-[9px] md:text-base leading-relaxed pl-3 md:pl-6 font-light">
+              <p className={`text-neutral-400 max-w-xl ${currentLang === "en" ? "text-[9px] md:text-base" : "text-[8px] md:text-base"}  leading-relaxed pl-3 md:pl-6 font-light`}>
                 {t("home.hero.description")}
               </p>
             </div>
@@ -208,17 +210,17 @@ const Home = () => {
         </div>
       </div>
 
-      <SponsorSection />
+      <HologramCylinder />
 
 
       {/* video */}
-      <div className="w-full mx-auto bg-black/0 h-full lg:h-[90dvh] mb-20 lg:mb-32 pt-10">
+      <div className="w-full mx-auto bg-black/0 h-full lg:h-[90dvh] mb-20 lg:mb-32 pt-16">
         <div className="w-[90%] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-3">
           <div className="w-[98%] md:w-full mx-auto flex flex-col justify-start items-start">
-            <h1 className="font-heading text-[22px] md:text-2xl lg:text-3xl font-bold tracking-wide text-white mb-3 md:mb-6 leading-none drop-shadow-[0px_0px_5px] drop-shadow-accet/40">
+            <h1 className="font-heading text-[22px] md:text-3xl lg:text-3xl font-bold tracking-wide text-white mb-3 md:mb-6 leading-none drop-shadow-[0px_0px_5px] drop-shadow-accet/40">
               LUNAI
             </h1>
-            <p className="text-white/60 text-[10px] lg:text-[14px] font-tamil ">
+            <p className="text-white/60 text-[10px] md:text-[14px] font-tamil ">
               Printers in the 1500s scrambled the words from Cicero's "De
               Finibus Bonorum et Malorum'' after mixing the words in each
               sentence. The familiar "lorem ipsum dolor sit amet" text emerged
@@ -253,7 +255,7 @@ const Home = () => {
             </div>
           </div>
 
-          <div className="h-96 md:h-[80vh] flex flex-col justify-center items-center z-50 rounded-2xl lg:rounded-[30px] drop-shadow-[0px_0px_0px] drop-shadow-accet/30 overflow-hidden">
+          <div className="h-96 md:h-[50vh] lg:h-[80vh] flex flex-col justify-center items-center z-50 rounded-2xl lg:rounded-[30px] drop-shadow-[0px_0px_0px] drop-shadow-accet/30 overflow-hidden">
             {/* <video 
             // ref={videoRef}
             autoPlay
@@ -265,7 +267,7 @@ const Home = () => {
             <iframe
               src="https://tinyglb.com/viewer/86ef964c2bed4803ad229723109fc5e5"
               style={{ border: 0, height: 600, width: "100%" }}
-              className="block md:hidden"
+              className="block lg:hidden"
             />
             <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 -translate-x-1/2">
               <img
@@ -296,7 +298,7 @@ const Home = () => {
                 </p>
               </div>
             </div>
-            <p className="text-white/60 text-end text-[10px] lg:text-[14px] font-tamil mb-3 lg:mb-5">
+            <p className="text-white/60 text-end text-[10px] md:text-[14px] font-tamil mb-3 lg:mb-5">
               Printers in the 1500s scrambled the words from Cicero's "De
               Finibus Bonorum et Malorum'' after mixing the words in each
               sentence. The familiar "lorem ipsum dolor sit amet" text emerged
@@ -311,7 +313,7 @@ const Home = () => {
               and typography across generations.
             </p>
 
-            <h1 className="font-heading text-[22px] md:text-2xl lg:text-3xl font-bold tracking-tight text-white mb-5 md:mb-6 leading-none drop-shadow-[0px_0px_5px] drop-shadow-accet/40">
+            <h1 className="font-heading text-[22px] md:text-3xl lg:text-3xl font-bold tracking-tight text-white mb-5 md:mb-6 leading-none drop-shadow-[0px_0px_5px] drop-shadow-accet/40">
               LUNAI
             </h1>
           </div>
@@ -326,7 +328,7 @@ const Home = () => {
             <div className="absolute top-0 left-1/4 w-px h-full bg-white/5" />
             <div className="absolute top-0 right-1/4 w-px h-full bg-white/5" />
             <div className="absolute top-1/2 left-0 w-full h-px bg-white/5" />
-          </div>
+          </div> 
           <div className="relative z-10 flex flex-col items-center">
             <Icon
               icon="lucide:fingerprint"
@@ -334,13 +336,13 @@ const Home = () => {
               width={isMobile ? 34 : 48}
               strokeWidth={1}
             />
-            <h2 className="font-heading text-lg md:text-4xl text-white mb-2 md:mb-4 tracking-wide">
+            <h2 className="font-heading font-semibold text-lg md:text-4xl text-white mb-2 md:mb-4 tracking-wide">
               {t("home.cta.title")}
             </h2>
-            <p className="text-neutral-400 mb-5 md:mb-10 max-w-lg mx-auto text-[10px] md:text-sm">
+            <p className={`text-neutral-400 mb-5 md:mb-10 max-w-lg mx-auto ${currentLang === "en" ? "text-[10px] md:text-sm" : "text-[8px] md:text-sm"} `}>
               {t("home.cta.description")}
             </p>
-            <div className="flex flex-col sm:flex-row gap-2 lg:gap-8 max-w-md mx-auto relative group">
+            <div className="flex flex-col sm:flex-row gap-2 lg:gap-4 max-w-md lg:max-w-xl mx-auto relative group">
               {/* <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 via-cyan-500 to-indigo-500 rounded-sm opacity-10 group-hover:opacity-100 transition duration-500 blur" /> */}
               <button
                 onClick={() => {
@@ -366,9 +368,9 @@ const Home = () => {
             </div>
             <button
               onClick={() => setShowResumeModal(true)}
-              className="px-6 py-3  hover:text-accet rounded-lg text-white md:mt-4 text-[10px] md:text-[13px] cursor-pointer font-body tracking-wider transition-all duration-300"
+              className="px-6 py-3  hover:text-accet rounded-lg text-white underline md:mt-4 text-[10px] md:text-[13px] cursor-pointer font-body tracking-wider transition-all duration-300"
             >
-              Already Registered? Resume Here
+              {t("home.cta.resume")}
             </button>
           </div>
         </div>
@@ -404,7 +406,7 @@ const Home = () => {
         isOpen={showResumeModal}
         onClose={() => setShowResumeModal(false)}
       />
-    </>
+    </div>
   );
 };
 

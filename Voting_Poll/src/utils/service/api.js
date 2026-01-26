@@ -1,6 +1,6 @@
 
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.VITE_API_URL
 
 // Register Voter API Call
 export const registerVoter = async (voterData) => {
@@ -59,8 +59,6 @@ export const getCasteList = async () => {
     };
   }
 };
-
-
 
 // Cast Vote API Call
 export const castVote = async (partyId) => {
@@ -132,7 +130,7 @@ export const getVoteStatus = async (trackerId) => {
 };
 
 // SUBMIT SURVEY API Call (NEW FUNCTION)
-export const submitSurvey = async (voteId, surveyData) => {
+export const submitSurvey = async (surveyData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/vote/survey`, {
       method: 'POST',
@@ -141,7 +139,6 @@ export const submitSurvey = async (voteId, surveyData) => {
       },
       credentials: 'include', // If your backend uses cookies for vote_id/session, uncomment this
       body: JSON.stringify({
-        vote_id: voteId,       // Step 2-ல இருந்து வந்த vote_id
         survey_data: surveyData, // q1: "a", q2: "b" format-ல
       }),
     });
@@ -172,7 +169,7 @@ export const submitSurvey = async (voteId, surveyData) => {
 };
 
 // CM Vote API
-export const submitCMVote = async (voteId, candidateId) => {
+export const submitCMVote = async (candidateId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/cm/vote`, {
       method: 'POST',
@@ -181,7 +178,6 @@ export const submitCMVote = async (voteId, candidateId) => {
       },
       credentials: 'include',
       body: JSON.stringify({
-        vote_id: voteId,
         cm_id: candidateId,
       }),
     });
@@ -199,7 +195,7 @@ export const submitCMVote = async (voteId, candidateId) => {
 };
 
 // Resume Session API
-export const resumeSession = async (trackerId) => {
+  export const resumeSession = async (trackerId) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/auth/resume`, {
       method: 'POST',
@@ -228,10 +224,10 @@ export const resumeSession = async (trackerId) => {
       error: error.message,
     };
   }
-};
+  };
 
 // Thanks API
-export const getMyChoice = async (voteId, lang = 'en') => {
+export const getMyChoice = async (lang = 'en') => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/cm/my-choice`, {
       method: 'POST',
@@ -240,7 +236,7 @@ export const getMyChoice = async (voteId, lang = 'en') => {
       },
       credentials: 'include', // 👈 Cookies anuppa ithu MUST
       body: JSON.stringify({
-        vote_id: voteId,
+        // vote_id: voteId,
         lang: lang
       })
     });

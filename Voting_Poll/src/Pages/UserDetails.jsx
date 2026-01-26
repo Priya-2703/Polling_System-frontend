@@ -34,7 +34,7 @@ import {
 // --- STEP INDICATOR
 const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
   return (
-    <div className="w-[70%] mx-auto mb-6">
+    <div className="w-full lg:w-[70%] mx-auto mb-6">
       <div className="hidden lg:flex items-center justify-between relative px-4">
         <div className="absolute top-5 left-8 right-8 h-0.5 bg-white/10">
           <div
@@ -79,16 +79,16 @@ const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
         })}
       </div>
 
-      <div className="lg:hidden flex items-center justify-between px-1">
+      <div className="w-full mx-auto lg:hidden flex items-center justify-between px-1">
         <div className="flex items-center justify-center gap-3">
-          <span className="text-3xl font-black text-accet font-num">
+          <span className="text-3xl md:text-4xl font-black text-accet font-num">
             {String(currentStep).padStart(2, "0")}
           </span>
           <div className="flex flex-col justify-center items-start">
-            <span className="text-[11px] text-white font-heading font-bold uppercase">
+            <span className="text-[11px] md:text-lg text-white font-heading font-bold uppercase">
               Step {currentStep} of {totalSteps}
             </span>
-            <span className="text-[9px] text-white/40 uppercase tracking-widest font-mono">
+            <span className="text-[9px] md:text-md text-white/40 uppercase tracking-widest font-mono">
               {subtitle[currentStep - 1]?.label}
             </span>
           </div>
@@ -250,7 +250,7 @@ const SearchableSelect = ({
             onChange={handleInputChange}
             onFocus={handleInputFocus}
             placeholder={placeholder}
-            className="w-full bg-transparent text-white font-body text-[11px] lg:text-[14px] outline-none placeholder:text-white/30 capitalize"
+            className="w-full bg-transparent text-white font-body text-[11px] md:text-[14px] outline-none placeholder:text-white/30 capitalize"
           />
           {(value || searchTerm) && (
             <button
@@ -318,15 +318,17 @@ const SearchableSelect = ({
 };
 
 // --- CLICK INDICATOR
-const ClickIndicator = ({ onClick, isAnimating }) => (
+const ClickIndicator = ({ onClick, isAnimating }) =>{
+  const {t}=useTranslation()
+   return(
   <div className="absolute bottom-16 md:bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center z-30">
     <button
       onClick={onClick}
       disabled={isAnimating}
       className="group cursor-pointer disabled:cursor-not-allowed flex flex-col items-center gap-5"
     >
-      <span className="text-white/50 text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-heading group-hover:text-white/80 transition-colors duration-500">
-        Enter
+      <span className="text-white/50 text-[8px] md:text-[10px] uppercase tracking-widest font-heading group-hover:text-white/80 transition-colors duration-500">
+         {t("form.enter")}
       </span>
 
       <div className="relative flex flex-col items-center">
@@ -371,7 +373,7 @@ const ClickIndicator = ({ onClick, isAnimating }) => (
       </div>
     </button>
   </div>
-);
+)};
 
 // ========================================
 // ✅ VALIDATION HELPERS
@@ -570,6 +572,7 @@ const DateInput = ({ value, onChange, placeholder }) => {
 };
 
 const UserDetails = () => {
+  const API_BASE_URL = import.meta.env.VITE_API_URL
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { checkUserStatus } = useAuth();
@@ -652,7 +655,7 @@ const UserDetails = () => {
       setFormData((prev) => ({ ...prev, constituency: "" }));
 
       axios
-        .get("http://localhost:5000/api/auth/utils/constituencies", {
+        .get(`${API_BASE_URL}/api/auth/utils/constituencies`, {
           params: {
             district: formData.district,
           },
@@ -764,10 +767,10 @@ const UserDetails = () => {
   ];
 
   const subtitle = [
-    { label: "Establish your identity" },
-    { label: "Map your background" },
-    { label: "Contact & Community details" },
-    { label: "Final verification step" },
+    { label: t("form.subtitle.lable1") },
+    { label: t("form.subtitle.lable2") },
+    { label: t("form.subtitle.lable3") },
+    { label: t("form.subtitle.lable4") },
   ];
 
   const ageRanges = [
@@ -1106,12 +1109,12 @@ const UserDetails = () => {
             <SectionTitle
               icon={<HiMiniUser className="text-gray-900 text-sm" />}
               title={t("sections.personal")}
-              subtitle="Establish your identity"
+              subtitle={t("form.subtitle.lable1")}
             />
 
             {/* Name */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
                 {t("labels.fullName")}
               </label>
               <div className="relative bg-shade border border-white/20 md:px-4 py-2.5 md:py-3 px-3 group-hover:border-accet/30 transition-colors">
@@ -1120,14 +1123,14 @@ const UserDetails = () => {
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   placeholder={t("placeholders.fullName")}
-                  className="w-full bg-transparent text-white font-body text-[12px] lg:text-[15px] capitalize outline-none placeholder:text-white/30"
+                  className="w-full bg-transparent text-white font-body text-[12px] md:text-[15px] capitalize outline-none placeholder:text-white/30"
                 />
               </div>
             </div>
 
             {/* Gender */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-3 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-3 block">
                 {t("labels.gender")}
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -1141,7 +1144,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[9px] lg:text-[11px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] md:text-[11px] font-heading uppercase tracking-widest">
                       {gender.label}
                     </span>
                   </button>
@@ -1151,7 +1154,7 @@ const UserDetails = () => {
 
             {/* Age */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-3 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-3 block">
                 {t("labels.ageGroup")}
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -1165,7 +1168,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[10px] lg:text-[12px] font-heading tracking-wide">
+                    <span className="text-[10px] md:text-[12px] font-heading tracking-wide">
                       {age.label}
                     </span>
                   </button>
@@ -1192,12 +1195,12 @@ const UserDetails = () => {
             <SectionTitle
               icon={<MdLocationOn className="text-gray-900 text-sm" />}
               title={t("sections.location")}
-              subtitle="Map your background"
+              subtitle={t("form.subtitle.lable2")}
             />
 
             {/* District */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
                 {t("labels.district")}
               </label>
               <div
@@ -1214,13 +1217,13 @@ const UserDetails = () => {
                 <span
                   className={
                     formData.district
-                      ? "text-white font-medium text-[11px] lg:text-[14px]"
-                      : "text-white/30 text-[10px] lg:text-[14px]"
+                      ? "text-white font-medium text-[11px] md:text-[14px]"
+                      : "text-white/30 text-[10px] md:text-[14px]"
                   }
                 >
                   {formData.district || t("placeholders.district")}
                 </span>
-                <MdLocationOn className="text-accet text-[14px] lg:text-xl animate-pulse" />
+                <MdLocationOn className="text-accet text-[14px] md:text-xl animate-pulse" />
               </div>
             </div>
 
@@ -1232,7 +1235,7 @@ const UserDetails = () => {
                   : "opacity-50 pointer-events-none"
               }`}
             >
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-wide mb-1.5 md:mb-2 block">
                 {t("labels.constituency") || "Constituency"}
                 <span className="text-red-400 ml-1">*</span>
               </label>
@@ -1242,7 +1245,7 @@ const UserDetails = () => {
                   value={formData.constituency}
                   onChange={(e) => handleChange("constituency", e.target.value)}
                   disabled={!formData.district || loadingConstituency}
-                  className={`w-full appearance-none text-[12px] bg-shade border md:px-4 py-2.5 md:py-4 px-3 text-white outline-none cursor-pointer transition-all md:text-[14px]
+                  className={`w-full appearance-none text-[12px] bg-shade border md:px-4 py-2.5 md:py-4 px-3 text-white outline-none cursor-pointer transition-all md:text-[14px] placeholder:text-white/30
                     ${
                       formData.constituency
                         ? "border-accet/50"
@@ -1254,8 +1257,8 @@ const UserDetails = () => {
                     className="bg-transparent text-white text-[12px] md:text-[14px]"
                   >
                     {loadingConstituency
-                      ? "Loading Constituency..."
-                      : "Select Your Constituency"}
+                      ? t("placeholders.constLoading")
+                      : t("placeholders.constituency")}
                   </option>
 
                   {constituencyList.map((thoguthi) => (
@@ -1301,7 +1304,7 @@ const UserDetails = () => {
 
             {/* Religion */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
                 {t("labels.religion")}
               </label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-1 lg:gap-3">
@@ -1315,7 +1318,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[8px] lg:text-[10px] font-heading uppercase tracking-widest">
+                    <span className="text-[8px] md:text-[10px] font-heading uppercase tracking-widest">
                       {religion.label}
                     </span>
                   </button>
@@ -1325,7 +1328,7 @@ const UserDetails = () => {
 
             {/* Mother Tongue */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
                 {t("labels.motherTongue")}
               </label>
               <div className="grid grid-cols-3 gap-2 lg:gap-3">
@@ -1339,7 +1342,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[9px] lg:text-[11px] font-heading uppercase tracking-widest">
+                    <span className="text-[9px] md:text-[11px] font-heading uppercase tracking-widest">
                       {lang.label}
                     </span>
                   </button>
@@ -1352,18 +1355,18 @@ const UserDetails = () => {
       case 3:
         return (
           <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            className={`space-y-4 md:space-y-6 ${animationClass}`}
             key="step3"
           >
             <SectionTitle
               icon={<HiPhone className="text-gray-900 text-sm" />}
               title={t("sections.contact")}
-              subtitle="Contact & Community details"
+              subtitle={t("form.subtitle.lable3")}
             />
 
             {/* Phone */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-widest mb-1.5 md:mb-2 block">
+              <label className="text-[8px] md:text-[12px] text-accet font-bold font-heading uppercase tracking-widest mb-1.5 md:mb-2 block">
                 {t("labels.phoneNumber")}
               </label>
               <div className="relative bg-shade border border-white/20 md:px-4 py-2.5 md:py-3 px-2 group-hover:border-accet/30 transition-colors">
@@ -1379,7 +1382,7 @@ const UserDetails = () => {
                     }
                     placeholder={t("placeholders.phone")}
                     maxLength="10"
-                    className="flex-1 bg-transparent text-white font-body text-[10px] lg:text-[14px] outline-none placeholder:text-white/30 tracking-wider"
+                    className="flex-1 bg-transparent text-white font-body text-[10px] md:text-[14px] outline-none placeholder:text-white/30 tracking-wider"
                   />
                 </div>
                 {formData.phone && (
@@ -1412,7 +1415,7 @@ const UserDetails = () => {
 
             {/* Community */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block">
                 {t("labels.community")}
               </label>
               <div className="grid grid-cols-3 gap-2 lg:gap-3">
@@ -1426,10 +1429,10 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[9px] lg:text-[16px] font-heading font-bold text-white tracking-widest">
+                    <span className="text-[9px] md:text-[16px] font-heading font-bold text-white tracking-widest">
                       {community.label}
                     </span>
-                    <span className="text-[7px] lg:text-[9px] font-body text-white/60 md:mt-1">
+                    <span className="text-[7px] md:text-[9px] font-body text-white/60 md:mt-1">
                       {community.full}
                     </span>
                   </button>
@@ -1439,7 +1442,7 @@ const UserDetails = () => {
 
             {/* Caste */}
             <div className="relative group">
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-2 block">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-2 block">
                 {t("labels.caste")}
               </label>
               <SearchableSelect
@@ -1459,21 +1462,21 @@ const UserDetails = () => {
 
         return (
           <div
-            className={`space-y-4 lg:space-y-6 ${animationClass}`}
+            className={`space-y-4 md:space-y-6 ${animationClass}`}
             key="step4"
           >
             <SectionTitle
               icon={<MdVerifiedUser className="text-gray-900 text-sm" />}
               title={t("sections.idVerification")}
-              subtitle="Final verification step"
+              subtitle={t("form.subtitle.lable4")}
             />
 
             {/* ID Type Selection */}
             <div>
-              <label className="text-[8px] lg:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
+              <label className="text-[8px] md:text-[12px] font-bold text-accet font-heading uppercase tracking-widest mb-1.5 md:mb-3 block md:px-1">
                 {t("labels.idType")}
               </label>
-              <div className="grid grid-cols-3 gap-1.5 lg:gap-3">
+              <div className="grid grid-cols-3 gap-1.5 md:gap-3">
                 {idTypes.map((id) => (
                   <button
                     key={id.value}
@@ -1491,7 +1494,7 @@ const UserDetails = () => {
                         : "bg-shade border-white/20 text-white hover:border-white/30"
                     }`}
                   >
-                    <span className="text-[8px] lg:text-[11px] font-heading uppercase tracking-widest font-bold">
+                    <span className="text-[8px] md:text-[11px] font-heading uppercase tracking-widest font-bold">
                       {id.label}
                     </span>
                   </button>
@@ -1502,8 +1505,8 @@ const UserDetails = () => {
             {/* AADHAR CARD INPUT */}
             {formData.idType === "aadhar" && (
               <div className="relative group animate-fadeIn">
-                <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
-                  Aadhar Card Number
+                <label className="text-[9px] md:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                  {t("options.ids.select.aadhar")}
                 </label>
                 <div
                   className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
@@ -1563,8 +1566,7 @@ const UserDetails = () => {
 
                 <div className="mt-3 bg-blue-500/10 border border-blue-500/30 p-2 rounded">
                   <p className="text-[7px] md:text-[9px] text-blue-400 font-body">
-                    💡 Your 12-digit Aadhar number can be found on your Aadhar
-                    card or e-Aadhar
+                    💡 {t("options.ids.select.aadharMsg")}
                   </p>
                 </div>
               </div>
@@ -1573,8 +1575,8 @@ const UserDetails = () => {
             {/* PAN CARD INPUT */}
             {formData.idType === "pan" && (
               <div className="relative group animate-fadeIn">
-                <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
-                  PAN Card Number
+                <label className="text-[9px] md:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                  {t("options.ids.select.pan")}
                 </label>
                 <div
                   className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
@@ -1636,8 +1638,8 @@ const UserDetails = () => {
             {formData.idType === "driving" && (
               <div className="space-y-4 animate-fadeIn">
                 <div className="relative group">
-                  <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
-                    Driving License Number
+                  <label className="text-[9px] md:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
+                    {t("options.ids.select.driving")}
                   </label>
                   <div
                     className={`relative bg-shade border md:px-4 py-2.5 md:py-3 px-3 transition-colors ${
@@ -1697,7 +1699,7 @@ const UserDetails = () => {
                 {/* Date of Birth */}
                 <div className="relative group">
                   <label className="text-[9px] lg:text-[12px] text-accet font-bold font-heading uppercase tracking-wide mb-1 md:mb-2 block md:px-1">
-                    Date of Birth
+                    {t("options.ids.select.dob")}
                   </label>
                   <DateInput
                     value={formData.dob}
@@ -1705,7 +1707,7 @@ const UserDetails = () => {
                     placeholder="DD / MM / YYYY"
                   />
                   <p className="text-[8px] text-white/40 mt-1 px-1 font-body">
-                    Enter your date of birth as per your driving license
+                    {t("options.ids.select.driveMsg")}
                   </p>
                 </div>
               </div>
@@ -1730,10 +1732,10 @@ const UserDetails = () => {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[8px] lg:text-[12px] text-green-400 font-heading uppercase tracking-wider">
+                  <p className="text-[8px] md:text-[12px] text-green-400 font-heading uppercase tracking-wider">
                     {t("user_messages.dataSecure")}
                   </p>
-                  <p className="text-[6px] lg:text-[10px] text-white/50 font-body mt-1">
+                  <p className="text-[6px] md:text-[10px] text-white/50 font-body mt-1">
                     {t("user_messages.encryptionNotice")}
                   </p>
                 </div>
@@ -1759,7 +1761,7 @@ const UserDetails = () => {
               >
                 {agreed && <MdCheck className="text-black text-sm" />}
               </div>
-              <p className="text-[8px] lg:text-[11px] text-white/60 font-body leading-relaxed">
+              <p className="text-[8px] md:text-[11px] text-white/60 font-body leading-relaxed">
                 {t("user_messages.agreement")}{" "}
                 <span
                   className="text-accet underline"
@@ -1816,15 +1818,15 @@ const UserDetails = () => {
           }}
         >
           <div className="lg:h-full w-full h-screen overflow-hidden lg:overflow-y-scroll">
-            <div className="lg:min-h-screen py-8 lg:py-12">
+            <div className="lg:min-h-screen py-8 md:py-12">
               <div className="container mx-auto px-4">
                 {/* Header */}
                 <div className="flex justify-center items-center mb-4 md:mb-6">
                   <div className="text-center">
-                    <h1 className="text-xl lg:text-3xl font-heading uppercase font-black tracking-wide leading-6 text-transparent bg-gradient-to-r from-accet to-cyan-600 bg-clip-text">
+                    <h1 className={`text-xl md:text-3xl font-heading uppercase font-black tracking-wide ${i18n.language === "ta" ? "leading-8" : "leading-6"}  text-transparent bg-gradient-to-r from-accet to-cyan-600 bg-clip-text`}>
                       {t("header.title")}
                     </h1>
-                    <p className="text-[8px] lg:text-[13px] md:mt-1 font-medium text-white/40 font-body">
+                    <p className="text-[8px] md:text-[13px] md:mt-1 font-medium text-white/40 font-body">
                       {t("header.subtitle")}
                     </p>
                   </div>
@@ -1847,7 +1849,7 @@ const UserDetails = () => {
                     <div className="flex justify-between items-center mt-3 md:mt-8 pt-3 md:pt-6 border-t border-white/10">
                       <button
                         onClick={handleBack}
-                        className={`flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 text-[10px] lg:text-[12px] uppercase font-heading font-bold tracking-widest transition-all ${
+                        className={`flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 text-[10px] md:text-[12px] uppercase font-heading font-bold tracking-widest transition-all ${
                           step === 1
                             ? "opacity-0 pointer-events-none"
                             : "text-white/50 hover:text-white"
@@ -1860,7 +1862,7 @@ const UserDetails = () => {
                         <button
                           onClick={handleNext}
                           disabled={!isStepValid()}
-                          className={`flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 font-heading text-[10px] lg:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
+                          className={`flex items-center gap-2 px-4 md:px-6 py-2.5 md:py-3 font-heading text-[10px] md:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
                             isStepValid()
                               ? "bg-gradient-to-r from-accet/80 to-accet text-black hover:shadow-lg hover:shadow-accet/30"
                               : "bg-white/5 text-white/30 cursor-not-allowed"
@@ -1873,7 +1875,7 @@ const UserDetails = () => {
                         <button
                           onClick={handleSubmit}
                           disabled={!isStepValid() || isSubmitting}
-                          className={`flex items-center gap-2 md:px-8 px-4 md:py-3 py-2.5 font-heading text-[11px] lg:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
+                          className={`flex items-center gap-2 md:px-8 px-4 md:py-3 py-2.5 font-heading text-[11px] md:text-[12px] tracking-wider uppercase font-bold transition-all duration-300 ${
                             isStepValid() && !isSubmitting
                               ? "bg-gradient-to-r from-green-600 to-emerald-500 text-white hover:shadow-lg hover:shadow-green-500/30"
                               : "bg-white/5 text-white/30 cursor-not-allowed"
@@ -1898,7 +1900,7 @@ const UserDetails = () => {
                   </div>
 
                   {/* Quick Links */}
-                  <div className="text-[7px] lg:text-[10px] tracking-widest text-white/40 flex justify-between items-center mt-2 md:mt-3 px-2 font-heading">
+                  <div className="text-[7px] md:text-[10px] tracking-widest text-white/40 flex justify-between items-center mt-2 md:mt-3 px-2 font-heading">
                     <button
                       onClick={() => setIsPrivacyOpen(true)}
                       className="hover:text-white transition-colors"
@@ -1951,6 +1953,7 @@ const UserDetails = () => {
           )}
         </div>
       </div>
+      
       {/* Modals */}
       {showMap && (
         <DistrictMapPicker

@@ -179,9 +179,9 @@ const QnA = () => {
         const surveyData = formatSurveyData(updatedAnswers);
         
         console.log("Submitting survey data:", surveyData); // Debug log
-        console.log("Submitting voter id:", voteId); // Debug log
+        // console.log("Submitting voter id:", voteId); // Debug log
 
-        const result = await submitSurvey(voteId, surveyData);
+        const result = await submitSurvey(surveyData);
 
         if (result.success) {
           // localStorage.setItem("voter_status", "survey_completed");
@@ -282,7 +282,7 @@ const QnA = () => {
             <div
               className={`relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full overflow-hidden border-2 transition-all duration-300 ${
                 isSelected
-                  ? "border-accet shadow-[0_0_10px_rgba(95,93,233,0.3)]"
+                  ? "border-accet shadow-[0_0_10px_rgba(0,243,255,0.3)]"
                   : "border-white/20 group-hover:border-accet/50"
               }`}
             >
@@ -402,7 +402,7 @@ const QnA = () => {
           {/* Header with Progress */}
           <div className="shrink-0 mb-4 mt-3">
             {/* Progress Section */}
-            <div className="relative max-w-md lg:max-w-[50%] mx-auto mt-4 lg:mt-8">
+            <div className="relative max-w-md lg:max-w-[50%] mx-auto mt-4 md:mt-8">
               <div className="flex justify-between items-center mb-2 px-1">
                 {questions.map((_, index) => (
                   <div
@@ -473,7 +473,7 @@ const QnA = () => {
               }`}
             >
               <div className="text-center mb-5">
-                <p className="text-[14px] md:text-[16px] lg:text-[20px] font-heading font-bold text-accet">
+                <p className="text-[14px] md:text-[20px] font-heading font-bold text-accet">
                   {question.question}
                 </p>
               </div>
@@ -533,8 +533,8 @@ const QnA = () => {
               <div
                 className={`grid gap-2 sm:gap-3 ${
                   question.type === "image"
-                    ? "grid-cols-1 sm:grid-cols-2"
-                    : "grid-cols-1 sm:grid-cols-2"
+                    ? "grid-cols-1 lg:grid-cols-2"
+                    : "grid-cols-1 lg:grid-cols-2"
                 }`}
               >
                 {question.options.map((option, index) => {
@@ -552,7 +552,7 @@ const QnA = () => {
                       disabled={isAnimating || isCompleting}
                       className={`group relative overflow-hidden transition-all duration-300 transform ${
                         isSelected
-                          ? "scale-[1.02] bg-linear-to-br from-accet/20 via-accet/10 to-shade backdrop-blur-sm border-2 border-accet shadow-[0_0_20px_rgba(95,98,233,0.3)]"
+                          ? "scale-[1.02] bg-linear-to-br from-accet/20 via-accet/10 to-shade backdrop-blur-sm border-2 border-accet shadow-[0_0_20px_rgba(0,243,255,0.3)]"
                           : `bg-shade border ${
                               showError && !isOtherSelected()
                                 ? "border-red-500/30"
@@ -564,7 +564,7 @@ const QnA = () => {
                           : "px-4 py-3 sm:p-4"
                       } ${
                         isAnimating || isCompleting ? "pointer-events-none" : ""
-                      } ${isOther && isSelected ? "sm:col-span-2" : ""}`}
+                      } ${isOther && isSelected ? "lg:col-span-2" : ""}`}
                     >
                       {isSelected && (
                         <div className="absolute inset-0 bg-linear-to-r from-accet/10 via-transparent to-accet/10 animate-pulse" />
@@ -645,7 +645,7 @@ const QnA = () => {
                           <>
                             <div className="flex-1 text-left">
                               <p
-                                className={`font-heading capitalize font-medium tracking-wide lg:text-[16px] text-[13px] sm:text-[14px] transition-colors duration-300 ${
+                                className={`font-heading capitalize font-medium tracking-wide md:text-[16px] text-[13px] sm:text-[14px] transition-colors duration-300 ${
                                   isSelected
                                     ? "text-accet"
                                     : "text-white/90 group-hover:text-white"
@@ -692,11 +692,11 @@ const QnA = () => {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="shrink-0 flex items-center justify-between gap-4 mt-4 max-w-lg lg:max-w-[50%] lg:mt-14 mx-auto w-full">
+          <div className="shrink-0 flex items-center justify-between gap-4 mt-4 max-w-lg md:max-w-[90%] lg:max-w-[50%] md:mt-14 mx-auto w-full">
             <button
               onClick={handlePrevious}
               disabled={currentQuestion === 0 || isAnimating || isCompleting}
-              className={`flex items-center gap-2 px-4 py-2.5 font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
+              className={`flex items-center gap-2 px-4 py-2.5 font-heading font-bold text-sm md:text-[16px] uppercase tracking-wider transition-all duration-300 ${
                 currentQuestion === 0 || isAnimating || isCompleting
                   ? "bg-white/5 text-white/20 cursor-not-allowed"
                   : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border border-white/10 hover:border-white/30"
@@ -723,11 +723,11 @@ const QnA = () => {
             <button
               onClick={handleNext}
               disabled={isAnimating || isCompleting}
-              className={`flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm lg:text-[16px] uppercase tracking-wider transition-all duration-300 ${
+              className={`flex items-center gap-2 px-6 py-2.5 font-heading font-bold text-sm md:text-[16px] uppercase tracking-wider transition-all duration-300 ${
                 isAnimating || isCompleting
                   ? "bg-accet/50 text-black/50 cursor-not-allowed"
                   : selectedOption
-                  ? "bg-linear-to-r from-accet to-accet/30 text-black hover:shadow-[0_0_30px_rgba(95,98,233,0.2)] hover:scale-[1.02] active:scale-[0.98]"
+                  ? "bg-linear-to-r from-accet to-accet/30 text-black hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
                   : "bg-linear-to-r from-accet/50 to-accet/50 text-black/70"
               }`}
             >

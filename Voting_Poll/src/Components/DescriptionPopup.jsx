@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from "react";
 import useSound from "use-sound";
 import click from "../assets/click2.wav";
+import { useTranslation } from "react-i18next";
 
 const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
+  const {t}= useTranslation()
   const [Click] = useSound(click, { volume: 0.2 });
   const [isClosing, setIsClosing] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
+  // Smooth mount and animation
   useEffect(() => {
     if (isOpen) {
-      setIsVisible(true);
+      setIsMounted(true);
       setIsClosing(false);
       document.body.style.overflow = "hidden";
+      
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setIsAnimating(true);
+        });
+      });
+    } else {
+      setIsAnimating(false);
     }
   }, [isOpen]);
 
   const handleClose = () => {
     Click();
     setIsClosing(true);
+    setIsAnimating(false);
 
     setTimeout(() => {
-      setIsVisible(false);
+      setIsMounted(false);
       setIsClosing(false);
       document.body.style.overflow = "auto";
       onClose();
@@ -33,50 +46,35 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
     }
   };
 
+  // ⭐ Just open suggestion - NO CLOSE
   const handleSuggestionClick = (e) => {
     e.stopPropagation();
     Click();
-    handleClose();
-    setTimeout(() => {
-      onOpenSuggestion(candidate);
-    }, 400);
+    onOpenSuggestion(candidate);
   };
 
-  if (!isVisible && !isOpen) return null;
+  if (!isMounted) return null;
 
   return (
     <>
-      {/* Animation Styles - Width Expansion */}
       <style>{`
-        /* Backdrop Animations */
         @keyframes descFadeIn {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
+          0% { opacity: 0; }
+          100% { opacity: 1; }
         }
         
         @keyframes descFadeOut {
-          from {
-            opacity: 1;
-          }
-          to {
-            opacity: 0;
-          }
+          0% { opacity: 1; }
+          100% { opacity: 0; }
         }
         
-        /* Width Expansion Animation - Opening */
         @keyframes expandWidth {
           0% {
             max-width: 0;
             opacity: 0;
-            transform: scaleX(0);
+            transform: scaleX(0.7);
           }
-          50% {
-            opacity: 0.5;
-          }
+          60% { opacity: 1; }
           100% {
             max-width: 100%;
             opacity: 1;
@@ -84,28 +82,24 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
           }
         }
         
-        /* Width Collapse Animation - Closing */
         @keyframes collapseWidth {
           0% {
             max-width: 100%;
             opacity: 1;
             transform: scaleX(1);
           }
-          50% {
-            opacity: 0.5;
-          }
+          40% { opacity: 0.7; }
           100% {
             max-width: 0;
             opacity: 0;
-            transform: scaleX(0);
+            transform: scaleX(0.7);
           }
         }
         
-        /* Content Fade In */
         @keyframes contentFadeIn {
           0% {
             opacity: 0;
-            transform: translateX(-20px);
+            transform: translateX(-15px);
           }
           100% {
             opacity: 1;
@@ -113,7 +107,6 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
           }
         }
         
-        /* Content Fade Out */
         @keyframes contentFadeOut {
           0% {
             opacity: 1;
@@ -121,82 +114,103 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
           }
           100% {
             opacity: 0;
-            transform: translateX(20px);
+            transform: translateX(15px);
           }
+        }
+
+        .desc-popup-wrapper,
+        .desc-popup-container,
+        .desc-popup-content {
+          will-change: transform, opacity;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          transform: translateZ(0);
+          -webkit-transform: translateZ(0);
         }
       `}</style>
 
       <div
-        className="fixed inset-0 z-[150] flex items-center justify-center overflow-hidden"
+        className="desc-popup-wrapper fixed inset-0 z-[150] flex items-center justify-center overflow-hidden"
         onClick={handleBackdropClick}
         style={{
           height: "100dvh",
           width: "100vw",
           minHeight: "-webkit-fill-available",
-          animation: isClosing
-            ? "descFadeOut 0.35s ease-out forwards"
-            : "descFadeIn 0.3s ease-out forwards",
+          opacity: isAnimating && !isClosing ? 1 : 0,
+          transition: isClosing 
+            ? "opacity 0.35s ease-out" 
+            : isAnimating 
+              ? "opacity 0.4s ease-out"
+              : "none",
         }}
       >
-        {/* Backdrop with blur */}
-        <div className="absolute inset-0 bg-black/95 backdrop-blur-xl" />
+        <div 
+          className="absolute inset-0 bg-black/95 backdrop-blur-xl"
+          style={{
+            opacity: isAnimating && !isClosing ? 1 : 0,
+            transition: isClosing 
+              ? "opacity 0.35s ease-out" 
+              : isAnimating 
+                ? "opacity 0.4s ease-out 0.05s"
+                : "none",
+          }}
+        />
 
-        {/* Popup Container */}
         <div
-          className="relative z-10 w-[94%] sm:w-[92%] md:w-[85%] lg:w-[75%] xl:w-[65%] max-w-4xl mx-auto px-1"
+          className="desc-popup-container relative z-10 w-[94%] sm:w-[92%] md:w-[90%] lg:w-[75%] xl:w-[65%] max-w-4xl mx-auto px-1"
           style={{
             maxHeight: "calc(100dvh - 32px)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Width Expanding Wrapper */}
           <div
             className="relative w-full overflow-hidden"
             style={{
               animation: isClosing
-                ? "collapseWidth 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards"
-                : "expandWidth 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards",
+                ? "collapseWidth 0.35s cubic-bezier(0.4, 0, 0.6, 1) forwards"
+                : isAnimating
+                  ? "expandWidth 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards"
+                  : "none",
               transformOrigin: "center center",
+              opacity: isAnimating && !isClosing ? 1 : 0,
             }}
           >
-            {/* Subtle Outer Glow */}
-            <div className="absolute -inset-1 bg-accet/20 blur-2xl opacity-50 pointer-events-none" />
-
-            {/* Corner Accents - Top Left */}
+            <div 
+              className="absolute -inset-1 bg-accet/20 blur-2xl pointer-events-none"
+              style={{
+                opacity: isAnimating && !isClosing ? 0.5 : 0,
+                transition: "opacity 0.5s ease-out 0.2s",
+              }}
+            />
+ 
+            {/* Corner Accents */}
             <div className="absolute top-0 left-0 w-6 h-6 md:w-8 md:h-8 z-10 pointer-events-none">
               <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-accet to-transparent" />
               <div className="absolute top-0 left-0 h-full w-px bg-gradient-to-b from-accet to-transparent" />
             </div>
-
-            {/* Corner Accents - Top Right */}
             <div className="absolute top-0 right-0 w-6 h-6 md:w-8 md:h-8 z-10 pointer-events-none">
               <div className="absolute top-0 right-0 w-full h-px bg-gradient-to-l from-accet to-transparent" />
               <div className="absolute top-0 right-0 h-full w-px bg-gradient-to-b from-accet to-transparent" />
             </div>
-
-            {/* Corner Accents - Bottom Left */}
             <div className="absolute bottom-0 left-0 w-6 h-6 md:w-8 md:h-8 z-10 pointer-events-none">
               <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-accet to-transparent" />
               <div className="absolute bottom-0 left-0 h-full w-px bg-gradient-to-t from-accet to-transparent" />
             </div>
-
-            {/* Corner Accents - Bottom Right */}
             <div className="absolute bottom-0 right-0 w-6 h-6 md:w-8 md:h-8 z-10 pointer-events-none">
               <div className="absolute bottom-0 right-0 w-full h-px bg-gradient-to-l from-accet to-transparent" />
               <div className="absolute bottom-0 right-0 h-full w-px bg-gradient-to-t from-accet to-transparent" />
             </div>
 
-            {/* Main Popup Card */}
             <div
               className="relative bg-gradient-to-b from-[#0a0a0f] via-[#05050a] to-[#0a0a0f] border border-accet/30 shadow-[0_0_80px_rgba(76,67,221,0.15)] overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-accet/30 scrollbar-track-transparent"
               style={{
                 maxHeight: "calc(100dvh - 48px)",
               }}
             >
-              {/* Top Accent Line */}
               <div className="sticky top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accet/60 to-transparent z-20" />
 
-              {/* Close Button */}
               <button
                 onClick={handleClose}
                 className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 z-30 w-8 h-8 md:w-9 md:h-9 border border-white/20 bg-black/90 backdrop-blur-sm flex items-center justify-center hover:bg-red-500/20 hover:border-red-500/50 transition-all duration-300 group rounded-sm"
@@ -216,18 +230,18 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                 </svg>
               </button>
 
-              {/* Content Container with fade animation */}
               <div
-                className="p-4 pt-8 sm:p-5 sm:pt-10 md:p-6 md:pt-10 lg:p-8 lg:pt-12"
+                className="desc-popup-content p-4 pt-8 sm:p-5 sm:pt-10 md:p-6 md:pt-10 lg:p-8 lg:pt-12"
                 style={{
                   animation: isClosing
-                    ? "contentFadeOut 0.2s ease-out forwards"
-                    : "contentFadeIn 0.4s ease-out 0.15s both",
+                    ? "contentFadeOut 0.25s ease-out forwards"
+                    : isAnimating
+                      ? "contentFadeIn 0.5s ease-out 0.2s both"
+                      : "none",
                 }}
               >
                 {/* Header Section */}
                 <div className="flex flex-col items-center mb-5 md:mb-8">
-                  {/* Party Logo */}
                   {candidate?.party_logo && (
                     <div className="relative mb-4 md:mb-6">
                       <div className="absolute inset-0 bg-accet/20 rounded-full blur-2xl" />
@@ -250,12 +264,10 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                     </div>
                   )}
 
-                  {/* Party Name */}
                   <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-heading uppercase font-bold text-center tracking-[0.1em] sm:tracking-[0.15em] md:tracking-[0.2em] text-white mb-1 px-2">
                     {candidate?.party}
                   </h2>
 
-                  {/* founder & tagline */}
                   <div className="w-full mx-auto lg:-mt-9 my-2">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-4">
                       <div className="flex items-center gap-2 md:gap-3">
@@ -267,8 +279,8 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                           />
                         )}
                         <div>
-                          <p className="text-[8px] md:text-[9px] uppercase text-center lg:text-start tracking-widest text-white/40 font-heading">
-                            Founder
+                          <p className="text-[8px] md:text-[9px] uppercase text-center md:text-start tracking-widest text-white/40 font-heading">
+                            {t("vote.dis.founder")}
                           </p>
                           <p className="text-[10px] md:text-[11px] font-body font-normal text-white/80">
                             {candidate?.founder || "Party Founder"}
@@ -290,7 +302,6 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                     </div>
                   </div>
 
-                  {/* Decorative Line */}
                   <div className="flex items-center justify-center gap-2 sm:gap-3 md:gap-4 mt-2 sm:mt-3 md:mt-5 w-full max-w-45 md:max-w-xs">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent to-white/10" />
                     <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-accet/60 rotate-45" />
@@ -300,7 +311,6 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
 
                 {/* Content Grid */}
                 <div className="relative grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-6 lg:gap-0">
-                  {/* Center Divider */}
                   <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 -translate-x-1/2">
                     <img
                       src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768106397/ChatGPT_Image_Jan_10_2026_05_27_23_PM_xsdl5a.png"
@@ -309,7 +319,7 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                     />
                   </div>
 
-                  {/* About Party Section */}
+                  {/* About Party */}
                   <div className="lg:pr-10">
                     <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
                       <div className="w-6 h-6 md:w-8 md:h-8 border border-accet/30 bg-accet/5 flex items-center justify-center flex-shrink-0">
@@ -329,18 +339,18 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                       </div>
                       <div>
                         <h3 className="text-[10px] md:text-xs lg:text-sm font-heading uppercase tracking-widest text-white font-semibold">
-                          About Party
+                          {t("vote.dis.about")}
                         </h3>
                         <div className="w-8 md:w-12 h-px bg-accet/40 mt-1" />
                       </div>
                     </div>
 
-                    <div className="relative pl-10 md:pl-4 lg:border-l lg:border-white/5">
+                    <div className="relative pl-10 md:pl-12 lg:pl-4 lg:border-l lg:border-white/5">
                       <div className="lg:hidden block absolute left-4 top-0 bottom-0 -translate-x-1/2">
                         <img
                           src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768106397/ChatGPT_Image_Jan_10_2026_05_27_23_PM_xsdl5a.png"
                           alt="sengol"
-                          className="h-40"
+                          className="h-40 md:h-44"
                         />
                       </div>
                       <p className="text-[11px] sm:text-[12px] md:text-[13px] leading-relaxed text-white font-light font-tamil">
@@ -348,26 +358,25 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                       </p>
 
                       <div className="flex items-center gap-4 md:gap-6 mt-4 md:mt-5">
-                        <div className="text-center">
+                        <div className="text-start">
                           <p className="text-base md:text-lg lg:text-xl font-num font-bold text-white">
                             {candidate?.year}
                           </p>
                           <p className="text-[8px] md:text-[9px] uppercase tracking-wider text-white/30 font-num">
-                            Founded
+                            {t("vote.dis.founded")}
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Mobile Divider */}
                   <div className="lg:hidden w-full flex items-center justify-center gap-3 md:gap-4 py-2 md:py-3">
                     <div className="flex-1 h-px bg-gradient-to-r from-transparent to-white/10" />
                     <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-accet/40 rotate-45" />
                     <div className="flex-1 h-px bg-gradient-to-l from-transparent to-white/10" />
                   </div>
 
-                  {/* Party Promises Section */}
+                  {/* Promises */}
                   <div className="lg:pl-12">
                     <div className="flex items-center lg:justify-end gap-2 md:gap-3 mb-3 md:mb-4">
                       <div className="lg:hidden w-6 h-6 md:w-8 md:h-8 border border-accet/30 bg-accet/5 flex items-center justify-center flex-shrink-0">
@@ -387,7 +396,7 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                       </div>
                       <div className="lg:text-right">
                         <h3 className="text-[10px] md:text-xs lg:text-sm font-heading uppercase tracking-widest text-white font-semibold">
-                          Key Promises
+                          {t("vote.dis.promises")}
                         </h3>
                         <div className="w-8 md:w-12 h-px bg-accet/40 mt-1 lg:ml-auto" />
                       </div>
@@ -408,12 +417,12 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                       </div>
                     </div>
 
-                    <div className="relative pl-10 md:pl-4 lg:pl-0 lg:pr-4 border-l-0 lg:border-l-0 lg:border-r border-white/5">
+                    <div className="relative pl-10 md:pl-12 lg:pl-0 lg:pr-4 border-l-0 lg:border-l-0 lg:border-r border-white/5">
                       <div className="lg:hidden block absolute left-4 top-0 bottom-0 -translate-x-1/2">
                         <img
                           src="https://res.cloudinary.com/dfgyjzm7c/image/upload/v1768106397/ChatGPT_Image_Jan_10_2026_05_27_23_PM_xsdl5a.png"
                           alt="sengol"
-                          className="h-40"
+                          className="h-40 md:h-44"
                         />
                       </div>
                       <ul className="space-y-2 md:space-y-3">
@@ -443,11 +452,11 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                   </div>
                 </div>
 
-                {/* Suggestion Button */}
+                {/* Suggestion Button - NO CLOSE */}
                 <div className="mt-4 md:mt-4 pt-3 md:pt-4 border-t border-white/5"/>
                 <button
                   onClick={handleSuggestionClick}
-                  className="w-full lg:w-[40%] mx-auto flex justify-center items-center relative text-[10px] md:text-[12px] px-4 py-2.5 bg-linear-to-r from-accet/40 to-accet/60 text-white rounded-lg uppercase font-heading font-semibold tracking-wide mt-2 hover:from-accet/60 hover:to-accet/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,243,255,0.5)] group overflow-hidden "
+                  className="w-full lg:w-[40%] mx-auto flex justify-center items-center relative text-[10px] md:text-[12px] px-4 py-2.5 bg-gradient-to-r from-accet/40 to-accet/60 text-white rounded-lg uppercase font-heading font-semibold tracking-wide mt-2 hover:from-accet/60 hover:to-accet/80 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,243,255,0.5)] group overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                   <span className="relative flex items-center gap-2">
@@ -464,12 +473,11 @@ const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
                         d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                       />
                     </svg>
-                    Suggestion About Party
+                    {t("vote.dis.suggestion")}
                   </span>
                 </button>
               </div>
 
-              {/* Bottom Accent Line */}
               <div className="sticky bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accet/60 to-transparent z-20" />
             </div>
           </div>

@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@100..800&family=Exo+2:ital,wght@0,100..900;1,100..900&family=Geologica:wght,CRSV@100..900,0&family=Orbitron:wght@400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Mukta+Malar:wght@200;300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -6,7 +7,7 @@
   --font-num: "Orbitron", sans-serif ; /* "Geologica", sans-serif , "Orbitron", sans-serif */
   --font-body: "Exo 2", sans-serif ; /* "Geologica", sans-serif , "Exo 2", sans-serif */
   --font-tamil: "Anek Tamil", sans-serif ; 
-  --color-accet: #00F3FF;   
+  --color-accet: #00F3FF;    /* rgba - 0, 243, 255*/
   --color-halo: #E0FBFC;   
   --color-shade: #07070B;   
   --color-indigo: #00F3FF;   
@@ -24,11 +25,11 @@
 
 .ta-lang .text-\[6px\] { font-size: 8px !important; }
 .ta-lang .text-\[7px\] { font-size: 9px !important; }
-.ta-lang .text-\[8px\] { font-size: 10px !important; }
+.ta-lang .text-\[8px\] { font-size: 11px !important; }
 .ta-lang .text-\[9px\] { font-size: 11px !important; }
 .ta-lang .text-\[10px\] { font-size: 12px !important; }
 .ta-lang .text-\[11px\] { font-size: 13px !important; }
-.ta-lang .text-\[12px\] { font-size: 14px !important; }
+.ta-lang .text-\[12px\] { font-size: 12px !important; }
 .ta-lang .text-\[13px\] { font-size: 15px !important; }
 .ta-lang .text-\[14px\] { font-size: 16px !important; }
 .ta-lang .text-\[15px\] { font-size: 17px !important; }
