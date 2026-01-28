@@ -1017,7 +1017,6 @@ const UserDetails = () => {
         ...(formData.idType === "driving" && { dob: formData.dob }),
       };
 
-      console.log("📤 Sending Registration Data:", registrationData);
 
       const result = await registerVoter(registrationData);
 
@@ -1033,12 +1032,6 @@ const UserDetails = () => {
       } else {
         const statusCode = result.statusCode || 0;
         const detectedErrorType = detectErrorType(result.error, statusCode);
-
-        console.log("❌ Error detected:", {
-          originalError: result.error,
-          statusCode: statusCode,
-          detectedType: detectedErrorType,
-        });
 
         setError(result.error);
         setErrorType(detectedErrorType);

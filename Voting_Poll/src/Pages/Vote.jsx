@@ -7,6 +7,9 @@ import { useTranslation } from "react-i18next";
 import useVote from "../Hooks/useVote";
 import axios from "axios"; // ✅ 1. Import Axios
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+
 const Vote = () => {
   const { t, i18n } = useTranslation();
   const [playClick] = useSound(scifi);
@@ -195,7 +198,7 @@ const Vote = () => {
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/vote/candidates");
+        const response = await axios.get(`${API_BASE_URL}/api/vote/candidates`);
         const apiData = response.data;
 
         const mergedData = staticCandidates.map((staticItem) => {

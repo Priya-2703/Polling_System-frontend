@@ -76,8 +76,6 @@ export const castVote = async (partyId) => {
 
     const data = await response.json();
 
-    console.log("vote", data)
-
     if (!response.ok) {
       if (response.status === 409) {
         throw new Error('ஏற்கனவே வாக்களிக்கப்பட்டது');
@@ -249,7 +247,6 @@ export const getMyChoice = async (lang = 'en') => {
       return { error: data.error || "Something went wrong" };
     }
 
-    console.log("My Choice Response:", data);
     return data;
 
   } catch (error) {

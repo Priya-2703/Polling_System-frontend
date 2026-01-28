@@ -149,8 +149,6 @@ const Thanks = () => {
 
         if (result.status === "success") {
           setBackendData(result);
-          console.log("Thanks:", result);
-          // 👈 DON'T set loading/dataReady here - let the sync effect handle it
         } else {
           setLoading(false);
           dataReadyRef.current = true;
@@ -175,22 +173,12 @@ const Thanks = () => {
     ) {
       // 👈 STEP 1: Update the selected index ref FIRST
       selectedIndexRef.current = selectedIndex;
-      console.log(
-        "✅ Step 1: selectedIndexRef set to:",
-        selectedIndex,
-        "for:",
-        selectedCandidate?.name,
-      );
 
       // 👈 STEP 2: THEN signal that data is ready for animation
       // Use requestAnimationFrame to ensure the ref update is complete
       requestAnimationFrame(() => {
         dataReadyRef.current = true;
         setLoading(false);
-        console.log(
-          "✅ Step 2: Data ready, animation will now target index:",
-          selectedIndexRef.current,
-        );
       });
     }
   }, [backendData, selectedIndex, selectedCandidate, allCandidates.length]);
@@ -285,17 +273,6 @@ const Thanks = () => {
         const extraSpins = 720; // 2 full rotations
         finalTargetAngle = startDecelAngle + extraSpins + rotationNeeded;
 
-        console.log("🎯 Animation Target:", {
-          candidateName: allCandidates[targetIdx]?.name,
-          selectedIndex: targetIdx,
-          candidatePositionAngle: candidatePositionAngle.toFixed(2),
-          currentMod: currentMod.toFixed(2),
-          targetWheelAngle: targetWheelAngle.toFixed(2),
-          rotationNeeded: rotationNeeded.toFixed(2),
-          finalTargetAngle: finalTargetAngle.toFixed(2),
-          finalAngleMod360: (finalTargetAngle % 360).toFixed(2),
-        });
-
         animationFrameId = requestAnimationFrame(animate);
       }
       // ===== PHASE 3: DECELERATION (Smooth Stop) =====
@@ -319,13 +296,6 @@ const Thanks = () => {
           // Animation complete
           setIsSpinning(false);
           setShowContent(true);
-
-          console.log(
-            "🎉 Animation Complete! Final angle:",
-            currentAngle.toFixed(2),
-            "mod 360:",
-            (currentAngle % 360).toFixed(2),
-          );
 
           confetti({
             particleCount: 150,
@@ -397,7 +367,6 @@ const handleNewVote = async () => {
     });
 
     if (response.ok) {
-      console.log("✅ Logout successful");
     }
   } catch (error) {
     console.error("❌ Logout error:", error);

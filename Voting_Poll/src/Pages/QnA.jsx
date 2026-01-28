@@ -177,9 +177,6 @@ const QnA = () => {
       try {
         // Format survey data for API
         const surveyData = formatSurveyData(updatedAnswers);
-        
-        console.log("Submitting survey data:", surveyData); // Debug log
-        // console.log("Submitting voter id:", voteId); // Debug log
 
         const result = await submitSurvey(surveyData);
 

@@ -31,8 +31,6 @@ const SwiperCard = ({
   const [showSuggestionPopup, setShowSuggestionPopup] = useState(false);
   const [selectedPopupCandidate, setSelectedPopupCandidate] = useState(null);
 
-  console.log("parties", candidates)
-
   useEffect(() => {
     if (!swiperReady) return;
     const swiper = swiperRef.current;

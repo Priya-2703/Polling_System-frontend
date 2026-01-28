@@ -8,6 +8,8 @@ import { useAuth } from "../Context/AuthContext";
 import { submitCMVote } from "../utils/service/api";
 import axios from "axios"; // axios install pannilena fetch use pannalam
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 const Candidate = () => {
   const { t } = useTranslation();
   const [playClick] = useSound(scifi);
@@ -86,7 +88,7 @@ const Candidate = () => {
     const fetchAndMergeCandidates = async () => {
       try {
 
-        const response = await axios.get("http://localhost:5000/api/cm/list"); // Update URL if needed
+        const response = await axios.get(`${API_BASE_URL}/api/cm/list`); // Update URL if needed
         const apiData = response.data;
 
         // Merging Logic:
@@ -124,13 +126,11 @@ const Candidate = () => {
       const result = await submitCMVote(selectedCandidate.id);
 
       if (result.success) {
-        console.log("cand id", selectedCandidate.id);
         await checkUserStatus();
       } else {
         setError(result.error || "Failed to submit vote. Please try again.");
       }
     } catch (err) {
-      console.error("CM Vote Error:", err);
       setError("Something went wrong. Please try again.");
     } finally {
       setIsVoting(false);

@@ -117,7 +117,6 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
       }
 
       const data = await response.json();
-      console.log("✅ Suggestion submitted successfully:", data);
 
       setIsSubmitting(false);
       setSubmitSuccess(true);

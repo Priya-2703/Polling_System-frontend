@@ -53,7 +53,6 @@ const LanguageDialog = ({ onLanguageSelect, onClose }) => {
     if (nextAudio) {
         const playPromise = nextAudio.play();
         if (playPromise !== undefined) {
-            playPromise.catch(error => console.log("Audio Play Error:", error));
         }
         
         // C. Set this new audio as the 'Global' audio

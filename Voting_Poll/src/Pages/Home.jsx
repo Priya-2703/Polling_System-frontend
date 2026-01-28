@@ -9,9 +9,7 @@ import { GoLaw } from "react-icons/go";
 import { MdNoEncryption } from "react-icons/md";
 import GlitchText from "../Components/GlitchText";
 import ResumeModal from "../Components/Model/ResumeModal";
-import SponsorSection from "../Components/SponsorSection";
 import HologramCylinder from "../Components/HologramCylinder";
-import OrbitNebula from "../Components/OrbitNebula";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
