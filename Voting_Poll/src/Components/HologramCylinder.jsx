@@ -83,7 +83,7 @@ export default function HologramCylinder() {
     if (drag) return;
     let raf;
     const spin = () => {
-      setRotation((r) => (r + 0.3) % 360); // ← speed here
+      setRotation((r) => (r + 0.2) % 360); // ← speed here
       raf = requestAnimationFrame(spin);
     };
     raf = requestAnimationFrame(spin);
@@ -101,7 +101,7 @@ export default function HologramCylinder() {
     // throttle inside RAF
     requestAnimationFrame(() => {
       const delta = e.clientX - startX;
-      setRotation((r) => (r + delta * 0.4) % 360);
+      setRotation((r) => (r + delta * 0.2) % 360);
       setStartX(e.clientX);
     });
   };
@@ -164,7 +164,7 @@ export default function HologramCylinder() {
                 href={s.site}
                 target="_blank"
                 rel="noreferrer"
-                className={`absolute w-37.5 md:w-70 h-20 md:h-45 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-6 md:p-8 bg-linear-to-b from-accet/20 to-black/20 border border-white/10 backdrop-blur-[1px] transition-all duration-500 overflow-hidden ${isActive ? `shadow-[0_0_10px_#00F3FF] scale-105` : ""}`}
+                className={`flex flex-col justify-center items-center absolute w-37.5 md:w-70 h-20 md:h-45 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-xl p-6 md:p-8 bg-black/80 md:bg-linear-to-b from-accet/20 to-black/20 border border-white/10 backdrop-blur-[10px] transition-all duration-500 overflow-hidden ${isActive ? `shadow-[0_0_10px_#00F3FF] scale-105` : ""}`}
                 style={{
                   transform: `rotateY(${angle}deg) translateZ(${RADIUS}px)`,
                   clipPath: "inset(0px round 12px)",
@@ -175,10 +175,11 @@ export default function HologramCylinder() {
               >
                 {/* hologram shine */}
                 <div
-                  className={`absolute inset-0 rounded-3xl overflow-hidden pointer-events-none
+                  className={`absolute inset-0 rounded-xl overflow-hidden pointer-events-none
                   ${isActive ? "opacity-100" : "opacity-0"}`}
                 >
                   <div className="absolute -inset-full bg-linear-to-r from-transparent via-white/20 to-transparent -skew-x-12 animate-shimmer" />
+                  
                 </div>
 
                 {/* logo */}
@@ -186,7 +187,7 @@ export default function HologramCylinder() {
                   <img
                     src={s.img}
                     alt={s.name}
-                    className={`w-24 h-8 md:w-40 md:h-24 object-contain mx-auto
+                    className={`w-32 h-10 md:w-40 md:h-24 object-contain mx-auto
                     transition-all duration-500 z-20
                     ${isActive ? "filter-none scale-110" : "brightness-150"}`}
                   />
@@ -197,7 +198,7 @@ export default function HologramCylinder() {
                 </div>
 
                 {/* text */}
-                <div className="text-center">
+                <div className="text-center hidden lg:block">
                   <h3 className="text-white font-heading uppercase tracking-wider text-[10px] md:text-xl font-bold">
                     {s.name}
                   </h3>

@@ -376,6 +376,9 @@ const en = {
       success: "Thank You!",
       msg: "Your valuable suggestion has been submitted successfully.",
       close: "Closing automatically...",
+      errorTitle: "Submission Failed",
+      errorMsg: "Something went wrong. Please try again.",
+      retry: "Retry"
     }
   },
   qna: {

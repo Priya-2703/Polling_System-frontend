@@ -78,7 +78,6 @@ const ThreeBackground = () => {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
       } catch (e) {
         // Browser may not support canvas blur filter
-        console.log("Canvas blur not supported, using gradient only");
       }
       
       // Create a texture from the canvas

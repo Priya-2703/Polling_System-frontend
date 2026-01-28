@@ -3,8 +3,10 @@ import useSound from "use-sound";
 import click from "../assets/click2.wav";
 import { useTranslation } from "react-i18next";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
 const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
-  const {t, i18n}= useTranslation()
+  const { t, i18n } = useTranslation();
   const [Click] = useSound(click, { volume: 0.2 });
   const [isClosing, setIsClosing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -13,6 +15,7 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
   const [wordCount, setWordCount] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState(null); // புதிய error state
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef(null);
   const MAX_WORDS = 50;
@@ -20,19 +23,16 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
   // Smooth mount and animation
   useEffect(() => {
     if (isOpen) {
-      // Step 1: Mount component (invisible)
       setIsMounted(true);
       setIsClosing(false);
       document.body.style.overflow = "hidden";
 
-      // Step 2: Start animation after paint
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           setIsAnimating(true);
         });
       });
 
-      // Step 3: Focus after animation completes
       const focusTimer = setTimeout(() => {
         textareaRef.current?.focus();
       }, 500);
@@ -50,6 +50,7 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
       setWordCount(0);
       setSubmitSuccess(false);
       setIsSubmitting(false);
+      setSubmitError(null); // Error reset
     }
   }, [isOpen, isClosing, isMounted]);
 
@@ -74,34 +75,63 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
       setSuggestionText(text);
       setWordCount(words.length);
     }
+    
+    // Clear error when user starts typing
+    if (submitError) {
+      setSubmitError(null);
+    }
   };
 
+  // ✅ API Integration - புதிய function
   const handleSubmitSuggestion = async () => {
     if (!suggestionText.trim() || isSubmitting) return;
 
     Click();
     setIsSubmitting(true);
+    setSubmitError(null);
+
+    // Request body தயாரிப்பு
+    const requestBody = {
+      partyId: candidate?.id,
+      partyName: candidate?.party,
+      suggestion: suggestionText.trim(),
+      wordCount: wordCount,
+    };
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      console.log({
-        partyId: candidate?.id,
-        partyName: candidate?.party,
-        suggestion: suggestionText,
-        wordCount: wordCount,
-        timestamp: new Date().toISOString(),
+      const response = await fetch(`${API_BASE_URL}/api/suggestion/submit`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(requestBody),
       });
+
+      // Response check
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        throw new Error(
+          errorData?.message || `HTTP Error: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
 
       setIsSubmitting(false);
       setSubmitSuccess(true);
 
+      // 2.5 sec பின் popup close
       setTimeout(() => {
         handleClose();
       }, 2500);
+
     } catch (error) {
-      console.error("Submission failed:", error);
+      console.error("❌ Submission failed:", error);
       setIsSubmitting(false);
+      setSubmitError(
+        error.message || t("vote.sug.errorMsg") || "Submission failed. Please try again."
+      );
     }
   };
 
@@ -111,7 +141,12 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
     }
   };
 
-  // Don't render until mounted
+  // Retry button handler
+  const handleRetry = () => {
+    setSubmitError(null);
+    handleSubmitSuggestion();
+  };
+
   if (!isMounted) return null;
 
   return (
@@ -119,21 +154,13 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
       {/* Optimized Animation Styles */}
       <style>{`
         @keyframes suggestionBackdropIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
+          0% { opacity: 0; }
+          100% { opacity: 1; }
         }
         
         @keyframes suggestionBackdropOut {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-          }
+          0% { opacity: 1; }
+          100% { opacity: 0; }
         }
         
         @keyframes suggestionPopupIn {
@@ -173,12 +200,8 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
         }
         
         @keyframes successCheckmark {
-          0% {
-            stroke-dashoffset: 50;
-          }
-          100% {
-            stroke-dashoffset: 0;
-          }
+          0% { stroke-dashoffset: 50; }
+          100% { stroke-dashoffset: 0; }
         }
         
         @keyframes successScale {
@@ -186,9 +209,7 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
             transform: scale(0);
             opacity: 0;
           }
-          50% {
-            transform: scale(1.2);
-          }
+          50% { transform: scale(1.2); }
           100% {
             transform: scale(1);
             opacity: 1;
@@ -196,15 +217,16 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
         }
         
         @keyframes glowPulse {
-          0%, 100% {
-            opacity: 0.3;
-          }
-          50% {
-            opacity: 0.6;
-          }
+          0%, 100% { opacity: 0.3; }
+          50% { opacity: 0.6; }
         }
 
-        /* Hardware acceleration */
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+          20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
         .suggestion-popup-wrapper,
         .suggestion-popup-container {
           will-change: transform, opacity;
@@ -214,6 +236,10 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
           -moz-osx-font-smoothing: grayscale;
           transform: translateZ(0);
           -webkit-transform: translateZ(0);
+        }
+
+        .error-shake {
+          animation: shake 0.5s ease-in-out;
         }
       `}</style>
 
@@ -330,13 +356,16 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
             >
               {/* Header Section */}
               <div className="flex flex-col items-center mb-6">
-                {/* Title Section */}
                 <div className="text-center">
                   <h2 className="text-[12px] md:text-xl font-heading uppercase font-bold tracking-wider text-transparent bg-gradient-to-r from-accet via-cyan-300 to-accet bg-clip-text mb-2">
-                    {t("vote.sug.title")} 
+                    {t("vote.sug.title")}
                   </h2>
                   <p className="text-[9px] md:text-sm text-white/50 font-heading uppercase tracking-wider flex items-center justify-center gap-2">
-                    <span className={`${i18n.language === "ta" ? "hidden": "flex"}`}>About</span>
+                    <span
+                      className={`${i18n.language === "ta" ? "hidden" : "flex"}`}
+                    >
+                      About
+                    </span>
                     <span className="text-accet font-semibold px-2 py-0.5 bg-accet/10 rounded border border-accet/30">
                       {candidate?.party}
                     </span>
@@ -394,7 +423,7 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                   </div>
 
                   <h3 className="text-2xl font-heading font-bold text-green-400 mb-2 tracking-wider">
-                   {t("vote.sug.success")}
+                    {t("vote.sug.success")}
                   </h3>
                   <p className="text-sm text-white/60 font-body text-center max-w-xs">
                     {t("vote.sug.msg")}
@@ -407,6 +436,53 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                 </div>
               ) : (
                 <>
+                  {/* ✅ Error Message Display - புதிய section */}
+                  {submitError && (
+                    <div className="mb-4 p-3 md:p-4 bg-red-500/10 border border-red-500/30 rounded-lg error-shake">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-red-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-sm font-heading font-semibold text-red-400 mb-1">
+                            {t("vote.sug.errorTitle") || "Submission Failed"}
+                          </h4>
+                          <p className="text-xs text-red-300/70">{submitError}</p>
+                        </div>
+                        <button
+                          onClick={() => setSubmitError(null)}
+                          className="flex-shrink-0 text-red-400/60 hover:text-red-400 transition-colors"
+                        >
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Textarea Section */}
                   <div className="relative mb-5">
                     <div
@@ -417,9 +493,11 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
 
                     <div
                       className={`relative border rounded-lg transition-all duration-300 overflow-hidden ${
-                        isFocused
-                          ? "border-accet/70 bg-accet/5 shadow-[0_0_15px_rgba(0,243,255,0.1)]"
-                          : "border-white/15 bg-white/5"
+                        submitError
+                          ? "border-red-500/50 bg-red-500/5"
+                          : isFocused
+                            ? "border-accet/70 bg-accet/5 shadow-[0_0_15px_rgba(0,243,255,0.1)]"
+                            : "border-white/15 bg-white/5"
                       }`}
                     >
                       {/* Header Bar */}
@@ -427,9 +505,11 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                         <div className="flex items-center gap-1 md:gap-2">
                           <div
                             className={`w-2 h-2 md:w-2.5 md:h-2.5 rounded-full transition-all duration-300 ${
-                              isFocused
-                                ? "bg-accet shadow-[0_0_10px_rgba(0,243,255,0.8)] animate-pulse"
-                                : "bg-white/30"
+                              submitError
+                                ? "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]"
+                                : isFocused
+                                  ? "bg-accet shadow-[0_0_10px_rgba(0,243,255,0.8)] animate-pulse"
+                                  : "bg-white/30"
                             }`}
                           />
                           <span className="text-[9px] md:text-xs uppercase tracking-widest text-white/80 font-heading">
@@ -438,7 +518,13 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                         </div>
 
                         <svg
-                          className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-300 ${isFocused ? "text-accet" : "text-white/30"}`}
+                          className={`w-3.5 h-3.5 md:w-4 md:h-4 transition-colors duration-300 ${
+                            submitError
+                              ? "text-red-400"
+                              : isFocused
+                                ? "text-accet"
+                                : "text-white/30"
+                          }`}
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -461,6 +547,7 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                         onBlur={() => setIsFocused(false)}
                         placeholder="உங்கள் கருத்துக்களை இங்கே பகிரவும்...&#10;Share your valuable thoughts and suggestions here..."
                         className="w-full h-36 md:h-44 px-3 lg:px-4 py-2 lg:py-4 bg-transparent text-white/90 text-[10px] lg:text-sm md:text-base font-tamil placeholder:text-white/25 focus:outline-none resize-none scrollbar-thin scrollbar-thumb-accet/40 scrollbar-track-transparent lg:leading-7"
+                        disabled={isSubmitting}
                       />
 
                       {/* Footer Bar */}
@@ -528,7 +615,10 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                   <div className="flex gap-3 mt-5">
                     <button
                       onClick={handleClose}
-                      className="flex-1 py-2 lg:py-3.5 px-5 border border-white/15 rounded-lg text-white/60 font-heading uppercase text-[10px] md:text-xs tracking-[0.15em] hover:bg-white/5 hover:border-white/25 hover:text-white/80 transition-all duration-300 flex items-center justify-center gap-1 md:gap-2"
+                      disabled={isSubmitting}
+                      className={`flex-1 py-2 lg:py-3.5 px-5 border border-white/15 rounded-lg text-white/60 font-heading uppercase text-[10px] md:text-xs tracking-[0.15em] hover:bg-white/5 hover:border-white/25 hover:text-white/80 transition-all duration-300 flex items-center justify-center gap-1 md:gap-2 ${
+                        isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                      }`}
                     >
                       <svg
                         className="w-3.5 h-3.5 md:w-4 md:h-4"
@@ -546,12 +636,15 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                       {t("vote.sug.cancel")}
                     </button>
 
+                    {/* Submit / Retry Button */}
                     <button
-                      onClick={handleSubmitSuggestion}
+                      onClick={submitError ? handleRetry : handleSubmitSuggestion}
                       disabled={!suggestionText.trim() || isSubmitting}
                       className={`flex-1 py-2 lg:py-3.5 px-5 rounded-lg font-heading font-semibold uppercase text-[10px] md:text-xs tracking-wider transition-all duration-300 flex items-center justify-center gap-1 md:gap-2 ${
                         suggestionText.trim() && !isSubmitting
-                          ? "bg-gradient-to-r from-accet via-accet to-cyan-500 text-black shadow-[0_0_10px_rgba(0,243,255,0.4)] hover:shadow-[0_0_35px_rgba(0,243,255,0.6)] hover:scale-[1.02] active:scale-[0.98]"
+                          ? submitError
+                            ? "bg-gradient-to-r from-orange-500 via-orange-500 to-yellow-500 text-black shadow-[0_0_10px_rgba(249,115,22,0.4)] hover:shadow-[0_0_35px_rgba(249,115,22,0.6)] hover:scale-[1.02] active:scale-[0.98]"
+                            : "bg-gradient-to-r from-accet via-accet to-cyan-500 text-black shadow-[0_0_10px_rgba(0,243,255,0.4)] hover:shadow-[0_0_35px_rgba(0,243,255,0.6)] hover:scale-[1.02] active:scale-[0.98]"
                           : "bg-white/5 text-white/25 cursor-not-allowed border border-white/10"
                       }`}
                     >
@@ -577,6 +670,23 @@ const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
                             />
                           </svg>
                           <span>{t("vote.sug.submitting")}</span>
+                        </>
+                      ) : submitError ? (
+                        <>
+                          <svg
+                            className="w-3.5 h-3.5 md:w-4 md:h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                          </svg>
+                          <span>{t("vote.sug.retry") || "Retry"}</span>
                         </>
                       ) : (
                         <>

@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   // Public pages - no redirect needed
-  const publicPaths = ['/', '/privacy', '/terms', '/about', '/contact'];
+  const publicPaths = ['/', '/privacy', '/terms', '/about', '/contact', '/status'];
 
   // ✅ FIXED: checkUserStatus with proper redirect
   const checkUserStatus = async (forceRedirect = true) => {
@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
       });
 
       const data = await res.json();
-      console.log("User Status:", data);
 
       // Update state
       setCurrentStep(data.step);
@@ -49,7 +48,6 @@ export const AuthProvider = ({ children }) => {
         const expectedPath = stepRoutes[data.step];
         
         if (expectedPath && location.pathname !== expectedPath) {
-          console.log(`Redirecting from ${location.pathname} to ${expectedPath}`);
           navigate(expectedPath, { replace: true });
         }
       }

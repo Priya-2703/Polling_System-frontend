@@ -79,7 +79,6 @@ const SuccessModal = ({
             : `My Tracker ID: ${trackerId}`,
         });
       } catch (err) {
-        console.log("Share cancelled");
       }
     }
   };
