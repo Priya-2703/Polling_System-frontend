@@ -438,22 +438,22 @@ const ta = {
       },
     },
     "q5": {
-      "question": "Upload an image of a problem in your district"
+      "question": "உங்கள் மாவட்டத்தில் உள்ள பிரச்சனையின் படத்தை பதிவேற்றவும்"
     },
     "imageUpload": {
-      "optional": "Optional",
-      "dragDrop": "Drag & drop an image here",
-      "dropHere": "Drop image here",
-      "or": "or",
-      "browse": "Browse Files",
-      "formats": "JPG, PNG, WebP • Max 10MB",
-      "uploaded": "Image Uploaded",
-      "remove": "Remove",
-      "skip": "Skip",
-      "invalidType": "Please upload a valid image (JPG, PNG, or WebP)",
-      "tooLarge": "Image size should be less than 10MB",
-      "readError": "Failed to read file",
-      "helpText": "Share an image showing infrastructure issues, public problems, or areas needing attention in your district."
+      "optional": "விருப்பமானது",
+      "dragDrop": "படத்தை இங்கே இழுத்து விடவும்",
+      "dropHere": "படத்தை இங்கே விடவும்",
+      "or": "அல்லது",
+      "browse": "கோப்புகளை தேர்வு செய்க",
+      "formats": "JPG, PNG, WebP • அதிகபட்சம் 10MB",
+      "uploaded": "படம் பதிவேற்றப்பட்டது",
+      "remove": "நீக்கு",
+      "skip": "தவிர்",
+      "invalidType": "சரியான படத்தை பதிவேற்றவும் (JPG, PNG, அல்லது WebP)",
+      "tooLarge": "படத்தின் அளவு 10MB-க்கு குறைவாக இருக்க வேண்டும்",
+      "readError": "கோப்பை படிக்க இயலவில்லை",
+      "helpText": "உங்கள் மாவட்டத்தில் உள்ள உள்கட்டமைப்பு பிரச்சனைகள், பொது பிரச்சனைகள் அல்லது கவனிக்க வேண்டிய பகுதிகளை காட்டும் படத்தை பகிரவும்."
     }
   },
   vote_messages: {
