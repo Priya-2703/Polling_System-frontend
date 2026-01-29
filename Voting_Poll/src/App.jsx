@@ -24,6 +24,7 @@ import ThreeBackground from "./Components/ThreeBackground";
 // i18n
 import "./i18n/i18n";
 import { useTranslation } from "react-i18next";
+import { TimeTrackingProvider } from "./Context/TimeTrackingContext";
 
 // ✅ NEW: Protected Route Component (Backend based)
 const ProtectedRoute = ({ children, allowedStep }) => {
@@ -148,9 +149,11 @@ const AppRoutes = () => {
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <TimeTrackingProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </TimeTrackingProvider>
     </BrowserRouter>
   );
 }
