@@ -433,18 +433,24 @@ const en = {
         h: "Others",
       },
     },
-    q5: {
-      question: "Which alliance would you like to be formed?",
-      options: {
-        a: "Water scarcity",
-        b: "Improper road facilities, traffic problems",
-        c: "Insecurity",
-        d: "Mineral thefts",
-        e: "Health department",
-        f: "power outage",
-        g: "Others",
-      },
+    "q5": {
+      "question": "Upload an image of a problem in your district"
     },
+    "imageUpload": {
+      "optional": "Optional",
+      "dragDrop": "Drag & drop an image here",
+      "dropHere": "Drop image here",
+      "or": "or",
+      "browse": "Browse Files",
+      "formats": "JPG, PNG, WebP • Max 10MB",
+      "uploaded": "Image Uploaded",
+      "remove": "Remove",
+      "skip": "Skip",
+      "invalidType": "Please upload a valid image (JPG, PNG, or WebP)",
+      "tooLarge": "Image size should be less than 10MB",
+      "readError": "Failed to read file",
+      "helpText": "Share an image showing infrastructure issues, public problems, or areas needing attention in your district."
+    }
   },
   vote_messages: {
     redirecting: "Redirecting...",

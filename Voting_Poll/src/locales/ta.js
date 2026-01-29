@@ -437,9 +437,24 @@ const ta = {
         h: "மற்றவை",
       },
     },
-    q5: {
-      question: "எந்தக் கூட்டணி  அமைய நீங்கள் விரும்புகிறீர்கள்?",
+    "q5": {
+      "question": "Upload an image of a problem in your district"
     },
+    "imageUpload": {
+      "optional": "Optional",
+      "dragDrop": "Drag & drop an image here",
+      "dropHere": "Drop image here",
+      "or": "or",
+      "browse": "Browse Files",
+      "formats": "JPG, PNG, WebP • Max 10MB",
+      "uploaded": "Image Uploaded",
+      "remove": "Remove",
+      "skip": "Skip",
+      "invalidType": "Please upload a valid image (JPG, PNG, or WebP)",
+      "tooLarge": "Image size should be less than 10MB",
+      "readError": "Failed to read file",
+      "helpText": "Share an image showing infrastructure issues, public problems, or areas needing attention in your district."
+    }
   },
   vote_messages: {
     redirecting: "திரும்புகிறது...",
