@@ -13,7 +13,7 @@ let globalAudioInstance = null;
 
 const LanguageDialog = ({ onLanguageSelect, onClose }) => {
   const { i18n } = useTranslation();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
   
   const [selectedLang, setSelectedLang] = useState(null);
   

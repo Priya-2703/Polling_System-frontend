@@ -1883,7 +1883,7 @@
           "arcs": [[0, 1, 2, 3, 4]],
           "type": "Polygon",
           "properties": {
-            "district": "Tiruvallur",
+            "district": "Thiruvallur",
             "st_code": "33",
             "dt_code": "602",
             "year": "2011_c",
@@ -2059,7 +2059,7 @@
           "arcs": [[-59, 63, 64, 65]],
           "type": "Polygon",
           "properties": {
-            "district": "Tiruvarur",
+            "district": "Thiruvarur",
             "st_code": "33",
             "dt_code": "619",
             "year": "2011_c",

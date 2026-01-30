@@ -120,8 +120,8 @@ const VoterStatus = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(scifi, { volume: 0.3 });
+  const [Click] = useSound(click, { volume: 0.1 });
+  const [playClick] = useSound(scifi, { volume: 0.1 });
 
   // Refs
   const containerRef = useRef(null);

@@ -377,8 +377,8 @@ const ScrollIndicator = () => (
 const FormPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(scifi, { volume: 0.3 }); 
+  const [Click] = useSound(click, { volume: 0.1 });
+  const [playClick] = useSound(scifi, { volume: 0.1 }); 
 
   // ✅ GSAP Refs
   const mainContainerRef = useRef(null);

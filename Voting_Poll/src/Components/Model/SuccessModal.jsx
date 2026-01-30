@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdCheck, MdContentCopy, MdShare } from "react-icons/md";
 import confetti from "canvas-confetti"; // Optional: npm install canvas-confetti
+import { useAudio } from "../../App";
 
 const SuccessModal = ({
   isOpen,
@@ -14,6 +15,7 @@ const SuccessModal = ({
 }) => {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const {fadeInAndPlay, isPlaying } = useAudio();
   const [countdown, setCountdown] = useState(redirectDelay / 1000);
 
   const isTamil = language === "ta";
@@ -53,6 +55,7 @@ const SuccessModal = ({
   const handleContinue = () => {
     if (onContinue) {
       onContinue();
+      fadeInAndPlay(1000);
     } else {
       localStorage.setItem("voter_status", "registered");
       navigate("/vote", { replace: true });

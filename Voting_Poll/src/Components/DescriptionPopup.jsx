@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 
 const DescriptionPopup = ({ isOpen, onClose, candidate, onOpenSuggestion }) => {
   const {t}= useTranslation()
-  const [Click] = useSound(click, { volume: 0.2 });
+  const [Click] = useSound(click, { volume: 0.1 });
   const [isClosing, setIsClosing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);

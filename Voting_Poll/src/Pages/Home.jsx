@@ -13,29 +13,11 @@ import HologramCylinder from "../Components/HologramCylinder";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
   const navigate = useNavigate();
   const [showLangDialog, setShowLangDialog] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   // const videoRef = useRef(null);
-
-  const sponser = [
-    {
-      id: 1,
-      img: "https://ik.imagekit.io/ivfldnjuy/lunailogoicon.ico?updatedAt=1759393439622",
-      name: "Lunai",
-    },
-    {
-      id: 2,
-      img: "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767595202/search_mhz3a1.png",
-      name: "Lunai",
-    },
-    {
-      id: 3,
-      img: "https://res.cloudinary.com/dfgyjzm7c/image/upload/v1767595262/paypoint_nnvsmr.png",
-      name: "Lunai",
-    },
-  ];
 
   // useEffect(() => {
   //   if (videoRef.current) {

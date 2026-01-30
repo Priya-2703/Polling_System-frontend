@@ -7,7 +7,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 
 const SuggestionPopup = ({ isOpen, onClose, candidate }) => {
   const { t, i18n } = useTranslation();
-  const [Click] = useSound(click, { volume: 0.2 });
+  const [Click] = useSound(click, { volume: 0.1 });
   const [isClosing, setIsClosing] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);

@@ -6,13 +6,14 @@ import scifi from "../assets/scifi.wav";
 import { useTranslation } from "react-i18next";
 import useVote from "../Hooks/useVote";
 import axios from "axios"; // ✅ 1. Import Axios
+import { useAudio } from "../App";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL
 
-
 const Vote = () => {
   const { t, i18n } = useTranslation();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
+  const { fadeOutAndStop, isPlaying } = useAudio();
   const navigate = useNavigate();
   const [selectedCandidate, setSelectedCandidate] = useState(null);
   
@@ -253,6 +254,9 @@ const Vote = () => {
     if (!selectedCandidate || isLoading) return;
     playClick();
     await castVote(selectedCandidate.id);
+      if (isPlaying) {
+      await fadeOutAndStop(500); // 1.5 seconds fade
+    }
   };
 
   return (

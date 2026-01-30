@@ -7,12 +7,14 @@ import scifi from "../assets/scifi.wav";
 import click from "../assets/click2.wav";
 import useSound from "use-sound";
 import { submitSurvey } from "../utils/service/api";
+import { useAudio } from "../App";
 
 const QnA = () => {
   const { t } = useTranslation();
   const { voteId, checkUserStatus } = useAuth();
-  const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(scifi, { volume: 0.3 });
+  const [Click] = useSound(click, { volume: 0.1 });
+  const [playClick] = useSound(scifi, { volume: 0.1 });
+    const { fadeInAndPlay } = useAudio();
   const location = useLocation();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -275,6 +277,7 @@ const QnA = () => {
 
       if (result.success) {
         await checkUserStatus();
+        fadeInAndPlay(1000);
       } else {
         setApiError(
           result.error || "Failed to submit survey. Please try again.",

@@ -12,7 +12,7 @@ const SCALE = 4.0;
 
 // --- COLORS CONFIG ---
 const DISTRICT_CONFIG = {
-    "Chennai": { color: "#A52A2A" }, "Tiruvallur": { color: "#0818A8" }, "Chengalpattu": { color: "#023020" },
+    "Chennai": { color: "#A52A2A" }, "Thiruvallur": { color: "#0818A8" }, "Chengalpattu": { color: "#023020" },
     "Kanchipuram": { color: "#834333" }, "Ranipet": { color: "#D2042D" }, "Vellore": { color: "#EF476F" },
     "Tirupathur": { color: "#630330" }, "Krishnagiri": { color: "#C04000" }, "Dharmapuri": { color: "#301934" },
     "Tiruvannamalai": { color: "#073B4C" }, "Viluppuram": { color: "#EC5800" }, "Kallakurichi": { color: "#5A189A" },
@@ -20,7 +20,7 @@ const DISTRICT_CONFIG = {
     "Coimbatore": { color: "#CC5500" }, "Tiruppur": { color: "#355E3B" }, "Namakkal": { color: "#8338EC" },
     "Karur": { color: "#8B0000" }, "Perambalur": { color: "#FB5607" }, "Ariyalur": { color: "#FF006E" },
     "Cuddalore": { color: "#38B000" }, "Mayiladuthurai": { color: "#CCFF33" }, "Nagapattinam": { color: "#0047AB" },
-    "Tiruvarur": { color: "#008000" }, "Thanjavur": { color: "#301934" }, "Pudukkottai": { color: "#008000" },
+    "Thiruvarur": { color: "#008000" }, "Thanjavur": { color: "#301934" }, "Pudukkottai": { color: "#008000" },
     "Tiruchirappalli": { color: "#0047AB" }, "Dindigul": { color: "#CD7F32" }, "Theni": { color: "#00008B" },
     "Madurai": { color: "#880808" }, "Sivaganga": { color: "#BC4749" }, "Virudhunagar": { color: "#023020" },
     "Ramanathapuram": { color: "#811331" }, "Tenkasi": { color: "#3D405B" }, "Thoothukudi": { color: "#CC5500" },

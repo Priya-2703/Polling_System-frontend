@@ -12,7 +12,7 @@ const API_BASE_URL = import.meta.env.VITE_API_URL
 
 const Candidate = () => {
   const { t } = useTranslation();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
   const navigate = useNavigate();
   const { checkUserStatus } = useAuth();
 

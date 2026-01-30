@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 
 const PrivacyPolicyPopup = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
   const [isAnimating, setIsAnimating] = useState(false);
   const [shouldRender, setShouldRender] = useState(false);
 

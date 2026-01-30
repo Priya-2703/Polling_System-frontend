@@ -17,8 +17,8 @@ const SwiperCard = ({
   setSelectedCandidate,
 }) => {
   const { t, i18n } = useTranslation();
-  const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(beep, { volume: 0.3 });
+  const [Click] = useSound(click, { volume: 0.1 });
+  const [playClick] = useSound(beep, { volume: 0.1 });
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const swiperRef = useRef(null);

@@ -30,6 +30,7 @@ import {
   ERROR_TYPES,
   detectErrorType,
 } from "../Components/Model";
+import { useAudio } from "../App";
 
 // --- STEP INDICATOR
 const StepIndicator = ({ currentStep, totalSteps, steps, subtitle }) => {
@@ -576,8 +577,9 @@ const UserDetails = () => {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { checkUserStatus } = useAuth();
-  const [Click] = useSound(click, { volume: 0.2 });
-  const [playClick] = useSound(scifi, { volume: 0.3 });
+  const { fadeOutAndStop, isPlaying } = useAudio();
+  const [Click] = useSound(click, { volume: 0.1 });
+  const [playClick] = useSound(scifi, { volume: 0.1 });
 
   // ✅ GSAP Refs
   const mainContainerRef = useRef(null);
@@ -662,6 +664,7 @@ const UserDetails = () => {
         })
         .then((response) => {
           setConstituencyList(response.data.constituencies || []);
+          console.log("cons", response.data)
           setLoadingConstituency(false);
         })
         .catch((error) => {
@@ -729,9 +732,12 @@ const UserDetails = () => {
     return () => ctx.revert();
   }, [fixedHeight]);
 
-  const handleContinueClick = () => {
+  const handleContinueClick = async () => {
     if (animationTlRef.current && !isAnimating && !isRevealed) {
       playClick();
+      if (isPlaying) {
+      await fadeOutAndStop(500); // 1.5 seconds fade
+    }
       animationTlRef.current.play();
     }
   };
@@ -866,6 +872,7 @@ const UserDetails = () => {
   // Handlers
   const handleChange = (name, value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+    console.log("cons",value)
   };
 
   const handlePANChange = (value) => {
@@ -1087,6 +1094,8 @@ const UserDetails = () => {
     await checkUserStatus();
   };
 
+  console.log("formdata", formData)
+
   // Render Step Content (Keep your existing renderStepContent code)
   const renderStepContent = () => {
     const animationClass =
@@ -1256,11 +1265,11 @@ const UserDetails = () => {
 
                   {constituencyList.map((thoguthi) => (
                     <option
-                      key={thoguthi}
-                      value={thoguthi}
+                      key={thoguthi.value}
+                      value={thoguthi.value}
                       className="bg-transparent text-white"
                     >
-                      {thoguthi}
+                      {thoguthi.label}
                     </option>
                   ))}
                 </select>

@@ -13,7 +13,7 @@ const Thanks = () => {
   const API_BASE_URL = import.meta.env.VITE_API_URL
   const { t, i18n } = useTranslation();
   const {clearAuth  } = useAuth();
-  const [playClick] = useSound(scifi);
+  const [playClick] = useSound(scifi, { volume: 0.1 });
   const navigate = useNavigate();
   const location = useLocation();
 
