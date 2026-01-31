@@ -1094,8 +1094,6 @@ const UserDetails = () => {
     await checkUserStatus();
   };
 
-  console.log("formdata", formData)
-
   // Render Step Content (Keep your existing renderStepContent code)
   const renderStepContent = () => {
     const animationClass =

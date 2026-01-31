@@ -10,11 +10,19 @@ import { MdNoEncryption } from "react-icons/md";
 import GlitchText from "../Components/GlitchText";
 import ResumeModal from "../Components/Model/ResumeModal";
 import HologramCylinder from "../Components/HologramCylinder";
+import englishVoiceFile from "../assets/lunai_en.mp3";
+import tamilVoiceFile from "../assets/lunai_ta.mp3";
+import { useAudio } from "../App";
 
 const Home = () => {
   const { t, i18n } = useTranslation();
   const [playClick] = useSound(scifi, { volume: 0.1 });
+    const [playEnglishVoice, { stop: stopEnglishVoice }] = useSound(englishVoiceFile, { volume: 0.7 });
+  const [playTamilVoice, { stop: stopTamilVoice }] = useSound(tamilVoiceFile, { volume: 0.7 });
+  const { fadeOutAndStop, isPlaying } = useAudio ();
+
   const navigate = useNavigate();
+  // const [nextAudio, setNextAudio] = useState(null);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const [showResumeModal, setShowResumeModal] = useState(false);
   // const videoRef = useRef(null);
@@ -30,6 +38,26 @@ const Home = () => {
   };
 
   const currentLang = i18n.language;
+
+   const handleStartClick = async () => {
+    playClick();
+    stopEnglishVoice();
+    stopTamilVoice();
+
+    if (isPlaying) {
+      await fadeOutAndStop(500);
+    }
+    
+    if (currentLang === "en") {
+      playEnglishVoice();
+    } else {
+      playTamilVoice();
+    }
+    
+    setTimeout(() => {
+      navigate("/form");
+    }, 500);
+  };
 
   const isMobile = window.innerWidth <= 460;
 
@@ -124,27 +152,35 @@ const Home = () => {
                 <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full animate-ping absolute" />
                 <div className="w-1 h-1 md:w-2 md:h-2 bg-accet rounded-full relative" />
               </div>
-              <span className={`${currentLang === "en" ? "text-[7px] md:text-[10px]" : "text-[6px] md:text-[10px]"} uppercase tracking-widest text-accet font-heading`}>
+              <span
+                className={`${currentLang === "en" ? "text-[7px] md:text-[10px]" : "text-[6px] md:text-[10px]"} uppercase tracking-widest text-accet font-heading`}
+              >
                 {t("home.statusBadge")}
               </span>
             </div>
 
             {/* Hero Title */}
-            <h1 className={`font-heading text-[32px] md:text-6xl lg:text-[70px] font-bold tracking-tight text-white ${currentLang === "en" ? "leading-none": "leading-10 lg:leading-20" }`}>
+            <h1
+              className={`font-heading text-[32px] md:text-6xl lg:text-[70px] font-bold tracking-tight text-white ${currentLang === "en" ? "leading-none" : "leading-10 lg:leading-20"}`}
+            >
               <span className="block text-glowtext-start">
                 {" "}
                 {t("home.hero.title1")} <br />
                 <GlitchText text={t("home.hero.title2")} />
               </span>
             </h1>
-            <p className={`font-heading text-[26px] lg:text-[45px] block text-start ${currentLang === "en" ? "leading-8 lg:leading-13" : "leading-8 lg:leading-18"}  font-semibold text-white mb-3 md:mb-6`}>
+            <p
+              className={`font-heading text-[26px] lg:text-[45px] block text-start ${currentLang === "en" ? "leading-8 lg:leading-13" : "leading-8 lg:leading-18"}  font-semibold text-white mb-3 md:mb-6`}
+            >
               {t("home.hero.title3")}
             </p>
 
             {/* Subtitle / Description */}
             <div className="relative mb-4 lg:mb-8">
               <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-linear-to-b from-accet/50 via-accet/20 to-transparent rounded-full" />
-              <p className={`text-neutral-400 max-w-xl ${currentLang === "en" ? "text-[9px] md:text-base" : "text-[8px] md:text-base"}  leading-relaxed pl-3 md:pl-6 font-light`}>
+              <p
+                className={`text-neutral-400 max-w-xl ${currentLang === "en" ? "text-[9px] md:text-base" : "text-[8px] md:text-base"}  leading-relaxed pl-3 md:pl-6 font-light`}
+              >
                 {t("home.hero.description")}
               </p>
             </div>
@@ -191,7 +227,6 @@ const Home = () => {
       </div>
 
       <HologramCylinder />
-
 
       {/* video */}
       <div className="w-full mx-auto bg-black/0 h-full lg:h-[90dvh] mb-20 lg:mb-32 pt-16">
@@ -308,7 +343,7 @@ const Home = () => {
             <div className="absolute top-0 left-1/4 w-px h-full bg-white/5" />
             <div className="absolute top-0 right-1/4 w-px h-full bg-white/5" />
             <div className="absolute top-1/2 left-0 w-full h-px bg-white/5" />
-          </div> 
+          </div>
           <div className="relative z-10 flex flex-col items-center">
             <Icon
               icon="lucide:fingerprint"
@@ -319,16 +354,15 @@ const Home = () => {
             <h2 className="font-heading font-semibold text-lg md:text-4xl text-white mb-2 md:mb-4 tracking-wide">
               {t("home.cta.title")}
             </h2>
-            <p className={`text-neutral-400 mb-5 md:mb-10 max-w-lg mx-auto ${currentLang === "en" ? "text-[10px] md:text-sm" : "text-[8px] md:text-sm"} `}>
+            <p
+              className={`text-neutral-400 mb-5 md:mb-10 max-w-lg mx-auto ${currentLang === "en" ? "text-[10px] md:text-sm" : "text-[8px] md:text-sm"} `}
+            >
               {t("home.cta.description")}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 lg:gap-4 max-w-md lg:max-w-xl mx-auto relative group">
               {/* <div className="absolute -inset-0.5 bg-linear-to-r from-indigo-500 via-cyan-500 to-indigo-500 rounded-sm opacity-10 group-hover:opacity-100 transition duration-500 blur" /> */}
               <button
-                onClick={() => {
-                  playClick();
-                  navigate("/form");
-                }}
+                onClick={handleStartClick}
                 className="relative bg-accet/40 text-white font-heading font-semibold text-[9px] rounded-md md:text-xs md:px-7 md:py-3 px-5 py-2 tracking-widest uppercase hover:bg-accet hover:text-black transition-all z-10 flex items-center gap-2 justify-center"
               >
                 {t("home.cta.startButton")} {t("home.cta.votingText")}

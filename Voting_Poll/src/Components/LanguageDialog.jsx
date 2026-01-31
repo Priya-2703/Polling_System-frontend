@@ -44,21 +44,21 @@ const LanguageDialog = ({ onLanguageSelect, onClose }) => {
     // 👇 MAGIC HAPPENS HERE
     
     // A. Check if there is already a Global Audio playing (from previous dialog session)
-    if (globalAudioInstance) {
-        globalAudioInstance.pause();       // Palasai niruthu
-        globalAudioInstance.currentTime = 0; // Reset pannu
-    }
+    // if (globalAudioInstance) {
+        // globalAudioInstance.pause();       // Palasai niruthu
+        // globalAudioInstance.currentTime = 0; // Reset pannu
+    // }
 
     // B. Play the new audio (if valid)
-    if (nextAudio) {
-        const playPromise = nextAudio.play();
-        if (playPromise !== undefined) {
-        }
+    // if (nextAudio) {
+        // const playPromise = nextAudio.play();
+        // if (playPromise !== undefined) {
+        // }
         
         // C. Set this new audio as the 'Global' audio
         // Adutha vati neenga dialog open panna, ithai stop panna ithu uthavum.
-        globalAudioInstance = nextAudio;
-    }
+        // globalAudioInstance = nextAudio;
+    // }
 
     // --- Regular Logic ---
     localStorage.setItem("language", selectedLang);
@@ -78,7 +78,7 @@ const LanguageDialog = ({ onLanguageSelect, onClose }) => {
   const handleBack = () => {
     playClick();
     setSelectedLang(null);
-    setNextAudio(null);
+    // setNextAudio(null);
   };
 
   const handleClose = () => {
@@ -87,10 +87,10 @@ const LanguageDialog = ({ onLanguageSelect, onClose }) => {
     // so inga stop logic theva illa.
     
     setSelectedLang(null);
-    setNextAudio(null);
-    if (onClose) {
-      onClose(); 
-    }
+    // setNextAudio(null);
+    // if (onClose) {
+    //   onClose(); 
+    // }
   };
 
   return (

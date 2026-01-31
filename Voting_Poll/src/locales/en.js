@@ -437,19 +437,26 @@ const en = {
       "question": "Upload an image of a problem in your district"
     },
     "imageUpload": {
-      "optional": "Optional",
-      "dragDrop": "Drag & drop an image here",
-      "dropHere": "Drop image here",
-      "or": "or",
-      "browse": "Browse Files",
-      "formats": "JPG, PNG, WebP • Max 10MB",
-      "uploaded": "Image Uploaded",
-      "remove": "Remove",
-      "skip": "Skip",
-      "invalidType": "Please upload a valid image (JPG, PNG, or WebP)",
-      "tooLarge": "Image size should be less than 10MB",
-      "readError": "Failed to read file",
-      "helpText": "Share an image showing infrastructure issues, public problems, or areas needing attention in your district."
+      optional: "Optional",
+      descriptionLabel: "Describe the problem",
+      descriptionPlaceholder: "Describe the issue you want to report (e.g., road damage, water shortage, garbage accumulation...)",
+      descriptionHint: "Optional: Add details about location, duration, or severity",
+      dragDrop: "Drag & drop images here",
+      dropHere: "Drop images here",
+      or: "or",
+      browse: "Browse Files",
+      formats: "JPG, PNG, WebP • Max 10MB each • Up to 4 images",
+      imagesUploaded: "images uploaded",
+      imagesReady: "image(s) ready to upload",
+      clearAll: "Clear All",
+      remove: "Remove",
+      uploaded: "Image Uploaded",
+      helpText: "Share images showing infrastructure issues, public problems, or areas needing attention in your district.",
+      skip: "Skip",
+      invalidType: "Please upload valid images (JPG, PNG, or WebP)",
+      tooLarge: "Image size should be less than 10MB",
+      maxFiles: "Maximum 4 images allowed",
+      readError: "Failed to read file"
     }
   },
   vote_messages: {
@@ -467,6 +474,13 @@ const en = {
       "Thank you for completing the survey. Click submit to confirm your vote.",
     yourVoteFor: "Your vote for",
     confirmSubmit: "Confirm & Submit Vote",
+    questionCounter: "Question",
+    of: "of",
+    back: "Back",
+    next: "Next",
+    finish: "Finish",
+    submitting: "Submitting...",
+    selectError: "Please select an option to continue"
   },
   cm_candi: {
     p1: { name: "Vijay", party: "TVK" },

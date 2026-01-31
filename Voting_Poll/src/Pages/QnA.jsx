@@ -9,12 +9,15 @@ import useSound from "use-sound";
 import { submitSurvey } from "../utils/service/api";
 import { useAudio } from "../App";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL
+
+
 const QnA = () => {
   const { t } = useTranslation();
   const { voteId, checkUserStatus } = useAuth();
   const [Click] = useSound(click, { volume: 0.1 });
   const [playClick] = useSound(scifi, { volume: 0.1 });
-    const { fadeInAndPlay } = useAudio();
+  const { fadeInAndPlay } = useAudio();
   const location = useLocation();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -27,12 +30,15 @@ const QnA = () => {
   const [apiError, setApiError] = useState(null);
 
   // Image Upload States
-  const [uploadedImage, setUploadedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadedImages, setUploadedImages] = useState([]); // Changed to array for multiple images
+  const [imagePreviews, setImagePreviews] = useState([]); // Changed to array
   const [isDragging, setIsDragging] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  // NEW: Problem Description State
+  const [problemDescription, setProblemDescription] = useState("");
 
   const questions = [
     {
@@ -98,7 +104,7 @@ const QnA = () => {
     {
       id: 5,
       question:
-        t("qna.q5.question") || "Upload an image of a problem in your district",
+        t("qna.q5.question") || "Report a problem in your district",
       type: "image_upload",
       isOptional: true,
       hasOther: false,
@@ -126,9 +132,7 @@ const QnA = () => {
     Object.keys(answersToFormat).forEach((questionId) => {
       const answer = answersToFormat[questionId];
 
-      // ✅ Skip பண்ணா அந்த question-ஐ include பண்ணாதே
-      if (answer.type === "skipped") {
-        // Don't add to formattedData - skip entirely
+      if (answer.type === "skipped" || answer.type === "image") {
         return;
       }
 
@@ -136,12 +140,6 @@ const QnA = () => {
         formattedData[questionId] = {
           value: "other",
           text: answer.text,
-        };
-      } else if (answer.type === "image") {
-        // ✅ Image upload பண்ணா மட்டும் include பண்ணு
-        formattedData[questionId] = {
-          value: "image",
-          file: answer.file,
         };
       } else {
         formattedData[questionId] = answer.value;
@@ -151,46 +149,109 @@ const QnA = () => {
     return formattedData;
   };
 
-  // Image Upload Handlers
-  const handleFileSelect = (file) => {
+  // NEW: Report Problem API Call
+  const submitProblemReport = async () => {
+    if (uploadedImages.length === 0) {
+      return { success: true, skipped: true };
+    }
+
+    try {
+      const formData = new FormData();
+      
+      // Add description
+      formData.append('description', problemDescription.trim());
+      
+      // Add all images
+      uploadedImages.forEach((image) => {
+        formData.append('images', image);
+      });
+
+      const response = await fetch(`${API_BASE_URL}/api/vote/report-problem`, {
+        method: 'POST',
+        credentials: 'include', // Important for cookies
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit problem report');
+      }
+
+      return { success: true, data };
+    } catch (error) {
+      console.error('Problem report submission error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
+  // Image Upload Handlers - Modified for multiple images
+  const handleFileSelect = (files) => {
     setUploadError(null);
 
-    if (!file) return;
+    if (!files || files.length === 0) return;
 
-    // Validate file type
     const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-    if (!validTypes.includes(file.type)) {
+    const maxSize = 10 * 1024 * 1024;
+    const maxFiles = 4; // Maximum 4 images
+
+    // Check if adding new files would exceed limit
+    if (uploadedImages.length + files.length > maxFiles) {
       setUploadError(
-        t("qna.imageUpload.invalidType") ||
-          "Please upload a valid image (JPG, PNG, or WebP)",
+        t("qna.imageUpload.maxFiles") || `Maximum ${maxFiles} images allowed`
       );
       return;
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024;
-    if (file.size > maxSize) {
-      setUploadError(
-        t("qna.imageUpload.tooLarge") || "Image size should be less than 10MB",
-      );
-      return;
-    }
+    const newImages = [];
+    const newPreviews = [];
+    let hasError = false;
 
     setIsUploading(true);
 
-    // Create preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-      setUploadedImage(file);
-      setIsUploading(false);
-      playClick();
+    const processFile = (file, index) => {
+      return new Promise((resolve, reject) => {
+        // Validate file type
+        if (!validTypes.includes(file.type)) {
+          reject(new Error(
+            t("qna.imageUpload.invalidType") ||
+            "Please upload valid images (JPG, PNG, or WebP)"
+          ));
+          return;
+        }
+
+        // Validate file size
+        if (file.size > maxSize) {
+          reject(new Error(
+            t("qna.imageUpload.tooLarge") || "Image size should be less than 10MB"
+          ));
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          newImages.push(file);
+          newPreviews.push(reader.result);
+          resolve();
+        };
+        reader.onerror = () => {
+          reject(new Error(t("qna.imageUpload.readError") || "Failed to read file"));
+        };
+        reader.readAsDataURL(file);
+      });
     };
-    reader.onerror = () => {
-      setUploadError(t("qna.imageUpload.readError") || "Failed to read file");
-      setIsUploading(false);
-    };
-    reader.readAsDataURL(file);
+
+    Promise.all(Array.from(files).map((file, index) => processFile(file, index)))
+      .then(() => {
+        setUploadedImages(prev => [...prev, ...newImages]);
+        setImagePreviews(prev => [...prev, ...newPreviews]);
+        setIsUploading(false);
+        playClick();
+      })
+      .catch((error) => {
+        setUploadError(error.message);
+        setIsUploading(false);
+      });
   };
 
   const handleDragOver = (e) => {
@@ -210,19 +271,30 @@ const QnA = () => {
     e.stopPropagation();
     setIsDragging(false);
 
-    const file = e.dataTransfer.files[0];
-    handleFileSelect(file);
+    const files = e.dataTransfer.files;
+    handleFileSelect(files);
   };
 
   const handleFileInputChange = (e) => {
-    const file = e.target.files[0];
-    handleFileSelect(file);
+    const files = e.target.files;
+    handleFileSelect(files);
   };
 
-  const handleRemoveImage = () => {
+  const handleRemoveImage = (indexToRemove) => {
     playClick();
-    setUploadedImage(null);
-    setImagePreview(null);
+    setUploadedImages(prev => prev.filter((_, index) => index !== indexToRemove));
+    setImagePreviews(prev => prev.filter((_, index) => index !== indexToRemove));
+    setUploadError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAllImages = () => {
+    playClick();
+    setUploadedImages([]);
+    setImagePreviews([]);
+    setProblemDescription("");
     setUploadError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -266,24 +338,39 @@ const QnA = () => {
     }
   };
 
-  // Submit survey to API
+  // Submit survey to API - Modified
   const handleSubmitSurvey = async (finalAnswers) => {
     setIsCompleting(true);
     setApiError(null);
 
     try {
+      // First, submit the survey data (questions 1-4)
       const surveyData = formatSurveyData(finalAnswers);
-      const result = await submitSurvey(surveyData);
+      const surveyResult = await submitSurvey(surveyData);
 
-      if (result.success) {
-        await checkUserStatus();
-        fadeInAndPlay(1000);
-      } else {
+      if (!surveyResult.success) {
         setApiError(
-          result.error || "Failed to submit survey. Please try again.",
+          surveyResult.error || "Failed to submit survey. Please try again."
         );
-        console.error("Survey submission failed:", result.error);
+        console.error("Survey submission failed:", surveyResult.error);
+        setIsCompleting(false);
+        return;
       }
+
+      // Then, submit the problem report if there are images
+      if (uploadedImages.length > 0) {
+        const problemResult = await submitProblemReport();
+        
+        if (!problemResult.success && !problemResult.skipped) {
+          // Don't block completion, just log the error
+          console.error("Problem report submission failed:", problemResult.error);
+          // Optionally show a warning but still complete
+        }
+      }
+
+      await checkUserStatus();
+      fadeInAndPlay(1000);
+
     } catch (error) {
       console.error("Error submitting survey:", error);
       setApiError("Something went wrong. Please try again.");
@@ -305,9 +392,10 @@ const QnA = () => {
 
       // Reset image states if moving to/from image upload question
       if (nextQuestion?.type !== "image_upload") {
-        setUploadedImage(null);
-        setImagePreview(null);
+        setUploadedImages([]);
+        setImagePreviews([]);
         setUploadError(null);
+        setProblemDescription("");
       }
 
       if (previousAnswer) {
@@ -315,12 +403,6 @@ const QnA = () => {
           const otherOption = nextQuestion?.options.find((opt) => opt.isOther);
           setSelectedOption(otherOption?.id || null);
           setOtherText(previousAnswer.text || "");
-        } else if (previousAnswer.type === "image") {
-          setUploadedImage(previousAnswer.file);
-          // Re-create preview
-          const reader = new FileReader();
-          reader.onloadend = () => setImagePreview(reader.result);
-          reader.readAsDataURL(previousAnswer.file);
         } else if (previousAnswer.type !== "skipped") {
           setSelectedOption(previousAnswer.value || null);
           setOtherText("");
@@ -347,10 +429,13 @@ const QnA = () => {
       if (isAnimating || isCompleting) return;
 
       let answerValue;
-      if (uploadedImage) {
-        answerValue = { type: "image", file: uploadedImage };
+      if (uploadedImages.length > 0) {
+        answerValue = { 
+          type: "image", 
+          files: uploadedImages,
+          description: problemDescription 
+        };
       } else {
-        // If no image and it's optional, skip
         answerValue = { type: "skipped", value: null };
       }
 
@@ -415,8 +500,9 @@ const QnA = () => {
         const previousAnswer = answers[prevQuestionId];
 
         // Reset image states
-        setUploadedImage(null);
-        setImagePreview(null);
+        setUploadedImages([]);
+        setImagePreviews([]);
+        setProblemDescription("");
 
         if (previousAnswer) {
           if (previousAnswer.type === "other") {
@@ -425,11 +511,6 @@ const QnA = () => {
             );
             setSelectedOption(otherOption?.id || null);
             setOtherText(previousAnswer.text || "");
-          } else if (previousAnswer.type === "image") {
-            setUploadedImage(previousAnswer.file);
-            const reader = new FileReader();
-            reader.onloadend = () => setImagePreview(reader.result);
-            reader.readAsDataURL(previousAnswer.file);
           } else if (previousAnswer.type !== "skipped") {
             setSelectedOption(previousAnswer.value || null);
             setOtherText("");
@@ -571,10 +652,10 @@ const QnA = () => {
     );
   };
 
-  // Render Image Upload Question
+  // Render Image Upload Question - UPDATED with text input
   const renderImageUploadQuestion = () => {
     return (
-      <div className="w-full max-w-lg mx-auto">
+      <div className="w-full max-w-2xl mx-auto">
         {/* Optional Badge */}
         <div className="flex items-center justify-center gap-2 mb-4">
           <span className="px-3 py-1 bg-accet/10 border border-accet/30 text-accet text-[10px] font-heading uppercase tracking-wider">
@@ -582,8 +663,25 @@ const QnA = () => {
           </span>
         </div>
 
+        {/* Problem Description Input - NEW */}
+        <div className="mb-6">
+          <label className="block text-white/70 text-sm font-heading mb-2">
+            {t("qna.imageUpload.descriptionLabel") || "Describe the problem"}
+          </label>
+          <textarea
+            value={problemDescription}
+            onChange={(e) => setProblemDescription(e.target.value)}
+            placeholder={t("qna.imageUpload.descriptionPlaceholder") || "Describe the issue you want to report (e.g., road damage, water shortage, garbage accumulation...)"}
+            className="w-full px-4 py-3 bg-shade border border-white/20 focus:border-accet/50 text-white text-sm font-heading placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-accet/20 transition-all duration-300 resize-none"
+            rows={3}
+          />
+          <p className="text-white/40 text-[10px] font-heading mt-1.5">
+            {t("qna.imageUpload.descriptionHint") || "Optional: Add details about location, duration, or severity"}
+          </p>
+        </div>
+
         {/* Upload Area */}
-        {!imagePreview ? (
+        {imagePreviews.length < 4 && (
           <div
             onClick={() => fileInputRef.current?.click()}
             onDragOver={handleDragOver}
@@ -593,7 +691,7 @@ const QnA = () => {
               isDragging
                 ? "bg-accet/20 border-accet scale-[1.02]"
                 : "bg-shade hover:bg-accet/5 border-white/20 hover:border-accet/50"
-            } border-2 border-dashed p-8 md:p-12`}
+            } border-2 border-dashed p-6 md:p-8`}
           >
             {/* Animated Corner Decorations */}
             <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-accet/50" />
@@ -601,11 +699,11 @@ const QnA = () => {
             <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-accet/50" />
             <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-accet/50" />
 
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex flex-col items-center gap-3">
               {isUploading ? (
-                <div className="w-16 h-16 flex items-center justify-center">
+                <div className="w-12 h-12 flex items-center justify-center">
                   <svg
-                    className="animate-spin w-10 h-10 text-accet"
+                    className="animate-spin w-8 h-8 text-accet"
                     viewBox="0 0 24 24"
                   >
                     <circle
@@ -626,12 +724,12 @@ const QnA = () => {
                 </div>
               ) : (
                 <div
-                  className={`w-16 h-16 flex items-center justify-center transition-colors ${
+                  className={`w-12 h-12 flex items-center justify-center transition-colors ${
                     isDragging ? "text-accet" : "text-white/40"
                   }`}
                 >
                   <svg
-                    className="w-12 h-12"
+                    className="w-10 h-10"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -648,28 +746,33 @@ const QnA = () => {
 
               <div className="text-center">
                 <p
-                  className={`font-heading text-sm md:text-base transition-colors ${
+                  className={`font-heading text-sm transition-colors ${
                     isDragging ? "text-accet" : "text-white/70"
                   }`}
                 >
                   {isDragging
-                    ? t("qna.imageUpload.dropHere") || "Drop image here"
+                    ? t("qna.imageUpload.dropHere") || "Drop images here"
                     : t("qna.imageUpload.dragDrop") ||
-                      "Drag & drop an image here"}
+                      "Drag & drop images here"}
                 </p>
-                <p className="text-white/40 text-xs mt-2">
+                <p className="text-white/40 text-xs mt-1">
                   {t("qna.imageUpload.or") || "or"}
                 </p>
                 <button
                   type="button"
-                  className="mt-3 px-5 py-2 bg-accet/10 border border-accet/40 text-accet text-sm font-heading uppercase tracking-wider hover:bg-accet/20 transition-all"
+                  className="mt-2 px-4 py-1.5 bg-accet/10 border border-accet/40 text-accet text-xs font-heading uppercase tracking-wider hover:bg-accet/20 transition-all"
                 >
                   {t("qna.imageUpload.browse") || "Browse Files"}
                 </button>
               </div>
 
-              <p className="text-white/30 text-[10px] font-heading tracking-wider mt-2">
-                {t("qna.imageUpload.formats") || "JPG, PNG, WebP • Max 10MB"}
+              <p className="text-white/30 text-[10px] font-heading tracking-wider">
+                {t("qna.imageUpload.formats") || "JPG, PNG, WebP • Max 10MB each • Up to 4 images"}
+              </p>
+
+              {/* Image count indicator */}
+              <p className="text-accet/70 text-[11px] font-heading">
+                {uploadedImages.length}/4 {t("qna.imageUpload.imagesUploaded") || "images uploaded"}
               </p>
             </div>
 
@@ -678,23 +781,20 @@ const QnA = () => {
               type="file"
               accept="image/jpeg,image/png,image/jpg,image/webp"
               onChange={handleFileInputChange}
+              multiple
               className="hidden"
             />
           </div>
-        ) : (
-          /* Image Preview */
-          <div className="relative bg-shade border border-accet/30 p-4 animate-fadeIn">
-            {/* Corner Decorations */}
-            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-accet" />
-            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-accet" />
-            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-accet" />
-            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-accet" />
+        )}
 
-            {/* Success Badge */}
-            <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-black border border-accet/50 z-10">
-              <span className="text-accet text-[10px] font-heading uppercase tracking-wider flex items-center gap-1.5">
+        {/* Image Previews Grid */}
+        {imagePreviews.length > 0 && (
+          <div className="mt-4 animate-fadeIn">
+            {/* Success Header */}
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-accet text-[11px] font-heading uppercase tracking-wider flex items-center gap-1.5">
                 <svg
-                  className="w-3 h-3"
+                  className="w-3.5 h-3.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -706,43 +806,16 @@ const QnA = () => {
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                {t("qna.imageUpload.uploaded") || "Image Uploaded"}
+                {uploadedImages.length} {t("qna.imageUpload.imagesReady") || "image(s) ready to upload"}
               </span>
-            </div>
-
-            {/* Image */}
-            <div className="relative aspect-video overflow-hidden bg-black/50 mt-2">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-full h-full object-contain"
-              />
-
-              {/* Scan Line Effect */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-gradient-to-b from-accet/5 via-transparent to-accet/5" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-accet/30 animate-scanline" />
-              </div>
-            </div>
-
-            {/* File Info */}
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className="text-white/70 text-sm font-heading truncate">
-                  {uploadedImage?.name}
-                </p>
-                <p className="text-white/40 text-[10px] font-heading">
-                  {(uploadedImage?.size / 1024 / 1024).toFixed(2)} MB
-                </p>
-              </div>
-
-              {/* Remove Button */}
+              
+              {/* Clear All Button */}
               <button
-                onClick={handleRemoveImage}
-                className="px-4 py-2 bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-heading uppercase tracking-wider hover:bg-red-500/20 transition-all flex items-center gap-2"
+                onClick={handleRemoveAllImages}
+                className="px-3 py-1 bg-red-500/10 border border-red-500/30 text-red-400 text-[10px] font-heading uppercase tracking-wider hover:bg-red-500/20 transition-all flex items-center gap-1"
               >
                 <svg
-                  className="w-4 h-4"
+                  className="w-3 h-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -751,11 +824,63 @@ const QnA = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-                {t("qna.imageUpload.remove") || "Remove"}
+                {t("qna.imageUpload.clearAll") || "Clear All"}
               </button>
+            </div>
+
+            {/* Images Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {imagePreviews.map((preview, index) => (
+                <div 
+                  key={index} 
+                  className="relative group bg-shade border border-accet/30 p-2 aspect-square"
+                >
+                  {/* Corner Decorations */}
+                  <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-accet" />
+                  <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-accet" />
+                  <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-accet" />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-accet" />
+
+                  <img
+                    src={preview}
+                    alt={`Preview ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+
+                  {/* Remove Button Overlay */}
+                  <button
+                    onClick={() => handleRemoveImage(index)}
+                    className="absolute top-1 right-1 w-6 h-6 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Image Number Badge */}
+                  <div className="absolute bottom-1 left-1 w-5 h-5 bg-accet text-black text-[10px] font-bold flex items-center justify-center">
+                    {index + 1}
+                  </div>
+
+                  {/* File Size */}
+                  <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/70 text-white/70 text-[8px] font-heading">
+                    {(uploadedImages[index]?.size / 1024 / 1024).toFixed(1)}MB
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -786,7 +911,7 @@ const QnA = () => {
         <div className="mt-6 text-center">
           <p className="text-white/40 text-xs font-heading">
             {t("qna.imageUpload.helpText") ||
-              "Share an image showing infrastructure issues, public problems, or areas needing attention in your district."}
+              "Share images showing infrastructure issues, public problems, or areas needing attention in your district."}
           </p>
         </div>
       </div>
@@ -868,7 +993,7 @@ const QnA = () => {
           </div>
 
           {/* Question Card */}
-          <div className="flex-1 min-h-0 flex flex-col justify-center">
+          <div className="flex-1 min-h-0 flex flex-col justify-center overflow-y-auto">
             <div
               className={`transition-all duration-300 mx-auto w-full max-w-2xl ${
                 isAnimating
@@ -1171,7 +1296,7 @@ const QnA = () => {
                   isAnimating || isCompleting
                     ? "bg-accet/50 text-black/50 cursor-not-allowed"
                     : isImageUploadQuestion
-                      ? uploadedImage
+                      ? uploadedImages.length > 0
                         ? "bg-linear-to-r from-accet to-accet/30 text-black hover:shadow-[0_0_30px_rgba(0,243,255,0.2)] hover:scale-[1.02] active:scale-[0.98]"
                         : "bg-linear-to-r from-accet/50 to-accet/50 text-black/70 hover:from-accet hover:to-accet/30 hover:text-black"
                       : selectedOption
@@ -1183,14 +1308,8 @@ const QnA = () => {
                   {isCompleting
                     ? t("vote_messages.submitting") || "Submitting..."
                     : isLastQuestion
-                      ? uploadedImage
-                        ? t("vote_messages.finish") || "Finish"
-                        : t("vote_messages.finish") || "Finish"
-                      : isImageUploadQuestion && uploadedImage
-                        ? t("vote_messages.next") || "Next"
-                        : isImageUploadQuestion
-                          ? t("vote_messages.next") || "Next"
-                          : t("vote_messages.next") || "Next"}
+                      ? t("vote_messages.finish") || "Finish"
+                      : t("vote_messages.next") || "Next"}
                 </span>
                 {isCompleting ? (
                   <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
